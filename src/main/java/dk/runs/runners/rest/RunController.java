@@ -1,11 +1,11 @@
-package runs;
+package dk.runs.runners.rest;
 
+import dk.runs.runners.entities.Run;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 public class RunController {

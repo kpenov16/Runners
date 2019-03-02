@@ -1,4 +1,4 @@
-package runs;
+package dk.runs.runners.entities;
 
 public class Run {
     private final int id;
