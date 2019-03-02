@@ -40,8 +40,7 @@ public class RunRepositoryImpl implements RunRepository {
 
 
         try(Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt= conn.prepareStatement(sql);
-            ){
+            PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setInt(1, run.getId());
             ResultSet rs = pstmt.executeQuery();
             rs.next();
