@@ -1,19 +1,22 @@
 package runs;
 
 public class Run {
-    private final long id;
-    private final String content;
+    private final int id;
+    private String location;
 
-    public Run(long id, String content) {
+    public Run(int id) {
         this.id = id;
-        this.content = content;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public String getContent() {
-        return content;
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }
