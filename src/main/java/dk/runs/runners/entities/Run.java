@@ -19,4 +19,9 @@ public class Run {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    @Override
+    public String toString(){
+        return String.format("id: %d, location: %s", id, location);
+    }
 }
