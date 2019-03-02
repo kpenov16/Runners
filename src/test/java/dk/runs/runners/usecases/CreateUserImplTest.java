@@ -1,4 +1,4 @@
-package dk.runs.runners;
+package dk.runs.runners.usecases;
 
 import dk.runs.runners.entities.User;
 import org.junit.Test;
@@ -10,16 +10,16 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class RunnersApplicationTests {
+public class CreateUserImplTest {
 
-	@Test
-	public void givenNewUser_returnUserCreated() {
-		User user = new User();
-		user.setFirstName("Bob");
-		user.setLastName("Larsen");
-		user.setEmail("haha@run.dk");
+    @Test
+    public void givenNonExistingUser_returnUserWasCreated(){
 
-        assertEquals("contextLoads","3","3");
-	}
+    }
+
+    @Test
+    public void givenAnExistingUser_returnUserAlreadyCreatedException(){
+
+    }
 
 }

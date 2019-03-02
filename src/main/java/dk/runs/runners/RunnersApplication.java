@@ -3,11 +3,9 @@ package dk.runs.runners;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+//@SpringBootApplication
 public class RunnersApplication {
-
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		SpringApplication.run(RunnersApplication.class, args);
-	}
-
+	}*/
 }
