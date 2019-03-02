@@ -7,7 +7,7 @@ import java.sql.*;
 
 public class RunRepositoryImpl implements RunRepository {
 
-    private String url = "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
+    private final String url = "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
             + "user=s133967&password=8JPOJuQcgUpUVIVHY4S2H";
 
 //    private Connection createConnection() {
