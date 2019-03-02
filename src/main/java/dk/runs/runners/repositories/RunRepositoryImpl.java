@@ -7,14 +7,17 @@ import java.sql.*;
 
 public class RunRepositoryImpl implements RunRepository {
 
-    private Connection createConnection() {
-        try {
-            return DriverManager.getConnection("jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
-                    + "user=s133967&password=8JPOJuQcgUpUVIVHY4S2H");
-        } catch (SQLException e) {
-            return null;
-        }
-    }
+    private String url = "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
+            + "user=s133967&password=8JPOJuQcgUpUVIVHY4S2H";
+
+//    private Connection createConnection() {
+//        try {
+//            return DriverManager.getConnection("jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
+//                    + "user=s133967&password=8JPOJuQcgUpUVIVHY4S2H");
+//        } catch (SQLException e) {
+//            return null;
+//        }
+//    }
 
     @Override
     public void createRun(Run run) throws CreateRunException {
@@ -32,47 +35,32 @@ public class RunRepositoryImpl implements RunRepository {
         return run;
     }
 
+
     private Run executeGetRunQuery(String sql, Run run) throws RunNotFoundException {
-        Connection conn = createConnection();
-        PreparedStatement pstmt = null;
 
-        try{
-            pstmt = conn.prepareStatement(sql);
+
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt= conn.prepareStatement(sql);
+            ){
             pstmt.setInt(1, run.getId());
-
             ResultSet rs = pstmt.executeQuery();
             rs.next();
-
             String location = rs.getString("location");
             run.setLocation(location);
-
             rs.close();
         }catch(SQLException se){
             throw new RunNotFoundException(se.getMessage());
         }catch(Exception e){
             throw new RunNotFoundException(e.getMessage());
-        }finally{
-            try{
-                if(pstmt!=null)
-                    conn.close();
-            }catch(SQLException se){ }
-            try{
-                if(conn!=null)
-                    conn.close();
-            }catch(SQLException se){
-                throw new RunNotFoundException(se.getMessage());
-            }
         }
         return run;
     }
 
 
     private void executeCreateRunQuery(String sql, int param01, String param02) throws CreateRunException {
-        Connection conn = createConnection();
-        PreparedStatement pstmt = null;
-        try{
-            pstmt = conn.prepareStatement(sql);
 
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setInt(1, param01);
             pstmt.setString(2, param02);
             pstmt.executeUpdate();
@@ -80,18 +68,8 @@ public class RunRepositoryImpl implements RunRepository {
             throw new CreateRunException(se.getMessage());
         }catch(Exception e){
             throw new CreateRunException(e.getMessage());
-        }finally{
-            try{
-                if(pstmt!=null)
-                    conn.close();
-            }catch(SQLException se){ }
-            try{
-                if(conn!=null)
-                    conn.close();
-            }catch(SQLException se){
-                throw new CreateRunException(se.getMessage());
-            }
         }
+
     }
 
     protected void deleteRun(int id) throws DeleteRunException {
@@ -99,29 +77,17 @@ public class RunRepositoryImpl implements RunRepository {
         executeDeleteRunQuery(sql, id);
     }
 
-    private void executeDeleteRunQuery(String sql, int param01) throws DeleteRunException {
-        Connection conn = createConnection();
-        PreparedStatement pstmt = null;
-        try{
-            pstmt = conn.prepareStatement(sql);
 
+    private void executeDeleteRunQuery(String sql, int param01) throws DeleteRunException {
+
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setInt(1, param01);
             pstmt.executeUpdate();
         }catch(SQLException se){
             throw new DeleteRunException(se.getMessage());
         }catch(Exception e){
             throw new DeleteRunException(e.getMessage());
-        }finally{
-            try{
-                if(pstmt!=null)
-                    conn.close();
-            }catch(SQLException se){ }
-            try{
-                if(conn!=null)
-                    conn.close();
-            }catch(SQLException se){
-                throw new DeleteRunException(se.getMessage());
-            }
         }
     }
 }
