@@ -9,12 +9,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 public class RunController {
-    private static final String template = "Bonjour, %s!";
+    private static final String template = "You are running in %s!";
     private final AtomicInteger counter = new AtomicInteger();
 
     @RequestMapping("/run")
-    public Run greeting(@RequestParam(value="name", defaultValue = "Runner") String name){
-        return new Run(counter.incrementAndGet());
+    public Run greeting(@RequestParam(value="location", defaultValue = "Copenhagen") String location){
+        Run run = new Run(counter.incrementAndGet());
+        run.setLocation(location);
+        return run;
     }
 }
 
