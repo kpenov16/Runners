@@ -4,6 +4,16 @@ public class Run {
     private final int id;
     private String location;
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    private String description;
+
     public Run(int id) {
         this.id = id;
     }

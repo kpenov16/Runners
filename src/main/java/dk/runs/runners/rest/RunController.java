@@ -16,6 +16,7 @@ public class RunController {
     public Run greeting(@RequestParam(value="location", defaultValue = "Copenhagen") String location){
         Run run = new Run(counter.incrementAndGet());
         run.setLocation(location);
+        run.setDescription("bla");
         return run;
     }
 }
