@@ -26,7 +26,6 @@ public class RunRepositoryImplTest {
 
     @Test
      public void givenCreateRun_returnRunCreated() {
-
         //act
         runRepository.createRun(run);
 
@@ -36,14 +35,34 @@ public class RunRepositoryImplTest {
         assertEquals("Run creation error!", run.toString(), returnedRun.toString());
 
         //clean up
-
         RunRepositoryImpl runRepositoryImpl = (RunRepositoryImpl)runRepository;
         runRepositoryImpl.deleteRun(run.getId());
      }
 
+    @Test
+    public void givenUserUpdatesExistingRunLocation_returnRunLocationUpdated() {
+        //arrange
+        Run newRun = new Run(Integer.MAX_VALUE);
+        newRun.setLocation("Copenhagen");
+        runRepository.createRun(newRun);
+
+        Run updatedRun = new Run(newRun.getId());
+        updatedRun.setLocation("Sofia");
+
+        //act
+        runRepository.updateRun(updatedRun);
+
+        //assert
+        Run returnedRun = runRepository.getRun(newRun.getId());
+        assertEquals("Update error", updatedRun.toString(), returnedRun.toString());
+
+        //clean up
+        RunRepositoryImpl runRepositoryImpl = (RunRepositoryImpl)runRepository;
+        runRepositoryImpl.deleteRun(newRun.getId());
+    }
 
     @Test
-    public void givenRequestingRunByID_returnRunNotFoundException() {
+    public void givenRequestingNonExistingRunById_returnRunNotFoundException() {
         assertThrows(RunRepository.RunNotFoundException.class, () -> {
             runRepository.getRun(1);
         });

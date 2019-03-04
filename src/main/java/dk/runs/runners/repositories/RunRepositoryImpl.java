@@ -27,10 +27,28 @@ public class RunRepositoryImpl implements RunRepository {
         return run;
     }
 
+    @Override
+    public void updateRun(Run run) {
+        String sql = "UPDATE run" +
+                " SET location = ?" +
+                " WHERE id = ?";
+        executeUpdateRunQuery(sql, run.getLocation(), run.getId());
+    }
+
+    private void executeUpdateRunQuery(String sql, String param01, int param02) throws UpdateRunException {
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt= conn.prepareStatement(sql)){
+            pstmt.setString(1, param01);
+            pstmt.setInt(2, param02);
+            pstmt.executeUpdate();
+        }catch(SQLException se){
+            throw new UpdateRunException(se.getMessage());
+        }catch(Exception e){
+            throw new UpdateRunException(e.getMessage());
+        }
+    }
 
     private Run executeGetRunQuery(String sql, Run run) throws RunNotFoundException {
-
-
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setInt(1, run.getId());
@@ -47,9 +65,7 @@ public class RunRepositoryImpl implements RunRepository {
         return run;
     }
 
-
     private void executeCreateRunQuery(String sql, int param01, String param02) throws CreateRunException {
-
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setInt(1, param01);
@@ -60,7 +76,6 @@ public class RunRepositoryImpl implements RunRepository {
         }catch(Exception e){
             throw new CreateRunException(e.getMessage());
         }
-
     }
 
     protected void deleteRun(int id) throws DeleteRunException {
@@ -68,9 +83,7 @@ public class RunRepositoryImpl implements RunRepository {
         executeDeleteRunQuery(sql, id);
     }
 
-
     private void executeDeleteRunQuery(String sql, int param01) throws DeleteRunException {
-
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setInt(1, param01);

@@ -13,7 +13,7 @@ public class RunController {
     private final AtomicInteger counter = new AtomicInteger();
 
     @RequestMapping("/run")
-    public Run greeting(@RequestParam(value="location", defaultValue = "Copenhagen") String location){
+    public Run getRun(@RequestParam(value="location", defaultValue = "Copenhagen") String location){
         Run run = new Run(counter.incrementAndGet());
         run.setLocation(location);
         run.setDescription("bla");

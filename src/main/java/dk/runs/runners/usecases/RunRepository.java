@@ -7,6 +7,14 @@ public interface RunRepository {
 
     Run getRun(int id) throws RunNotFoundException;
 
+    void updateRun(Run updatedRun);
+
+    class UpdateRunException extends RuntimeException{
+        public UpdateRunException(String msg){
+            super(msg);
+        }
+    }
+
     class RunNotFoundException extends RuntimeException{
         public RunNotFoundException(String msg){
             super(msg);
