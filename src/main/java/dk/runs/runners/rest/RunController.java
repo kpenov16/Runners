@@ -1,9 +1,10 @@
 package dk.runs.runners.rest;
 
 import dk.runs.runners.entities.Run;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import dk.runs.runners.repositories.RunRepositoryImpl;
+import dk.runs.runners.services.run.RunService;
+import dk.runs.runners.services.run.RunServiceImpl;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,11 +13,10 @@ public class RunController {
     private static final String template = "You are running in %s!";
     private final AtomicInteger counter = new AtomicInteger();
 
-    @RequestMapping("/run")
-    public Run getRun(@RequestParam(value="location", defaultValue = "Copenhagen") String location){
-        Run run = new Run(counter.incrementAndGet());
-        run.setLocation(location);
-        run.setDescription("bla");
+    @GetMapping("/runs/{id}")
+    public Run getRun(@PathVariable int id){
+        RunService runService = new RunServiceImpl(new RunRepositoryImpl());
+        Run run = runService.getRun(id);
         return run;
     }
 }

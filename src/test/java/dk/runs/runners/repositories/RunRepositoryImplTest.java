@@ -20,8 +20,8 @@ public class RunRepositoryImplTest {
     @Before
     public void beforeEach(){
         runRepository = new RunRepositoryImpl();
-        run = new Run(1);
-        run.setLocation("Copenhagen");
+        run = new Run(2);
+        run.setLocation("Paris");
     }
 
     @Test

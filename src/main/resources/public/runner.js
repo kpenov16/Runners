@@ -1,12 +1,12 @@
 
 angular.module('run', [])
     .controller('runController', function($scope, $http) {
-        $http.get('http://localhost:8080/run?location=Pleven').
+        $http.get('http://localhost:8080/runs/1').
         then(function(response) {
             $scope.run = response.data;
         });
     }).controller('descriptionController', function($scope, $http) {
-        $http.get('http://localhost:8080/run?location=Bla').
+        $http.get('http://localhost:8080/runs/1').
         then(function(response) {
             $scope.run = response.data;
         })
