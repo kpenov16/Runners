@@ -9,6 +9,7 @@ angular.module('run', [])
         $http.get('http://localhost:8080/runs').
         then(function(response) {
             $scope.runs = response.data;
+            //todo add function to join button. Updates number of participants.
         })
 });
 
