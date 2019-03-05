@@ -27,14 +27,12 @@ public class RunController {
     public List<Run> getRuns(){
 
         List<Run> runs = new LinkedList<>();
-
         Run run1 = new Run(5);
         run1.setLocation("Riga");
         Run run2 = new Run(6);
         run2.setLocation("Sofia");
         runs.add(run1);
         runs.add(run2);
-
 
         return runs;
     }
