@@ -5,10 +5,10 @@ angular.module('run', [])
         then(function(response) {
             $scope.run = response.data;
         });
-    }).controller('descriptionController', function($scope, $http) {
-        $http.get('http://localhost:8080/runs/1').
+    }).controller('runsController', function($scope, $http) {
+        $http.get('http://localhost:8080/runs').
         then(function(response) {
-            $scope.run = response.data;
+            $scope.runs = response.data;
         })
 });
 
