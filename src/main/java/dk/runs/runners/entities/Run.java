@@ -17,6 +17,10 @@ public class Run {
     public Run(int id) {
         this.id = id;
     }
+    public Run(int id, String location) {
+        this.id = id;
+        this.location = location;
+    }
 
     public int getId() {
         return id;

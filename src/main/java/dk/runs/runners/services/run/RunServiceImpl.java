@@ -22,4 +22,9 @@ public class RunServiceImpl implements RunService {
     public List<Run> getRunsList() {
         return runRepository.getRunsList();
     }
+
+    @Override
+    public void createRun(Run run) {
+        runRepository.createRun(run);
+    }
 }

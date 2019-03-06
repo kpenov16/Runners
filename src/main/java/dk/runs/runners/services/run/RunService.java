@@ -7,4 +7,5 @@ import java.util.List;
 public interface RunService {
     Run getRun(int id);
     List<Run> getRunsList();
+    void createRun(Run run);
 }

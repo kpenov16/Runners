@@ -11,6 +11,12 @@ angular.module('run', [])
             $scope.runs = response.data;
             //todo add function to join button. Updates number of participants.
         })
+    }).controller('createRunController', function($scope, $http) {
+    $http.post('http://localhost:8080/createRun', {
+        id: 10
+    }).
+    then(function(response) {
+    })
 });
 
 
