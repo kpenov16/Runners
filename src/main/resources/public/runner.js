@@ -13,12 +13,4 @@ angular.module('run', [])
         })
 });
 
-// angular.module('run', [])
-//     .controller('descriptionController', function($scope, $http) {
-//         $http.get('http://localhost:8080/run?location=Bla').
-//         then(function(response) {
-//             $scope.run = response.data;
-//         });
-//
-
 
