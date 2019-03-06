@@ -4,6 +4,8 @@ import dk.runs.runners.entities.Run;
 import dk.runs.runners.usecases.RunRepository;
 
 import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class RunRepositoryImpl implements RunRepository {
 
@@ -33,6 +35,34 @@ public class RunRepositoryImpl implements RunRepository {
                 " SET location = ?" +
                 " WHERE id = ?";
         executeUpdateRunQuery(sql, run.getLocation(), run.getId());
+    }
+
+    @Override
+    public List<Run> getRunsList() {
+        String sql = "SELECT run.id AS id, run.location AS location " +
+                    "FROM run"; //TODO select only comming runs. That is where dato > now
+        return executeGetRunsQuery(sql);
+    }
+
+    private List<Run> executeGetRunsQuery(String sql) {
+
+        List<Run> runs = new LinkedList<>();
+
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery()){
+
+            while(rs.next()){
+                Run run = new Run(rs.getInt(1));
+                run.setLocation(rs.getString(2));
+                runs.add(run);
+            }
+        } catch (SQLException se){
+            throw new GetRunsException(se.getMessage());
+        } catch (Exception e){
+            throw new GetRunsException(e.getMessage());
+        }
+        return runs;
     }
 
     private void executeUpdateRunQuery(String sql, String param01, int param02) throws UpdateRunException {

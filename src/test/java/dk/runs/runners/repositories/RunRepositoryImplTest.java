@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -16,12 +17,15 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 public class RunRepositoryImplTest {
     private RunRepository runRepository;
     private Run run;
+    private Run run1;
 
     @Before
     public void beforeEach(){
         runRepository = new RunRepositoryImpl();
-        run = new Run(2);
-        run.setLocation("Paris");
+        run = new Run(3);
+        run.setLocation("Stockholm");
+        run1 = new Run(4);
+        run1.setLocation("Berlin");
     }
 
     @Test
@@ -42,7 +46,7 @@ public class RunRepositoryImplTest {
     @Test
     public void givenUserUpdatesExistingRunLocation_returnRunLocationUpdated() {
         //arrange
-        Run newRun = new Run(Integer.MAX_VALUE);
+        Run newRun = new Run(Integer.MAX_VALUE);  //TODO Why creating new runs here if there is in beforeEach?
         newRun.setLocation("Copenhagen");
         runRepository.createRun(newRun);
 
@@ -67,4 +71,15 @@ public class RunRepositoryImplTest {
             runRepository.getRun(1);
         });
     }
+    @Test
+    public void givenGetRunsList_returnListIsNotEmpty(){
+        runRepository.createRun(run);
+        runRepository.createRun(run1);
+        assertTrue(runRepository.getRunsList().size() > 0);
+        //clean up
+        RunRepositoryImpl runRepositoryImpl = (RunRepositoryImpl)runRepository;
+        runRepositoryImpl.deleteRun(run.getId());
+        runRepositoryImpl.deleteRun(run1.getId());
+    }
+
 }
