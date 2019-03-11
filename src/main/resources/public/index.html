@@ -11,8 +11,18 @@
             <p>The run ID is {{run.id}}</p>
             <p>The run location is {{run.location}}</p>
         </div>
-        <div ng-controller="descriptionController">
-            <p>Description {{run.description}}</p>
+
+        <div ng-controller="runsController" >
+            <h1>Prints runs from database:</h1>
+            <div ng-repeat="run in runs">
+                <p ng-click="plusOne($index)">Run id: {{run.id}},
+                    location: {{run.location}},
+                    attendancies:  {{run.attendancies}}</p>
+            </div>
+        </div>
+
+        <div ng-controller="createRunController">
+
         </div>
     </body>
 </html>
