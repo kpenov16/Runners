@@ -19,19 +19,13 @@ runapp.controller('runsController', function($scope, $http) {
 });
 
 runapp.controller('createRunController', function($scope, $http) {
-
-
-    $scope.run = {
-        id: 23,
-        location: "Copenhagen"
-    }
+    $scope.runCreate = {};
     $scope.createRun = function () {
-    $http.post('http://localhost:8080/createRun', $scope.run).then(function (response) {
+    $http.post('http://localhost:8080/createRun', $scope.runCreate).then(function (response) {
         console.log(response.data);
         $scope.runs.push(response.data);
     }, function errorCallback(response) {
         alert("Error. while created user Try Again!\n" + response.data.message);
-
     })
     }
 });
