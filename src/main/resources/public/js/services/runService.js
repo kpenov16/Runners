@@ -20,12 +20,13 @@ runapp.factory('getRunService', ['$http', function($http) {
 
 runapp.factory('createRunService', ['$http', function( $http) {
         var factory = {};
-        var urlBase = 'http://localhost:8080/createRun';
+        var urlBase = 'http://localhost:8080/runs';
         factory.createRun = function(run){
-            return  $http.post(urlBase, run)
-                .then(function(response) {
+            return  $http.post(urlBase, run).then(
+                function (response) {
                     return response;
-                },function errorCallback(response) {
+                },
+                function errorCallback(response){
                     alert("Error. while created user Try Again!\n" + response.data.message);
                 })
         }

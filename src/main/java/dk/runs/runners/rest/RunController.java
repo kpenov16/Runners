@@ -25,7 +25,7 @@ public class RunController {
         return runService.getRunsList();
     }
 
-    @PostMapping(path = "/createRun")
+    @PostMapping(path = "/runs")//@PostMapping(path = "/createRun")
     public Run addRun(@RequestBody Run run) {
         RunService runService = new RunServiceImpl(new RunRepositoryImpl());
         runService.createRun(run);

@@ -12,22 +12,15 @@
     </head>
 
     <body>
-
-
-
         <div ng-controller="runsTableController" >
-
             <h1>Create run</h1>
             <div ng-controller="createRunController">
-
                 Enter run id : <input type="text" ng-model="runCreate.id" placeholder="id">
                 Enter run location : <input type="text" ng-model="runCreate.location" placeholder="city">
                 <button ng-click="createRun()">
                     Submit
                 </button>
             </div>
-
-
             <h1>Prints runs from database:</h1>
             <div ng-repeat="run in runs">
                 <p ng-click="plusOne($index)">Run id: {{run.id}},

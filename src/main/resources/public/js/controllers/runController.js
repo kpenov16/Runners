@@ -18,7 +18,8 @@ runapp.controller('runsTableController', ['$scope', 'getRunService', function($s
 }]);
 
 
-runapp.controller('createRunController', ['$scope', 'createRunService', function($scope, createRunService) {
+runapp.controller('createRunController', ['$scope', 'createRunService',
+    function($scope, createRunService){
     $scope.runCreate = {};
     $scope.createRun = function() {
         createRunService.createRun($scope.runCreate).then(function (response) {
