@@ -108,7 +108,7 @@ public class RunRepositoryImpl implements RunRepository {
         }
     }
 
-    protected void deleteRun(int id) throws DeleteRunException {
+    public void deleteRun(int id) throws DeleteRunException {
         String sql = "DELETE FROM run WHERE id = ?";
         executeDeleteRunQuery(sql, id);
     }

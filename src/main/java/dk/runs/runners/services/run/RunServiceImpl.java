@@ -27,4 +27,9 @@ public class RunServiceImpl implements RunService {
     public void createRun(Run run) {
         runRepository.createRun(run);
     }
+
+    @Override
+    public void deleteRun(int id) {
+        runRepository.deleteRun(id);
+    }
 }

@@ -13,6 +13,8 @@ public interface RunRepository {
 
     List<Run> getRunsList();
 
+    void deleteRun(int id)throws DeleteRunException ;
+
     class UpdateRunException extends RuntimeException{
         public UpdateRunException(String msg){
             super(msg);

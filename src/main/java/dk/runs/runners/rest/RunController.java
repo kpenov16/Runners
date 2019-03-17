@@ -18,6 +18,11 @@ public class RunController {
         return run;
     }
 
+    @DeleteMapping("/runs/{id}")
+    public void deleteRun(@PathVariable int id){
+        RunService runService = new RunServiceImpl(new RunRepositoryImpl());
+        runService.deleteRun(id);
+    }
 
     @GetMapping("/runs")
     public List<Run> getRuns(){

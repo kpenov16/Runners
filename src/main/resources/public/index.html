@@ -21,6 +21,13 @@
                     Submit
                 </button>
             </div>
+            <h1>Delete run by id</h1>
+            <div ng-controller="deleteRunController">
+                Enter run id : <input type="text" ng-model="deleteRun.id" placeholder="id">
+                <button ng-click="deleteRunById()">
+                    Delete
+                </button>
+            </div>
             <h1>Prints runs from database:</h1>
             <div ng-repeat="run in runs">
                 <p ng-click="plusOne($index)">Run id: {{run.id}},

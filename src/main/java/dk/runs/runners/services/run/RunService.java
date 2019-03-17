@@ -8,4 +8,5 @@ public interface RunService {
     Run getRun(int id);
     List<Run> getRunsList();
     void createRun(Run run);
+    void deleteRun(int id);
 }

@@ -1,15 +1,25 @@
-runapp.controller('runController', ['$scope', 'getRunService',function($scope, getRunService) {
+runapp.controller('runController', ['$scope', 'runService',function($scope, runService) {
     //FIXME getRunById id is hardcoded
-    getRunService.getRunById(1).then( function(response){
+    runService.getRunById(1).then( function(response){
         $scope.detailedRun = response.data;
         console.log($scope.detailedRun)
         }
     )
 }]);
 
+runapp.controller('deleteRunController', ['$scope', 'runService',
+    function($scope, runService) {
+        $scope.deleteRunById = function(){
+            runService.deleteRunById($scope.deleteRun.id).then(
+                function(response){
+                console.log(response);
+            });
+        }
+}]);
 
-runapp.controller('runsTableController', ['$scope', 'getRunService', function($scope, getRunService) {
-    getRunService.getAllURuns().then(function(response) {
+
+runapp.controller('runsTableController', ['$scope', 'runService', function($scope, runService) {
+    runService.getAllURuns().then(function(response) {
         $scope.runs = response.data;
         $scope.plusOne = function(index){
             $scope.runs[index].attendancies++;
@@ -18,11 +28,10 @@ runapp.controller('runsTableController', ['$scope', 'getRunService', function($s
 }]);
 
 
-runapp.controller('createRunController', ['$scope', 'createRunService',
-    function($scope, createRunService){
-    $scope.runCreate = {};
+runapp.controller('createRunController', ['$scope', 'runService',
+    function($scope, runService){
     $scope.createRun = function() {
-        createRunService.createRun($scope.runCreate).then(function (response) {
+        runService.createRun($scope.runCreate).then(function (response) {
             $scope.runs.push(response.data);  // pushes new element to the runs table
         });
     }
