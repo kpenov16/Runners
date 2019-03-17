@@ -2,27 +2,38 @@
 <html ng-app="run">
     <head>
         <title>Hello runner</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-        <script src="runner.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.7/angular.min.js"></script>
+        <!-- Modules -->
+        <script src="js/app.js"></script>
+        <!--Controllers-->
+        <script src="js/controllers/runController.js"></script>
+        <!--Services-->
+        <script src="js/services/runService.js"></script>
     </head>
 
     <body>
-        <div ng-controller="runController">
-            <p>The run ID is {{run.id}}</p>
-            <p>The run location is {{run.location}}</p>
-        </div>
 
-        <div ng-controller="runsController" >
+
+
+        <div ng-controller="runsTableController" >
+
+            <h1>Create run</h1>
+            <div ng-controller="createRunController">
+
+                Enter run id : <input type="text" ng-model="runCreate.id" placeholder="id">
+                Enter run location : <input type="text" ng-model="runCreate.location" placeholder="city">
+                <button ng-click="createRun()">
+                    Submit
+                </button>
+            </div>
+
+
             <h1>Prints runs from database:</h1>
             <div ng-repeat="run in runs">
                 <p ng-click="plusOne($index)">Run id: {{run.id}},
                     location: {{run.location}},
                     attendancies:  {{run.attendancies}}</p>
             </div>
-        </div>
-
-        <div ng-controller="createRunController">
-
         </div>
     </body>
 </html>
