@@ -2,18 +2,19 @@ package dk.runs.runners.usecases;
 
 import dk.runs.runners.entities.Run;
 
+import java.math.BigInteger;
 import java.util.List;
 
 public interface RunRepository {
-    void createRun(Run run) throws CreateRunException;
+    Run createRun(Run run, long creatorId) throws CreateRunException;
 
-    Run getRun(int id) throws RunNotFoundException;
+    Run getRun(BigInteger id) throws RunNotFoundException;
 
     void updateRun(Run updatedRun);
 
     List<Run> getRunsList();
 
-    void deleteRun(int id)throws DeleteRunException ;
+    void deleteRun(BigInteger id)throws DeleteRunException ;
 
     class UpdateRunException extends RuntimeException{
         public UpdateRunException(String msg){

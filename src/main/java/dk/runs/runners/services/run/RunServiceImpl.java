@@ -25,7 +25,7 @@ public class RunServiceImpl implements RunService {
 
     @Override
     public void createRun(Run run) {
-        runRepository.createRun(run);
+        runRepository.createRun(run, creatorId);
     }
 
     @Override

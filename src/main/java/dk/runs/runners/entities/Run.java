@@ -3,18 +3,14 @@ package dk.runs.runners.entities;
 import java.util.Date;
 
 public class Run {
-    private final int id;
+    private long id;
     private String title;
     private String location;
     private Date date;
     private int distance;
     private long duration;
     private String description;
-    private String status;
-
-    public Run(int id) {
-        this.id = id;
-    }
+    private String status = "active";
 
     public String getTitle() {
         return title;
@@ -24,8 +20,12 @@ public class Run {
         this.title = title;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getLocation() {
@@ -78,6 +78,7 @@ public class Run {
 
     @Override
     public String toString(){
-        return String.format("id: %d, location: %s", id, location);
+        return String.format("id: %d, title: %s, location: %s, date: %s, distance: %d, duration: %s, description: %s, status: %s",
+                                id, title, location, String.valueOf(date.getTime()), distance, duration.toString(),description, status );
     }
 }

@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,27 +23,31 @@ public class RunRepositoryImplTest {
     private Run secondRun;
     private final long ms = System.currentTimeMillis();
     private final long ONE_HOUR = 60*60*1_000;
+    private final int DISTANCE = 5_000;
 
     @Before
     public void beforeEach(){
         runRepository = new RunRepositoryImpl();
-        run = new Run(3);
+        run = new Run();
         run.setTitle("Run three");
         run.setLocation("Stockholm");
         run.setDescription("It is going to be very fun!!!");
         run.setDate(new Date(ms));
         run.setStatus("active");
         run.setDuration(ONE_HOUR);
-        secondRun = new Run(4);
+        run.setDistance(DISTANCE);
+
+        secondRun = new Run();
         secondRun.setLocation("Berlin");
     }
 
     @Test
      public void givenCreateRun_returnRunCreated() {
         //act
-        runRepository.createRun(run);
+        long creatorId = 1;
+        Run returnedRun = runRepository.createRun(run, creatorId);
 
-        Run returnedRun = runRepository.getRun(run.getId());
+        //Run returnedRun = runRepository.getRun(run.getId());
 
         //assert
         assertEquals("Run creation error!", run.toString(), returnedRun.toString());
@@ -55,11 +60,13 @@ public class RunRepositoryImplTest {
     @Test
     public void givenUserUpdatesExistingRunLocation_returnRunLocationUpdated() {
         //arrange
-        Run newRun = new Run(Integer.MAX_VALUE);  //TODO Why creating new runs here if there is in beforeEach?
+        Run newRun = new Run();  //TODO Why creating new runs here if there is in beforeEach?
+        newRun.setId(new BigInteger("0"));
         newRun.setLocation("Copenhagen");
-        runRepository.createRun(newRun);
+        runRepository.createRun(newRun, creatorId);
 
-        Run updatedRun = new Run(newRun.getId());
+        Run updatedRun = new Run();
+        updatedRun.setId(new BigInteger( String.valueOf( newRun.getId())));
         updatedRun.setLocation("Sofia");
 
         //act
@@ -77,13 +84,13 @@ public class RunRepositoryImplTest {
     @Test
     public void givenRequestingNonExistingRunById_returnRunNotFoundException() {
         assertThrows(RunRepository.RunNotFoundException.class, () -> {
-            runRepository.getRun(1);
+            runRepository.getRun(new BigInteger("1"));
         });
     }
     @Test
     public void givenGetRunsList_returnListIsNotEmpty(){
-        runRepository.createRun(run);
-        runRepository.createRun(secondRun);
+        runRepository.createRun(run, creatorId);
+        runRepository.createRun(secondRun, creatorId);
         assertTrue(runRepository.getRunsList().size() > 0);
         //clean up
         RunRepositoryImpl runRepositoryImpl = (RunRepositoryImpl)runRepository;
@@ -95,7 +102,7 @@ public class RunRepositoryImplTest {
     public void givenRunMarkDeleted_returnRunMarkedDeleted(){
 
         //Arrange
-        runRepository.createRun(run);
+        runRepository.createRun(run, creatorId);
 
     }
 
