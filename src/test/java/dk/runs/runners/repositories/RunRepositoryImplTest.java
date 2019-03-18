@@ -8,6 +8,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Date;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
@@ -17,15 +19,22 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 public class RunRepositoryImplTest {
     private RunRepository runRepository;
     private Run run;
-    private Run run1;
+    private Run secondRun;
+    private final long ms = System.currentTimeMillis();
+    private final long ONE_HOUR = 60*60*1_000;
 
     @Before
     public void beforeEach(){
         runRepository = new RunRepositoryImpl();
         run = new Run(3);
+        run.setTitle("Run three");
         run.setLocation("Stockholm");
-        run1 = new Run(4);
-        run1.setLocation("Berlin");
+        run.setDescription("It is going to be very fun!!!");
+        run.setDate(new Date(ms));
+        run.setStatus("active");
+        run.setDuration(ONE_HOUR);
+        secondRun = new Run(4);
+        secondRun.setLocation("Berlin");
     }
 
     @Test
@@ -74,12 +83,20 @@ public class RunRepositoryImplTest {
     @Test
     public void givenGetRunsList_returnListIsNotEmpty(){
         runRepository.createRun(run);
-        runRepository.createRun(run1);
+        runRepository.createRun(secondRun);
         assertTrue(runRepository.getRunsList().size() > 0);
         //clean up
         RunRepositoryImpl runRepositoryImpl = (RunRepositoryImpl)runRepository;
         runRepositoryImpl.deleteRun(run.getId());
-        runRepositoryImpl.deleteRun(run1.getId());
+        runRepositoryImpl.deleteRun(secondRun.getId());
+    }
+
+    @Test
+    public void givenRunMarkDeleted_returnRunMarkedDeleted(){
+
+        //Arrange
+        runRepository.createRun(run);
+
     }
 
 }
