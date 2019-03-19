@@ -1,8 +1,10 @@
 
 ## Spatial Data Types
-`navigator.geolocation.getCurrentPosition(function(position) {  <br />
-  console.log(position.coords.latitude, position.coords.longitude);  <br />
-});`
+```javascript
+navigator.geolocation.getCurrentPosition(function(position) {  
+  console.log(position.coords.latitude, position.coords.longitude);  
+});
+```
 
 https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API  
 https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html  
