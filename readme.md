@@ -1,7 +1,7 @@
 
 ## Spatial Data Types
-`navigator.geolocation.getCurrentPosition(function(position) {  \
-  console.log(position.coords.latitude, position.coords.longitude);  \
+`navigator.geolocation.getCurrentPosition(function(position) {  <br />
+  console.log(position.coords.latitude, position.coords.longitude);  <br />
 });`
 
 https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API  
