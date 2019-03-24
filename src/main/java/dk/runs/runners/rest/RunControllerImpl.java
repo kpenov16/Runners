@@ -1,7 +1,7 @@
 package dk.runs.runners.rest;
 
 import dk.runs.runners.resources.RunRequest;
-import dk.runs.runners.resources.RunResponce;
+import dk.runs.runners.resources.RunResponse;
 import dk.runs.runners.entities.Run;
 import dk.runs.runners.services.run.RunService;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +15,11 @@ public class RunControllerImpl implements RunController{
     //RunService runService = runsconfig.getRunService();
 
     @GetMapping("/runs/{id}")
-    public RunResponce getRun(@PathVariable String id){
-        RunResponce runResponce = new RunResponce();
-        runResponce.run = runService.getRun(id);
+    public RunResponse getRun(@PathVariable String id){
+        RunResponse runResponse = new RunResponse();
+        runResponse.setRun(runService.getRun(id));
 
-        return runResponce;
+        return runResponse;
     }
 
     @DeleteMapping("/runs/{id}")
@@ -33,12 +33,12 @@ public class RunControllerImpl implements RunController{
     }
 
     @PostMapping(path = "/runs")//@PostMapping(path = "/createRun")
-    public RunResponce addRun(@RequestBody RunRequest RunRequest) {
-        runService.createRun(RunRequest.run, RunRequest.creatorId);
-        RunResponce runResponce = new RunResponce();
-        runResponce.error = "";
-        runResponce.run = RunRequest.run;
-        return runResponce;
+    public RunResponse addRun(@RequestBody RunRequest runRequest) {
+        runService.createRun(runRequest.getRun(), runRequest.getCreatorId());
+        RunResponse runResponse = new RunResponse();
+        runResponse.setError("");
+        runResponse.setRun(runRequest.getRun());
+        return runResponse;
     }
 
 }

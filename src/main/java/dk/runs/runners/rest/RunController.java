@@ -2,7 +2,7 @@ package dk.runs.runners.rest;
 
 import dk.runs.runners.entities.Run;
 import dk.runs.runners.resources.RunRequest;
-import dk.runs.runners.resources.RunResponce;
+import dk.runs.runners.resources.RunResponse;
 import dk.runs.runners.services.run.RunService;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +14,7 @@ public interface RunController {
     RunService runService = null;
 
     @GetMapping("/runs/{id}")  //FIXME crashes if id is not exists
-    public RunResponce getRun(@PathVariable String id);
+    public RunResponse getRun(@PathVariable String id);
 
     @DeleteMapping("/runs/{id}")
     public void deleteRun(@PathVariable String id);
@@ -23,5 +23,5 @@ public interface RunController {
     public List<Run> getRuns();
 
     @PostMapping(path = "/runs")//@PostMapping(path = "/createRun")
-    public RunResponce addRun(@RequestBody RunRequest RunRequest);
+    public RunResponse addRun(@RequestBody RunRequest RunRequest);
 }
