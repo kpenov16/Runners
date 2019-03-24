@@ -14,7 +14,7 @@ public class RunServiceImpl implements RunService {
     }
 
     @Override
-    public Run getRun(int id) {
+    public Run getRun(String id) {
         return runRepository.getRun(id);
     }
 
@@ -24,12 +24,12 @@ public class RunServiceImpl implements RunService {
     }
 
     @Override
-    public void createRun(Run run) {
-        runRepository.createRun(run);
+    public void createRun(Run run, String creatorId) {
+        runRepository.createRun(run, creatorId);
     }
 
     @Override
-    public void deleteRun(int id) {
+    public void deleteRun(String id) {
         runRepository.deleteRun(id);
     }
 }

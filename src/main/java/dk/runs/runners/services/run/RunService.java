@@ -5,8 +5,8 @@ import dk.runs.runners.entities.Run;
 import java.util.List;
 
 public interface RunService {
-    Run getRun(int id);
+    Run getRun(String id);
     List<Run> getRunsList();
-    void createRun(Run run);
-    void deleteRun(int id);
+    void createRun(Run run, String creatorId);
+    void deleteRun(String id);
 }
