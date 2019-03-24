@@ -1,11 +1,9 @@
 package dk.runs.runners;
 
-import dk.runs.runners.RunsConfig.RunsConfig;
 import dk.runs.runners.repositories.RunRepositoryImpl;
 import dk.runs.runners.services.run.RunServiceImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;

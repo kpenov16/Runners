@@ -1,12 +1,10 @@
-package dk.runs.runners.RunsConfig;
+package dk.runs.runners.runsconfig;
 
 import dk.runs.runners.repositories.RunRepositoryImpl;
 import dk.runs.runners.services.run.RunServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-
-import javax.annotation.Resource;
 
 @Configuration
 public abstract class RunsConfig {

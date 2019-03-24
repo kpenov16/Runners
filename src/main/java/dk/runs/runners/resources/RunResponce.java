@@ -1,4 +1,4 @@
-package dk.runs.runners.Resources;
+package dk.runs.runners.resources;
 
 import dk.runs.runners.entities.Run;
 
