@@ -5,26 +5,30 @@ USE s133967;
 DDL Creating tables
 ############################################*/
 CREATE TABLE run(
-	id BIGINT NOT NULL AUTO_INCREMENT,
-	creator_id BIGINT,
+	id VARCHAR(225),
+	creator_id VARCHAR(225),
     title VARCHAR(225),
     location VARCHAR(225),
-    date DATETIME,
+    date BIGINT,
     distance INT,
     duration BIGINT,
     description VARCHAR(500),
     status VARCHAR(225),
-    PRIMARY KEY (id),
-    FOREIGN KEY (creator_id) REFERENCES user_cdio(id)
+    PRIMARY KEY (id)
+/*    FOREIGN KEY (creator_id) REFERENCES user_cdio(id)*/
 );
 
+SELECT * FROM run;
+DROP TABLE run;
+
+
 CREATE TABLE user_cdio(
-	id BIGINT,
+	id VARCHAR(225),
     name VARCHAR(225),
     PRIMARY KEY(id)
 );
 
-DROP TABLE run;
+DROP TABLE user_cdio;
 
 INSERT INTO run (title, creator_id, location, distance, duration, description, status)
 VALUES ("testing", 2, "testing", 5000, 6454545451651651, "testing", "active");
