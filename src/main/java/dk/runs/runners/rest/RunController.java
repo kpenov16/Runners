@@ -17,13 +17,15 @@ import java.util.List;
 @RestController
 public class RunController {
 
-    //@Resource(name="runRepository")
-    //RunService runService;
-    RunService runService = RunsConfig.getRunService();
+    @Resource(name="runService")  RunService runService;
+    //RunService runService = RunsConfig.getRunService();
 
     @GetMapping("/runs/{id}")  //FIXME crashes if id is not exists
-    public Run getRun(@PathVariable String id){
-        return runService.getRun(id);
+    public RunResponce getRun(@PathVariable String runId){
+        RunResponce runResponce = new RunResponce();
+        runResponce.run = runService.getRun(runId);
+
+        return runResponce;
     }
 
     @DeleteMapping("/runs/{id}")

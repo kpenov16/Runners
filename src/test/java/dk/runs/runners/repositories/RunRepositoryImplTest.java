@@ -102,6 +102,11 @@ public class RunRepositoryImplTest {
         runRepositoryImpl.deleteRun(secondRun.getId());
     }
 
+
+    @Test
+    public void nothing(){
+        runRepository.createRun(run, "123");
+    }
 /*
     @Test
     public void givenRunMarkDeleted_returnRunMarkedDeleted(){

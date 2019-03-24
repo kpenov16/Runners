@@ -6,4 +6,5 @@ public class RunResponce {
     public String error;
     public Run run;
     public String creatorId;
+    public RunResponce(){}
 }

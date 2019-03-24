@@ -13,6 +13,8 @@ public class Run {
     private String description = "";
     private String status = "active";
 
+    public Run(){}
+
     public Run(String id){
         setId(id);
     }
