@@ -15,30 +15,14 @@ public class RunRepositoryImpl implements RunRepository {
 
 
     @Override
-    public Run createRun(Run run, long creatorId) throws CreateRunException {
-        String sql = "INSERT INTO run (creator_id, title, location, date, distance, duration, description, status)" +
-                "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? )";
+    public void createRun(Run run, String creatorId) throws CreateRunException {
+        String sql = "INSERT INTO run (id, creator_id, title, location, date, distance, duration, description, status)" +
+                "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? )";
               executeCreateRunQuery(sql, run, creatorId);
-        return queryLastCreatedRun(creatorId);
 
 /*        String sql = "INSERT INTO run (id, location)" +
                 "VALUES ( ? , ? )";
         executeCreateRunQuery(sql, run.getId(), run.getLocation());*/
-    }
-
-    private Run queryLastCreatedRun(long creatorId) {
-        /*String sql = "SELECT run.id AS id, run.location AS location" +
-                     " FROM run" +
-                     " WHERE run.id in (SELECT MAX(run.id) AS id" +
-                                      " FROM run" +
-                                      " WHERE run.creator_id = ?)";*/
-        String sql = "SELECT MAX(run.id) AS id" +
-                     " FROM run" +
-                     " WHERE run.creator_id = ?";
-        Run run = new Run();
-        run.setId(executeGetIdQuery(sql, creatorId));
-        executeGetIdQuery(sql, creatorId);
-        return executeGetRunQuery(sql,run);
     }
 
     private long executeGetIdQuery(String sql, long creatorId) throws RunNotFoundException {
@@ -59,12 +43,22 @@ public class RunRepositoryImpl implements RunRepository {
     }
 
     @Override
-    public Run getRun(BigInteger id) throws RunNotFoundException {
-        String sql = "SELECT run.id AS id, run.location AS location" +
+    public Run getRun(String id) throws RunNotFoundException {
+        String sql = "SELECT * " +
                 " FROM run" +
                 " WHERE run.id = ?";
-        Run run = executeGetRunQuery(sql,new Run(id));
-        return run;
+
+        /*
+            * private String id;
+            private String title;
+            private String location;
+            private Date date;
+            private int distance;
+            private long duration;
+            private String description;
+            private String status = "active";
+                    * */
+        return executeGetRunQuery(sql,new Run(id));
     }
 
     @Override
@@ -91,7 +85,7 @@ public class RunRepositoryImpl implements RunRepository {
             ResultSet rs = pstmt.executeQuery()){
 
             while(rs.next()){
-                Run run = new Run(rs.getInt(1));
+                Run run = new Run(rs.getString(1));
                 run.setLocation(rs.getString(2));
                 runs.add(run);
             }
@@ -103,11 +97,11 @@ public class RunRepositoryImpl implements RunRepository {
         return runs;
     }
 
-    private void executeUpdateRunQuery(String sql, String param01, int param02) throws UpdateRunException {
+    private void executeUpdateRunQuery(String sql, String param01, String param02) throws UpdateRunException {
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, param01);
-            pstmt.setInt(2, param02);
+            pstmt.setString(2, param02);
             pstmt.executeUpdate();
         }catch(SQLException se){
             throw new UpdateRunException(se.getMessage());
@@ -119,11 +113,16 @@ public class RunRepositoryImpl implements RunRepository {
     private Run executeGetRunQuery(String sql, Run run) throws RunNotFoundException {
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
-            pstmt.setLong(1, run.getId());
+            pstmt.setString(1, run.getId());
             ResultSet rs = pstmt.executeQuery();
             rs.next();
-            String location = rs.getString("location");
-            run.setLocation(location);
+            run.setTitle(rs.getString("title"));
+            run.setLocation(rs.getString("location"));
+            run.setDate( new java.util.Date( rs.getLong("date") ));
+            run.setDistance(rs.getInt("distance"));
+            run.setDuration(rs.getLong("duration"));
+            run.setDescription(rs.getString("description"));
+            run.setStatus(rs.getString("status"));
             rs.close();
         }catch(SQLException se){
             throw new RunNotFoundException(se.getMessage());
@@ -133,38 +132,38 @@ public class RunRepositoryImpl implements RunRepository {
         return run;
     }
 
-    private void executeCreateRunQuery(String sql, Run run, long creatorId) throws CreateRunException {
-        /*String sql = "INSERT INTO run (title, location, date, distance, duration, description, status)" +
-                "VALUES ( ? , ? , ? , ? , ? , ? , ? )";*/
+    private void executeCreateRunQuery(String sql, Run run, String creatorId) throws CreateRunException {
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
-            pstmt.setLong(1, creatorId);
-            pstmt.setString(2, run.getTitle());
-            pstmt.setString(3, run.getLocation());
-            pstmt.setDate(4, new Date( run.getDate().getTime()) );
-            pstmt.setInt(5, run.getDistance());
-            pstmt.setLong(6, run.getDuration() );
-            pstmt.setString(7, run.getDescription() );
-            pstmt.setString(8, run.getStatus() );
+            pstmt.setString(1, run.getId());
+            pstmt.setString(2, creatorId);
+            pstmt.setString(3, run.getTitle());
+            pstmt.setString(4, run.getLocation());
+            pstmt.setLong(5, run.getDate().getTime() );
+            pstmt.setInt(6, run.getDistance());
+            pstmt.setLong(7, run.getDuration() );
+            pstmt.setString(8, run.getDescription() );
+            pstmt.setString(9, run.getStatus() );
 
             pstmt.executeUpdate();
         }catch(SQLException se){
+            se.printStackTrace();
             throw new CreateRunException(se.getMessage());
         }catch(Exception e){
+            e.printStackTrace();
             throw new CreateRunException(e.getMessage());
         }
-
     }
 
-    public void deleteRun(BigInteger id) throws DeleteRunException {
+    public void deleteRun(String id) throws DeleteRunException {
         String sql = "DELETE FROM run WHERE id = ?";
         executeDeleteRunQuery(sql, id);
     }
 
-    private void executeDeleteRunQuery(String sql, int param01) throws DeleteRunException {
+    private void executeDeleteRunQuery(String sql, String param01) throws DeleteRunException {
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
-            pstmt.setInt(1, param01);
+            pstmt.setString(1, param01);
             pstmt.executeUpdate();
         }catch(SQLException se){
             throw new DeleteRunException(se.getMessage());

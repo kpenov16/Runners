@@ -12,14 +12,14 @@ import java.util.List;
 public class RunController {
 
     @GetMapping("/runs/{id}")  //FIXME crashes if id is not exists
-    public Run getRun(@PathVariable int id){
+    public Run getRun(@PathVariable String id){
         RunService runService = new RunServiceImpl(new RunRepositoryImpl());
         Run run = runService.getRun(id);
         return run;
     }
 
     @DeleteMapping("/runs/{id}")
-    public void deleteRun(@PathVariable int id){
+    public void deleteRun(@PathVariable String id){
         RunService runService = new RunServiceImpl(new RunRepositoryImpl());
         runService.deleteRun(id);
     }
@@ -31,9 +31,9 @@ public class RunController {
     }
 
     @PostMapping(path = "/runs")//@PostMapping(path = "/createRun")
-    public Run addRun(@RequestBody Run run) {
+    public Run addRun(@RequestBody Run run, @PathVariable String creatorId) {
         RunService runService = new RunServiceImpl(new RunRepositoryImpl());
-        runService.createRun(run);
+        runService.createRun(run, creatorId);
         return run;
     }
 }

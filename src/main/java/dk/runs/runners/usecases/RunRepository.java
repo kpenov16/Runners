@@ -6,15 +6,15 @@ import java.math.BigInteger;
 import java.util.List;
 
 public interface RunRepository {
-    Run createRun(Run run, long creatorId) throws CreateRunException;
+    void createRun(Run run, String creatorId) throws CreateRunException;
 
-    Run getRun(BigInteger id) throws RunNotFoundException;
+    Run getRun(String id) throws RunNotFoundException;
 
     void updateRun(Run updatedRun);
 
     List<Run> getRunsList();
 
-    void deleteRun(BigInteger id)throws DeleteRunException ;
+    void deleteRun(String id)throws DeleteRunException ;
 
     class UpdateRunException extends RuntimeException{
         public UpdateRunException(String msg){
