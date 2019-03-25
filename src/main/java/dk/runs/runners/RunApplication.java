@@ -1,7 +1,9 @@
 package dk.runs.runners;
 
 import dk.runs.runners.repositories.RunRepositoryImpl;
+import dk.runs.runners.services.run.RunService;
 import dk.runs.runners.services.run.RunServiceImpl;
+import dk.runs.runners.usecases.RunRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -18,15 +20,17 @@ public class RunApplication {
         SpringApplication.run(RunApplication.class, args);
     }
 
-    @Bean(name="runRepository")
+    //@Bean(name="runRepository")
+    @Bean
     @Scope("prototype")
-    public static RunRepositoryImpl getRunRepository(){
+    public static RunRepository getRunRepository(){
         return new RunRepositoryImpl();
     }
 
-    @Bean(name="runService")
+    //@Bean(name="runService")
+    @Bean
     @Scope("prototype")
-    public static RunServiceImpl getRunService(){
+    public static RunService getRunService(){
         return new RunServiceImpl(getRunRepository());
     }
 }

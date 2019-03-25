@@ -11,8 +11,13 @@ import java.util.List;
 
 @RestController
 public class RunControllerImpl implements RunController{
-    @Resource(name="runService")  RunService runService;
+    //@Resource(name="runService")
     //RunService runService = runsconfig.getRunService();
+    private RunService runService;
+
+    public RunControllerImpl(RunService runService){
+        this.runService = runService;
+    }
 
     @GetMapping("/runs/{id}")
     public RunResponse getRun(@PathVariable String id){
