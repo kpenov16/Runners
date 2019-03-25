@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 
-@ComponentScan("dk.runs.runners")
+//@ComponentScan("dk.runs.runners")
 @Configuration
-public abstract class RunsConfig {
+public class RunsConfig {
 
 //    @Bean(name="runRepository")
 //    @Scope("prototype")
@@ -29,16 +29,16 @@ public abstract class RunsConfig {
     //@Bean(name="runRepository")
     @Bean
     @Scope("prototype")
-    public RunRepository getRunRepository(){
-        return new RunRepositoryImpl();
-    }
-
-    //@Bean(name="runService")
-    @Bean
-    @Scope("prototype")
     public RunService getRunService(){
         return new RunServiceImpl(getRunRepository());
     }
+
+    @Bean
+    @Scope("prototype")
+    public RunRepository getRunRepository(){
+        return new RunRepositoryImpl();
+    }
+    //@Bean(name="runService")
 
 
 }

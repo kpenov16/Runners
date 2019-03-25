@@ -10,8 +10,8 @@ import javax.annotation.Resource;
 import java.util.List;
 
 public interface RunController {
-    @Resource(name="runService")
-    RunService runService = null;
+//    @Resource(name="runService")
+//    RunService runService = null;
 
     @GetMapping("/runs/{id}")  //FIXME crashes if id is not exists
     public RunResponse getRun(@PathVariable String id);

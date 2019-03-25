@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-public class RunControllerImpl implements RunController{
+public class RunControllerImpl{
     //@Resource(name="runService")
     //RunService runService = runsconfig.getRunService();
     private RunService runService;
