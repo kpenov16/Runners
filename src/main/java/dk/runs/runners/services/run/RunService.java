@@ -7,7 +7,7 @@ import java.util.List;
 public interface RunService {
     Run getRun(String id);
     List<Run> getRunsList();
-    void createRun(Run run, String creatorId);
+    void createRun(Run run, String creatorId) throws RunServiceException;
     void deleteRun(String id);
 
     class RunServiceException extends RuntimeException{

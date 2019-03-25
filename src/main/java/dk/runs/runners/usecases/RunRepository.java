@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 public interface RunRepository {
-    void createRun(Run run, String creatorId) throws CreateRunException;
+    void createRun(Run run, String creatorId) throws CreateRunException, RunIdDuplicationException;
 
     Run getRun(String id) throws RunNotFoundException;
 

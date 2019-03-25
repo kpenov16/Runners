@@ -26,18 +26,18 @@ class RunServiceImplTest {
         runService = new RunServiceImpl(runRepository);
 
         //Act, Assert
-        assertThrows(RunRepository.RunIdDuplicationException.class,
+        RunService.RunServiceException ex = assertThrows(RunService.RunServiceException.class,
                 () -> runService.createRun(new Run(), "creatorId")
         );
+        assertEquals("Run already created!",ex.getMessage());
         assertEquals(1,((FakeRunRepository)runRepository).numberOfCallsTo_createRun);
     }
-
     class FakeRunRepository implements RunRepository{
         protected int numberOfCallsTo_createRun;
         @Override
         public void createRun(Run run, String creatorId) throws CreateRunException {
             numberOfCallsTo_createRun++;
-            throw new RunIdDuplicationException("");
+            throw new RunIdDuplicationException("PRIMARY KEY");
         }
         @Override
         public Run getRun(String id) throws RunNotFoundException {

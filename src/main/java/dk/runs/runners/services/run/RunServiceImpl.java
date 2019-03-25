@@ -25,7 +25,14 @@ public class RunServiceImpl implements RunService {
 
     @Override
     public void createRun(Run run, String creatorId) {
-        runRepository.createRun(run, creatorId);
+        try {
+            runRepository.createRun(run, creatorId);
+        }catch (RunRepository.RunIdDuplicationException e){
+            if(e.getMessage().contains("PRIMARY")){
+                throw new RunServiceException("Run already created!");
+            }
+        }
+
     }
 
     @Override
