@@ -1,7 +1,6 @@
 package dk.runs.runners.services.run;
 
 import dk.runs.runners.entities.Run;
-import dk.runs.runners.repositories.RunRepositoryImpl;
 import dk.runs.runners.usecases.RunRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,14 +29,14 @@ class RunServiceImplTest {
         assertThrows(RunRepository.RunIdDuplicationException.class,
                 () -> runService.createRun(new Run(), "creatorId")
         );
-        assertEquals(1,((FakeRunRepository)runRepository).createRunCount);
+        assertEquals(1,((FakeRunRepository)runRepository).numberOfCallsTo_createRun);
     }
 
     class FakeRunRepository implements RunRepository{
-        protected int createRunCount;
+        protected int numberOfCallsTo_createRun;
         @Override
         public void createRun(Run run, String creatorId) throws CreateRunException {
-            createRunCount++;
+            numberOfCallsTo_createRun++;
             throw new RunIdDuplicationException("");
         }
         @Override
