@@ -9,4 +9,11 @@ public interface RunService {
     List<Run> getRunsList();
     void createRun(Run run, String creatorId);
     void deleteRun(String id);
+
+    class RunServiceException extends RuntimeException{
+        public RunServiceException(String msg){
+            super(msg);
+        }
+    }
+
 }

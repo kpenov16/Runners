@@ -59,12 +59,18 @@ public class RunRepositoryImplTest {
      }
 
     @Test
-    public void givenUserUpdatesExistingRunLocation_returnRunLocationUpdated() {
+    public void givenUserUpdated_returnRunUpdated() {
         //arrange
         runRepository.createRun(run, creatorId);
 
         Run updatedRun = run;
-        updatedRun.setLocation("Sofia");
+        updatedRun.setTitle("new Title");
+        updatedRun.setLocation("new Location");
+        updatedRun.setDate(new Date());
+        updatedRun.setDistance(1000);
+        updatedRun.setDuration(2000);
+        updatedRun.setDescription("new Dwscription");
+        updatedRun.setStatus("new Status");
 
         //act
         runRepository.updateRun(updatedRun);
@@ -86,6 +92,18 @@ public class RunRepositoryImplTest {
     }
 
     @Test
+    public void givenCreateRunWithExistingId_returnRunIdDuplicationException() {
+        //Arrange
+        runRepository.createRun(run, creatorId);
+
+        //Act, Assert
+        assertThrows(RunRepository.RunIdDuplicationException.class,
+                () -> runRepository.createRun(run, creatorId)
+        );
+
+    }
+
+    @Test
     public void givenGetRunsList_returnListIsNotEmpty(){
         runRepository.createRun(run, creatorId);
         runRepository.createRun(secondRun, creatorId);
@@ -95,21 +113,4 @@ public class RunRepositoryImplTest {
         runRepositoryImpl.deleteRun(run.getId());
         runRepositoryImpl.deleteRun(secondRun.getId());
     }
-
-
-    @Test
-    public void nothing(){
-        runRepository.createRun(run, "123");
-    }
-/*
-    @Test
-    public void givenRunMarkDeleted_returnRunMarkedDeleted(){
-
-        //Arrange
-        runRepository.createRun(run, creatorId);
-
-    }*/
-
-
-
 }

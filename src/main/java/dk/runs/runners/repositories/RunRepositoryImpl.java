@@ -3,7 +3,6 @@ package dk.runs.runners.repositories;
 import dk.runs.runners.entities.Run;
 import dk.runs.runners.usecases.RunRepository;
 
-import java.math.BigInteger;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,16 +12,11 @@ public class RunRepositoryImpl implements RunRepository {
     private final String url = "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
             + "user=s133967&password=8JPOJuQcgUpUVIVHY4S2H";
 
-
     @Override
     public void createRun(Run run, String creatorId) throws CreateRunException {
         String sql = "INSERT INTO run (id, creator_id, title, location, date, distance, duration, description, status)" +
                 "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? )";
               executeCreateRunQuery(sql, run, creatorId);
-
-/*        String sql = "INSERT INTO run (id, location)" +
-                "VALUES ( ? , ? )";
-        executeCreateRunQuery(sql, run.getId(), run.getLocation());*/
     }
 
     private long executeGetIdQuery(String sql, long creatorId) throws RunNotFoundException {
@@ -47,26 +41,15 @@ public class RunRepositoryImpl implements RunRepository {
         String sql = "SELECT * " +
                 " FROM run" +
                 " WHERE run.id = ?";
-
-        /*
-            * private String id;
-            private String title;
-            private String location;
-            private Date date;
-            private int distance;
-            private long duration;
-            private String description;
-            private String status = "active";
-                    * */
         return executeGetRunQuery(sql,new Run(id));
     }
 
     @Override
     public void updateRun(Run run) {
         String sql = "UPDATE run" +
-                " SET location = ?" +
+                " SET title = ?, location = ?, date = ?, distance = ?, duration = ?, description = ?, status = ?" +
                 " WHERE id = ?";
-        executeUpdateRunQuery(sql, run.getLocation(), run.getId());
+        executeUpdateRunQuery(sql, run);
     }
 
     @Override
@@ -97,11 +80,17 @@ public class RunRepositoryImpl implements RunRepository {
         return runs;
     }
 
-    private void executeUpdateRunQuery(String sql, String param01, String param02) throws UpdateRunException {
+    private void executeUpdateRunQuery(String sql, Run run) throws UpdateRunException {
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
-            pstmt.setString(1, param01);
-            pstmt.setString(2, param02);
+            pstmt.setString(1, run.getTitle());
+            pstmt.setString(2, run.getLocation());
+            pstmt.setLong(3, run.getDate().getTime() );
+            pstmt.setInt(4, run.getDistance());
+            pstmt.setLong(5, run.getDuration() );
+            pstmt.setString(6, run.getDescription() );
+            pstmt.setString(7, run.getStatus() );
+            pstmt.setString(8, run.getId() );
             pstmt.executeUpdate();
         }catch(SQLException se){
             throw new UpdateRunException(se.getMessage());
@@ -144,8 +133,9 @@ public class RunRepositoryImpl implements RunRepository {
             pstmt.setLong(7, run.getDuration() );
             pstmt.setString(8, run.getDescription() );
             pstmt.setString(9, run.getStatus() );
-
             pstmt.executeUpdate();
+        }catch (SQLIntegrityConstraintViolationException e){
+            throw new RunIdDuplicationException(e.getMessage());
         }catch(SQLException se){
             se.printStackTrace();
             throw new CreateRunException(se.getMessage());

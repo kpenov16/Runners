@@ -41,5 +41,7 @@ public interface RunRepository {
     class GetRunsException extends RuntimeException{
         public GetRunsException(String msg) {super(msg);}
     }
-
+    class RunIdDuplicationException extends RuntimeException{
+        public RunIdDuplicationException(String msg) {super(msg);}
+    }
 }
