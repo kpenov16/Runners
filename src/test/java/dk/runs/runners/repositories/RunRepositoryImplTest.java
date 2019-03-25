@@ -2,22 +2,16 @@ package dk.runs.runners.repositories;
 
 import dk.runs.runners.entities.Run;
 import dk.runs.runners.usecases.RunRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class RunRepositoryImplTest {
     private RunRepository runRepository;
     private Run run;
@@ -27,7 +21,7 @@ public class RunRepositoryImplTest {
     private final int DISTANCE = 5_000;
     private String creatorId = UUID.randomUUID().toString();
 
-    @Before
+    @BeforeEach
     public void beforeEach(){
         runRepository = new RunRepositoryImpl();
         run = new Run(UUID.randomUUID().toString());
@@ -57,7 +51,7 @@ public class RunRepositoryImplTest {
         Run returnedRun = runRepository.getRun(run.getId());
 
         //assert
-        assertEquals("Run creation error!", run.toString(), returnedRun.toString());
+        assertEquals(run.toString(), returnedRun.toString());
 
         //clean up
         RunRepositoryImpl runRepositoryImpl = (RunRepositoryImpl)runRepository;
@@ -77,7 +71,7 @@ public class RunRepositoryImplTest {
 
         //assert
         Run returnedRun = runRepository.getRun(run.getId());
-        assertEquals("Update error", updatedRun.toString(), returnedRun.toString());
+        assertEquals(updatedRun.toString(), returnedRun.toString());
 
         //clean up
         RunRepositoryImpl runRepositoryImpl = (RunRepositoryImpl)runRepository;
