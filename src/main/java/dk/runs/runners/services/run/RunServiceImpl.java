@@ -20,7 +20,11 @@ public class RunServiceImpl implements RunService {
 
     @Override
     public List<Run> getRunsList() {
-        return runRepository.getRunsList();
+        try {
+            return runRepository.getRunsList();
+        }catch (RunRepository.GetRunsException e){
+            throw new RunServiceException("Could not receive run events from database");
+        }
     }
 
     @Override
