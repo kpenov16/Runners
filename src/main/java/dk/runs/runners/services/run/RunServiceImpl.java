@@ -34,6 +34,8 @@ public class RunServiceImpl implements RunService {
         }catch (RunRepository.RunIdDuplicationException e){
             if(e.getMessage().contains("PRIMARY")){
                 throw new RunServiceException("Run already created!");
+            } else {
+                throw new RunServiceException("Error creating a run. Try again later.");
             }
         }
 
