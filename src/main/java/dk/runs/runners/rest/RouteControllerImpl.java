@@ -36,7 +36,7 @@ public class RouteControllerImpl {
         return routeService.getRoutesList();
     }
 
-    @PostMapping(path = "/route")//@PostMapping(path = "/createRoute")
+    @PostMapping(path = "/routes")//@PostMapping(path = "/createRoute")
     public RouteResponse addRun(@RequestBody RouteRequest routeRequest) {
         routeService.createRoute(routeRequest.getRoute(), routeRequest.getCreatorId());
         RouteResponse routeResponse = new RouteResponse();
