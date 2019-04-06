@@ -102,11 +102,11 @@ public class UserRepositoryImplTest {
         User updatedUser = user;
         updatedUser.setEmail(email);
 
-        User userWithDuplicateUserName = new User(UUID.randomUUID().toString());
-        userWithDuplicateUserName.setUserName(UUID.randomUUID().toString());
-        userWithDuplicateUserName.setEmail(email);
-        userWithDuplicateUserName.setPassword("userWithDuplicateUserName_password");
-        userRepository.createUser(userWithDuplicateUserName);
+        User userWithDuplicateEmail = new User(UUID.randomUUID().toString());
+        userWithDuplicateEmail.setUserName(UUID.randomUUID().toString());
+        userWithDuplicateEmail.setEmail(email);
+        userWithDuplicateEmail.setPassword("userWithDuplicateUserName_password");
+        userRepository.createUser(userWithDuplicateEmail);
 
         //Act, Assert
         try{
@@ -118,7 +118,7 @@ public class UserRepositoryImplTest {
         }
         //Tear down
         finally {
-            userRepository.deleteUser(userWithDuplicateUserName.getId());
+            userRepository.deleteUser(userWithDuplicateEmail.getId());
         }
     }
 
