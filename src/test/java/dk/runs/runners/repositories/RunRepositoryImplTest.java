@@ -59,7 +59,7 @@ public class RunRepositoryImplTest {
      }
 
     @Test
-    public void givenUserUpdated_returnRunUpdated() {
+    public void givenRunUpdated_returnRunUpdated() {
         //arrange
         runRepository.createRun(run, creatorId);
 

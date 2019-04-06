@@ -21,13 +21,11 @@ public interface RunRepository {
             super(msg);
         }
     }
-
     class RunNotFoundException extends RuntimeException{
         public RunNotFoundException(String msg){
             super(msg);
         }
     }
-
     class CreateRunException extends RuntimeException{
         public CreateRunException(String msg){
             super(msg);

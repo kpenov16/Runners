@@ -5,7 +5,11 @@ import dk.runs.runners.usecases.RunRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,5 +60,4 @@ class RunServiceImplTest {
 
         }
     }
-
 }
