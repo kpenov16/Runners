@@ -5,9 +5,9 @@ CREATE TABLE route(
     PRIMARY KEY (id)
 );
 
-INSERT INTO route (id, description, distance) VALUES (1, 'fast run', '5 km');
-INSERT INTO route (id, description, distance) VALUES (2, 'slow run', '15 km');
-INSERT INTO route (id, description, distance) VALUES (3, 'moderate run', '70 km');
+INSERT INTO route (id, description, distance) VALUES (1, 'fast route', '5 km');
+INSERT INTO route (id, description, distance) VALUES (2, 'slow route', '15 km');
+INSERT INTO route (id, description, distance) VALUES (3, 'moderate route', '70 km');
 SELECT * FROM route;
 
 UPDATE route

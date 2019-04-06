@@ -1,10 +1,10 @@
 package dk.runs.runners.resources;
 
-import dk.runs.runners.entities.Run;
+import dk.runs.runners.entities.Route;
 
-public class RunResponse {
+public class RouteResponse {
     private String error;
-    private Run run;
+    private Route route;
     private String creatorId;
 
     public String getError() {
@@ -15,12 +15,12 @@ public class RunResponse {
         this.error = error;
     }
 
-    public Run getRun() {
-        return run;
+    public Route getRoute() {
+        return route;
     }
 
-    public void setRun(Run run) {
-        this.run = run;
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
     public String getCreatorId() {
@@ -31,5 +31,5 @@ public class RunResponse {
         this.creatorId = creatorId;
     }
 
-    public RunResponse(){}
+    public RouteResponse(){}
 }

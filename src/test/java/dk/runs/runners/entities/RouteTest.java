@@ -5,14 +5,14 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RunTest {
+public class RouteTest {
 
     @Test
     public void givenNewRun_returnRunCreated() {
         String id = UUID.randomUUID().toString();
-        Run run = new Run(id);
-        run.setLocation("Copenhagen");
-        assertEquals(id, run.getId());
-        assertEquals("Copenhagen",run.getLocation());
+        Route route = new Route(id);
+        route.setLocation("Copenhagen");
+        assertEquals(id, route.getId());
+        assertEquals("Copenhagen", route.getLocation());
     }
 }

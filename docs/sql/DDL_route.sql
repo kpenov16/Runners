@@ -22,14 +22,6 @@ SELECT * FROM route;
 DROP TABLE route;
 
 
-CREATE TABLE user_cdio(
-	id VARCHAR(225),
-    name VARCHAR(225),
-    PRIMARY KEY(id)
-);
-
-DROP TABLE user_cdio;
-
 INSERT INTO route (title, creator_id, location, distance, duration, description, status)
 VALUES ("testing", 2, "testing", 5000, 6454545451651651, "testing", "active");
 SELECT * FROM route;

@@ -1,17 +1,17 @@
 package dk.runs.runners.resources;
 
-import dk.runs.runners.entities.Run;
+import dk.runs.runners.entities.Route;
 
-public class RunRequest {
-    private Run run;
+public class RouteRequest {
+    private Route route;
     private String creatorId;
 
-    public RunRequest(){}
-    public Run getRun() {
-        return run;
+    public RouteRequest(){}
+    public Route getRoute() {
+        return route;
     }
-    public void setRun(Run run) {
-        this.run = run;
+    public void setRoute(Route route) {
+        this.route = route;
     }
     public String getCreatorId() {
         return creatorId;
