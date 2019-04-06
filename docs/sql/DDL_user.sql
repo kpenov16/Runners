@@ -7,6 +7,3 @@ CREATE TABLE user(
     PRIMARY KEY (id,user_name,email)
 );
 
-INSERT INTO user values("2","user_2","email_2","pass");
-UPDATE user SET user_name = "blaaaa" WHERE id="2";
-
