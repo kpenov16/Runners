@@ -34,7 +34,7 @@ class RouteControllerImplTest {
 
         // Act & Assert
         assertThrows(RouteService.RouteServiceException.class,
-                () -> controller.addRun(routeRequest)
+                () -> controller.addRoute(routeRequest)
         );
     }
 
@@ -47,7 +47,7 @@ class RouteControllerImplTest {
         doThrow(new RouteService.RouteServiceException("")).when(routeService).getRoutesList();
         // Act & Assert
         assertThrows(RouteService.RouteServiceException.class,
-                () -> controller.getRuns()
+                () -> controller.getRoutes()
         );
     }
 
@@ -56,13 +56,13 @@ class RouteControllerImplTest {
         // Arrange
         when(routeService.getRoutesList()).thenReturn(new LinkedList<Route>());
         // Act & Assert
-        assertEquals(new LinkedList<Route>(), controller.getRuns());
+        assertEquals(new LinkedList<Route>(), controller.getRoutes());
     }
 
     @Test
     void givenIdToDelete_InvokeDeleteMethodInRunService(){
         // Act
-        controller.deleteRun("0000");
+        controller.deleteRoute("0000");
         // Assert
         verify(routeService).deleteRoute("0000");
     }
