@@ -82,7 +82,7 @@ public class UserRepositoryImplTest {
             assertThrows(UserRepository.UserNameDuplicationException.class,
                     () -> userRepository.updateUser(updatedUser)
             );
-        } catch(Exception e){
+        } catch(Throwable e){
             e.printStackTrace();
         }
         //Tear down
@@ -113,7 +113,7 @@ public class UserRepositoryImplTest {
             assertThrows(UserRepository.UserEmailDuplicationException.class,
                     () -> userRepository.updateUser(updatedUser)
             );
-        } catch(Exception e){
+        } catch(Throwable e){
             e.printStackTrace();
         }
         //Tear down
