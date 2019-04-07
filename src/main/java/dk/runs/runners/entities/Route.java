@@ -3,7 +3,7 @@ package dk.runs.runners.entities;
 import java.util.Date;
 import java.util.UUID;
 
-public class Run {
+public class Route {
     private String id = "";
     private String title = "";
     private String location = "";
@@ -13,9 +13,9 @@ public class Run {
     private String description = "";
     private String status = "active";
 
-    public Run(){}
+    public Route(){}
 
-    public Run(String id){
+    public Route(String id){
         setId(id);
     }
 
