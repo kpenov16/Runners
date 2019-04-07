@@ -19,7 +19,7 @@ public class RouteControllerImpl {
     }
 
     @GetMapping("/routes/{id}")
-    public RouteResponse getRun(@PathVariable String id){
+    public RouteResponse getRoute(@PathVariable String id){
         RouteResponse routeResponse = new RouteResponse();
         routeResponse.setRoute(routeService.getRoute(id));
 
@@ -27,17 +27,17 @@ public class RouteControllerImpl {
     }
 
     @DeleteMapping("/routes/{id}")
-    public void deleteRun(@PathVariable String id){
+    public void deleteRoute(@PathVariable String id){
         routeService.deleteRoute(id);
     }
 
     @GetMapping("/routes")
-    public List<Route> getRuns(){
+    public List<Route> getRoutes(){
         return routeService.getRoutesList();
     }
 
     @PostMapping(path = "/routes")//@PostMapping(path = "/createRoute")
-    public RouteResponse addRun(@RequestBody RouteRequest routeRequest) {
+    public RouteResponse addRoute(@RequestBody RouteRequest routeRequest) {
         routeService.createRoute(routeRequest.getRoute(), routeRequest.getCreatorId());
         RouteResponse routeResponse = new RouteResponse();
         routeResponse.setError("");
