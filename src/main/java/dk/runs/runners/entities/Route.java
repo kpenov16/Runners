@@ -1,6 +1,8 @@
 package dk.runs.runners.entities;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 public class Route {
@@ -12,6 +14,7 @@ public class Route {
     private long duration = 0;
     private String description = "";
     private String status = "active";
+    private List<WayPoint> wayPoints = new LinkedList<>();
 
     public Route(){}
 
@@ -87,5 +90,13 @@ public class Route {
     public String toString(){
         return String.format("id: %s, title: %s, location: %s, date: %s, distance: %d, duration: %s, description: %s, status: %s",
                                 id, title, location, String.valueOf(date.getTime()), distance, String.valueOf(duration), description, status );
+    }
+
+    public void setWayPoints(List<WayPoint> wayPoints) {
+        this.wayPoints = wayPoints;
+    }
+
+    public List<WayPoint> getWayPoints() {
+        return wayPoints;
     }
 }

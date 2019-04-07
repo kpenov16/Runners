@@ -1,12 +1,17 @@
 package dk.runs.runners.repositories;
 
 import dk.runs.runners.entities.Route;
+import dk.runs.runners.entities.User;
+import dk.runs.runners.entities.WayPoint;
 import dk.runs.runners.usecases.RouteRepository;
+import dk.runs.runners.usecases.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,16 +19,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteRepositoryImplTest {
+    private UserRepository userRepository;
     private RouteRepository routeRepository;
     private Route route;
+    private User user;
     private Route secondRoute;
     private final long ms = System.currentTimeMillis();
     private final long ONE_HOUR = 60*60*1_000;
     private final int DISTANCE = 5_000;
-    private String creatorId = UUID.randomUUID().toString();
 
     @BeforeEach
     public void beforeEach(){
+        user = new User(UUID.randomUUID().toString());
+        user.setEmail("runner@runner.com");
+        user.setUserName("BillGates");
+        user.setPassword("bananas");
+
+        userRepository = new UserRepositoryImpl();
         routeRepository = new RouteRepositoryImpl();
         route = new Route(UUID.randomUUID().toString());
         route.setTitle("Route three");
@@ -33,6 +45,12 @@ public class RouteRepositoryImplTest {
         route.setStatus("active");
         route.setDuration(ONE_HOUR);
         route.setDistance(DISTANCE);
+        List<WayPoint> wayPoints = new LinkedList<>();
+        WayPoint startWayPoint = new WayPoint(1.12, 1.13, 0);
+        WayPoint endWayPoint = new WayPoint(5.12, 5.13, 1);
+        wayPoints.add(startWayPoint);
+        wayPoints.add(endWayPoint);
+        route.setWayPoints(wayPoints);
 
         secondRoute = new Route(UUID.randomUUID().toString());
         secondRoute.setTitle("Slow Route");
@@ -48,13 +66,16 @@ public class RouteRepositoryImplTest {
     public void tearDown(){
         routeRepository.deleteRoute(route.getId());
         routeRepository.deleteRoute(secondRoute.getId());
+
+        userRepository.deleteUser(user.getId());
     }
 
 
     @Test
-     public void givenCreateRun_returnRunCreated() {
+     public void givenCreateRoute_returnRouteCreated() {
         //act
-        routeRepository.createRoute(route, creatorId);
+        userRepository.createUser(user);
+        routeRepository.createRoute(route, user.getId());
 
         Route returnedRoute = routeRepository.getRoute(route.getId());
 
@@ -67,9 +88,10 @@ public class RouteRepositoryImplTest {
      }
 
     @Test
-    public void givenRunUpdated_returnRunUpdated() {
+    public void givenRouteUpdated_returnRouteUpdated() {
         //arrange
-        routeRepository.createRoute(route, creatorId);
+        userRepository.createUser(user);
+        routeRepository.createRoute(route, user.getId());
 
         Route updatedRoute = route;
         updatedRoute.setTitle("new Title");
@@ -93,28 +115,31 @@ public class RouteRepositoryImplTest {
     }
 
     @Test
-    public void givenRequestingNonExistingRunById_returnRunNotFoundException() {
+    public void givenRequestingNonExistingRouteById_returnRouteNotFoundException() {
         assertThrows(RouteRepository.RouteNotFoundException.class,
                 () -> routeRepository.getRoute(UUID.randomUUID().toString())
         );
     }
 
     @Test
-    public void givenCreateRunWithExistingId_returnRunIdDuplicationException() {
+    public void givenCreateRouteWithExistingId_returnRouteIdDuplicationException() {
         //Arrange
-        routeRepository.createRoute(route, creatorId);
+        userRepository.createUser(user);
+        routeRepository.createRoute(route, user.getId());
 
         //Act, Assert
         assertThrows(RouteRepository.RouteIdDuplicationException.class,
-                () -> routeRepository.createRoute(route, creatorId)
+                () -> routeRepository.createRoute(route, user.getId())
         );
 
     }
 
     @Test
-    public void givenGetRunsList_returnListIsNotEmpty(){
-        routeRepository.createRoute(route, creatorId);
-        routeRepository.createRoute(secondRoute, creatorId);
+    public void givenGetRoutesList_returnListIsNotEmpty(){
+        userRepository.createUser(user);
+
+        routeRepository.createRoute(route, user.getId());
+        routeRepository.createRoute(secondRoute, user.getId());
         assertTrue(routeRepository.getRouteList().size() > 0);
         //clean up
         RouteRepositoryImpl runRepositoryImpl = (RouteRepositoryImpl) routeRepository;
