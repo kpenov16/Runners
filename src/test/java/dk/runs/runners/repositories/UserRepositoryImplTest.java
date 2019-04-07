@@ -61,6 +61,68 @@ public class UserRepositoryImplTest {
         assertEquals(updatedUser.getPassword(), returnedUser.getPassword());
     }
 
+
+    @Test
+    public void givenUserUpdateWithExistingUserName_returnUserNameDuplicationException(){
+        //arrange
+        String userName = UUID.randomUUID().toString();
+
+        userRepository.createUser(user);
+        User updatedUser = user;
+        updatedUser.setUserName(userName);
+
+        User userWithDuplicateUserName = new User(UUID.randomUUID().toString());
+        userWithDuplicateUserName.setUserName(userName);
+        userWithDuplicateUserName.setEmail("userWithDuplicateUserName@banana.com");
+        userWithDuplicateUserName.setPassword("userWithDuplicateUserName_password");
+        userRepository.createUser(userWithDuplicateUserName);
+
+        //Act, Assert
+        try{
+            assertThrows(UserRepository.UserNameDuplicationException.class,
+                    () -> userRepository.updateUser(updatedUser)
+            );
+        } catch(Throwable e){
+            e.printStackTrace();
+        }
+        //Tear down
+        finally {
+            userRepository.deleteUser(userWithDuplicateUserName.getId());
+        }
+    }
+
+
+
+    @Test
+    public void givenUserUpdateWithExistingEmail_returnEmailDuplicationException(){
+        //arrange
+        String email = UUID.randomUUID().toString();
+
+        userRepository.createUser(user);
+        User updatedUser = user;
+        updatedUser.setEmail(email);
+
+        User userWithDuplicateEmail = new User(UUID.randomUUID().toString());
+        userWithDuplicateEmail.setUserName(UUID.randomUUID().toString());
+        userWithDuplicateEmail.setEmail(email);
+        userWithDuplicateEmail.setPassword("userWithDuplicateUserName_password");
+        userRepository.createUser(userWithDuplicateEmail);
+
+        //Act, Assert
+        try{
+            assertThrows(UserRepository.UserEmailDuplicationException.class,
+                    () -> userRepository.updateUser(updatedUser)
+            );
+        } catch(Throwable e){
+            e.printStackTrace();
+        }
+        //Tear down
+        finally {
+            userRepository.deleteUser(userWithDuplicateEmail.getId());
+        }
+    }
+
+
     @Test
     public void givenRequestingNonExistingUserById_returnUserNotFoundException() {
         assertThrows(UserRepository.UserNotFoundException.class,

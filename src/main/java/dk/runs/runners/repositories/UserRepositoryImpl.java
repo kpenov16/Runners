@@ -102,6 +102,15 @@ public class UserRepositoryImpl implements UserRepository {
             pstmt.setString(3, user.getPassword() );
             pstmt.setString(4, user.getId());
             pstmt.executeUpdate();
+    }   catch (SQLIntegrityConstraintViolationException e) {
+            final String MSG = e.getMessage();
+            if (MSG.contains("user_name")) {
+                throw new UserNameDuplicationException(MSG);
+            } else if (MSG.contains("email")) {
+                throw new UserEmailDuplicationException(MSG);
+            } else {
+                throw new UpdateUserException(MSG);
+            }
         }catch(SQLException se){
             throw new UpdateUserException(se.getMessage());
         }catch(Exception e){
