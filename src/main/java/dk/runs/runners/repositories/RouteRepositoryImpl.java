@@ -1,6 +1,7 @@
 package dk.runs.runners.repositories;
 
 import dk.runs.runners.entities.Route;
+import dk.runs.runners.entities.WayPoint;
 import dk.runs.runners.usecases.RouteRepository;
 
 import java.sql.*;
@@ -14,9 +15,18 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     @Override
     public void createRoute(Route route, String creatorId) throws CreateRouteException {
-        String sql = "INSERT INTO route (id, creator_id, title, location, date, distance, duration, description, status)" +
+  /*      String sql = "INSERT INTO route (id, creator_id, title, location, date, distance, duration, description, status)" +
                 "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? )";
-              executeCreateRouteQuery(sql, route, creatorId);
+*/
+
+        //executeCreateRouteQuery(sql, route, creatorId);
+
+        String routeSql = "INSERT INTO route (id, creator_id, title, location, date, distance, duration, description, status)" +
+                "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? )";
+
+        String waypointSql = "INSERT INTO waypoint (`index`, route_id, spatial_point)" +
+                "VALUES ( ? , ? , ST_GeomFromText( ? , ? ))";
+        executeCreateRouteQueryAsUnitOfWork(routeSql, waypointSql, route, creatorId);
     }
 
     private long executeGetIdQuery(String sql, long creatorId) throws RouteNotFoundException {
@@ -41,7 +51,16 @@ public class RouteRepositoryImpl implements RouteRepository {
         String sql = "SELECT * " +
                 " FROM route" +
                 " WHERE route.id = ?";
-        return executeGetRouteQuery(sql,new Route(id));
+        Route route = executeGetRouteQuery(sql,new Route(id));
+        route.setWayPoints(getWaypoints(route.getId()));
+        return route;
+    }
+
+    private List<WayPoint> getWaypoints(String routeId) {
+        String sql = "SELECT `index`, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y " +
+                " FROM waypoint" +
+                " WHERE waypoint.route_id = ?";
+        return executeGetRouteQuery(sql, new LinkedList<WayPoint>(), routeId);
     }
 
     @Override
@@ -121,6 +140,100 @@ public class RouteRepositoryImpl implements RouteRepository {
         return route;
     }
 
+    private List<WayPoint> executeGetRouteQuery(String sql, List<WayPoint> wayPoints, String routeId) throws RouteNotFoundException {
+        String s = "SELECT index, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y " +
+                " FROM waypoint" +
+                " WHERE waypoint.route_id = ?";
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt= conn.prepareStatement(sql)){
+            pstmt.setString(1, routeId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()){
+                int index = rs.getInt(1);
+                double x = rs.getDouble(2);
+                double y = rs.getDouble(3);
+                wayPoints.add( new WayPoint(x, y, index) );
+            }
+            rs.close();
+        }catch(SQLException se){
+            throw new RouteNotFoundException(se.getMessage());
+        }catch(Exception e){
+            throw new RouteNotFoundException(e.getMessage());
+        }
+        return wayPoints;
+    }
+
+    private void executeCreateRouteQueryAsUnitOfWork(String routeSql, String waypointSql, Route route, String creatorId) throws CreateRouteException {
+        Connection conn = null;
+        PreparedStatement pstmtRoute = null;
+        PreparedStatement pstmtWaypoint = null;
+        try{
+            conn = DriverManager.getConnection(url);
+            conn.setAutoCommit(false);
+
+            pstmtRoute = conn.prepareStatement(routeSql);
+            pstmtWaypoint = conn.prepareStatement(waypointSql);
+
+
+            pstmtRoute.setString(1, route.getId());
+            pstmtRoute.setString(2, creatorId);
+            pstmtRoute.setString(3, route.getTitle());
+            pstmtRoute.setString(4, route.getLocation());
+            pstmtRoute.setLong(5, route.getDate().getTime() );
+            pstmtRoute.setInt(6, route.getDistance());
+            pstmtRoute.setLong(7, route.getDuration() );
+            pstmtRoute.setString(8, route.getDescription() );
+            pstmtRoute.setString(9, route.getStatus() );
+            int rowsEffected = pstmtRoute.executeUpdate();
+
+            if(rowsEffected == 1){
+                for(WayPoint wayPoint : route.getWayPoints()){
+                    pstmtWaypoint.setInt(1, wayPoint.getIndex());
+                    pstmtWaypoint.setString(2, route.getId());
+                    pstmtWaypoint.setString(3, "POINT("+wayPoint.getX()+" "+wayPoint.getY()+")");
+                    pstmtWaypoint.setInt(4, wayPoint.getSRID());
+                    pstmtWaypoint.executeUpdate();
+                }
+                conn.commit();
+            }else {
+                conn.rollback();
+            }
+        }catch (SQLIntegrityConstraintViolationException e){
+            try {
+                if(conn!=null){
+                    conn.rollback();
+                }
+                throw new RouteIdDuplicationException(e.getMessage());
+            }catch (SQLException rollBackException){
+                //??
+            }
+        }catch(SQLException se){
+            try {
+                conn.rollback();
+                se.printStackTrace();
+                throw new CreateRouteException(se.getMessage());
+            }catch (SQLException rollBackException){
+                throw new CreateRouteException(rollBackException.getMessage());
+            }
+        }catch(Exception e){
+            try {
+                conn.rollback();
+                e.printStackTrace();
+                throw new CreateRouteException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new CreateRouteException(rollBackException.getMessage());
+            }
+        }finally {
+            try {
+                if(pstmtRoute != null) pstmtRoute.close();
+                if(pstmtWaypoint != null) pstmtWaypoint.close();
+                if(conn != null) conn.close();
+            } catch (SQLException e) {
+                throw new CreateRouteException(e.getMessage());
+            }
+        }
+    }
+
     private void executeCreateRouteQuery(String sql, Route route, String creatorId) throws CreateRouteException {
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
@@ -145,12 +258,60 @@ public class RouteRepositoryImpl implements RouteRepository {
         }
     }
 
-    public void deleteRoute(String id) throws DeleteRouteException {
+    public void deleteRouteOld(String id) throws DeleteRouteException {
         String sql = "DELETE FROM route WHERE id = ?";
-        executeDeleteRouteQuery(sql, id);
+        executeDeleteRouteQueryOld(sql, id);
     }
 
-    private void executeDeleteRouteQuery(String sql, String param01) throws DeleteRouteException {
+    public void deleteRoute(String routeId) throws DeleteRouteException {
+        String routeSql = "DELETE FROM route WHERE id = ?";
+        String waypointSql = "DELETE FROM waypoint WHERE route_id = ?";
+        executeDeleteRouteQuery(routeSql, waypointSql, routeId);
+    }
+
+    private void executeDeleteRouteQuery(String routeSql, String waypointSql, String routeId) throws DeleteRouteException {
+        Connection conn = null;
+        PreparedStatement pstmtRoute = null;
+        PreparedStatement pstmtWaypoint = null;
+        try{
+            conn = DriverManager.getConnection(url);
+            conn.setAutoCommit(false);
+
+            pstmtWaypoint = conn.prepareStatement(waypointSql);
+            pstmtWaypoint.setString(1, routeId);
+            pstmtWaypoint.executeUpdate();
+
+            pstmtRoute = conn.prepareStatement(routeSql);
+            pstmtRoute.setString(1, routeId);
+            pstmtRoute.executeUpdate();
+
+            conn.commit();
+        }catch(SQLException se){
+            try {
+                conn.rollback();
+                throw new DeleteRouteException(se.getMessage());
+            }catch (SQLException rollBackException){
+                throw new DeleteRouteException(rollBackException.getMessage());
+            }
+        }catch(Exception e){
+            try {
+                conn.rollback();
+                throw new DeleteRouteException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new DeleteRouteException(rollBackException.getMessage());
+            }
+        }finally {
+            try {
+                if(pstmtRoute != null) pstmtRoute.close();
+                if(pstmtWaypoint != null) pstmtWaypoint.close();
+                if(conn != null) conn.close();
+            } catch (SQLException e) {
+                throw new DeleteRouteException(e.getMessage());
+            }
+        }
+    }
+
+    private void executeDeleteRouteQueryOld(String sql, String param01) throws DeleteRouteException {
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, param01);
@@ -161,4 +322,6 @@ public class RouteRepositoryImpl implements RouteRepository {
             throw new DeleteRouteException(e.getMessage());
         }
     }
+
+
 }

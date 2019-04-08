@@ -1,9 +1,9 @@
 package dk.runs.runners.entities;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import org.springframework.util.comparator.Comparators;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Route {
     private String id = "";
@@ -88,8 +88,8 @@ public class Route {
 
     @Override
     public String toString(){
-        return String.format("id: %s, title: %s, location: %s, date: %s, distance: %d, duration: %s, description: %s, status: %s",
-                                id, title, location, String.valueOf(date.getTime()), distance, String.valueOf(duration), description, status );
+        return String.format("id: %s, title: %s, location: %s, date: %s, distance: %d, duration: %s, description: %s, status: %s, waypoints: %s",
+                                id, title, location, String.valueOf(date.getTime()), distance, String.valueOf(duration), description, status, Arrays.stream(wayPoints.toArray()).map(wp->wp.toString()).collect(Collectors.toList()).toString() );
     }
 
     public void setWayPoints(List<WayPoint> wayPoints) {

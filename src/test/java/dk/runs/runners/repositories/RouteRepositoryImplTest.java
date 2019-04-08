@@ -75,7 +75,7 @@ public class RouteRepositoryImplTest {
      public void givenCreateRoute_returnRouteCreated() {
         //act
         userRepository.createUser(user);
-        routeRepository.createRoute(route, user.getId());
+        routeRepository.createRoute(route, user.getId());//route and waypoints
 
         Route returnedRoute = routeRepository.getRoute(route.getId());
 

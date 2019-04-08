@@ -34,4 +34,13 @@ public class WayPoint {
     public void setIndex(int index) {
         this.index = index;
     }
+
+    public int getSRID() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("x: %s, y: %s, index: %s", String.valueOf(x), String.valueOf(y), String.valueOf(index));
+    }
 }
