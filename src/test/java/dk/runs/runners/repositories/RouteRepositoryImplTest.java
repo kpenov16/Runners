@@ -70,7 +70,6 @@ public class RouteRepositoryImplTest {
         userRepository.deleteUser(user.getId());
     }
 
-
     @Test
      public void givenCreateRoute_returnRouteCreated() {
         //act
@@ -80,7 +79,7 @@ public class RouteRepositoryImplTest {
         Route returnedRoute = routeRepository.getRoute(route.getId());
 
         //assert
-        assertEquals(route.toString(), returnedRoute.toString());
+        assertEquals(route.toString() + " - do an error", returnedRoute.toString());
 
         //clean up
         RouteRepositoryImpl runRepositoryImpl = (RouteRepositoryImpl) routeRepository;
