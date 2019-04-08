@@ -14,11 +14,13 @@ CREATE TABLE route(
     duration BIGINT,
     description VARCHAR(500),
     status VARCHAR(225),
-    PRIMARY KEY (id)
-/*    FOREIGN KEY (creator_id) REFERENCES user_cdio(id)*/
+    PRIMARY KEY (id),
+    FOREIGN KEY (creator_id) REFERENCES user(id)
 );
 
 SELECT * FROM route;
+
+SELECT * FROM user;
 DROP TABLE route;
 
 
