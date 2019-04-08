@@ -13,10 +13,8 @@ INSERT INTO `checkpoint` (`run_id`,`waypoint_index`,`visited_timestamp`)
 SELECT `run`.`id`, `index`, now()
 FROM `waypoint`
 JOIN `run` ON `waypoint`.`route_id` = `run`.`route_id`
-WHERE `run`.`route_id` = '#route_id#' AND                                          /*  ? ? i stedet af 2 2   i JBDC*/
+WHERE `run`.`id` = '#run_id#' AND                                          /*  ? ? i stedet af 2 2   i JBDC*/
 ST_Distance(`spatial_point`,ST_GeomFromText( 'POINT(1 1)' )) <= 1;  /*hvis der angives en loc som ikke eksistere i waypoints, så tilføjes der ikke noget til `checkpoint`*/
-
-SELECT * FROM `checkpoint`;
 
 /*query disitnct checkpoints with last visited timestamp */
 SELECT `waypoint_index`, MAX(visited_timestamp) AS Last_visit
@@ -31,7 +29,17 @@ LEFT JOIN `checkpoint` ON `waypoint`.`index` = `checkpoint`.`waypoint_index`
 WHERE `waypoint`.`route_id` = '#route_id#' AND
 `visited_timestamp` IS null;
 
-
-DELETE FROM `user`;
-DELETE FROM `route`;
+DELETE FROM `checkpoint`;
+DELETE FROM `run`;
 DELETE FROM `waypoint`;
+DELETE FROM `route`;
+DELETE FROM `user`;
+
+
+
+SELECT st_x(`spatial_point`) FROM waypoint WHERE `index` = 1; 
+SELECT * from `waypoint`;
+SELECT * from `route`;
+SELECT * from `user`;
+SELECT * FROM `checkpoint`;
+SELECT * FROM `checkpoint` WHERE `run_id` = '#second_run_id#';
