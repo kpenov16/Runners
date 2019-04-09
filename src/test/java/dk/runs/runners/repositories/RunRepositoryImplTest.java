@@ -1,9 +1,6 @@
 package dk.runs.runners.repositories;
 
-import dk.runs.runners.entities.Route;
-import dk.runs.runners.entities.Run;
-import dk.runs.runners.entities.User;
-import dk.runs.runners.entities.WayPoint;
+import dk.runs.runners.entities.*;
 import dk.runs.runners.usecases.RouteRepository;
 import dk.runs.runners.usecases.RunRepository;
 import dk.runs.runners.usecases.UserRepository;
@@ -63,6 +60,7 @@ class RunRepositoryImplTest {
         run = new Run();
         run.setRoute(route);
         run.setId(UUID.randomUUID().toString());
+        run.setCheckpoints(new LinkedList<Checkpoint>());
         runRepository = new RunRepositoryImpl();
         runRepository.setRouteRepository(routeRepository);
     }
@@ -76,7 +74,7 @@ class RunRepositoryImplTest {
 
 
     @Test
-    void givenCreateRun_ReturnRunCreated(){
+    void givenCreateRun_returnRunCreated(){
 
         // Arrange
         runRepository.createRun(run, route.getId(), user.getId());
@@ -85,4 +83,25 @@ class RunRepositoryImplTest {
         assertEquals(run.toString(), returnedRun.toString());
     }
 
+
+    @Test
+    void givenRunnerAddsACheckpoint_returnCheckpointAddedForARun(){
+
+        // Arrange
+        runRepository.createRun(run, route.getId(), user.getId());
+
+        //runRepository.isACheckpoint(run, currentX, currentY);
+        double currentY = 5.1;
+        double currentX = 5.1;
+        int precision = 1;
+        runRepository.addCheckpointIfValid(run.getId(), currentX, currentY, precision);
+
+        Run returnedRun = runRepository.getRun(run.getId());
+        List<Checkpoint> returnedCheckpoints = returnedRun.getCheckpoints();
+        List<Checkpoint> extecptedCheckpoint = new LinkedList<>();
+        extecptedCheckpoint.add(new Checkpoint( new WayPoint(5.12, 5.13, 1) ) );
+
+        // Act
+        assertEquals(returnedCheckpoints.toString(), extecptedCheckpoint.toString());
+    }
 }

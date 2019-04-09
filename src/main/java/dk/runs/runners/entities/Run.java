@@ -1,8 +1,12 @@
 package dk.runs.runners.entities;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Run {
     private String id;
     private Route route;
+    private List<Checkpoint> checkpoints = new LinkedList<>();
 
     public String getId() {
         return id;
@@ -23,5 +27,13 @@ public class Run {
     @Override
     public String toString() {
         return String.format("Run id: %s, route: %s", id, route.toString());
+    }
+
+    public List<Checkpoint> getCheckpoints() {
+        return checkpoints;
+    }
+
+    public void setCheckpoints(List<Checkpoint> checkpoints) {
+        this.checkpoints = checkpoints;
     }
 }

@@ -63,6 +63,33 @@ public class RunRepositoryImpl implements RunRepository {
         executeDeleteRunQuery(sqlQuery, runId);
     }
 
+    @Override
+    public void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) {
+        String sqlQuery = "INSERT INTO checkpoint (run_id, waypoint_index, visited_timestamp)" +
+                          " SELECT run.id, `index`, now()" +
+                          " FROM waypoint" +
+                          " JOIN run ON waypoint.route_id = run.route_id" +
+                          " WHERE run.id = ? AND " +
+                          " ST_Distance(spatial_point, ST_GeomFromText( ? )) <= ?";
+        executeInsertCheckpointQuery(sqlQuery, runId, currentX, currentY, precision);
+    }
+
+    private void executeInsertCheckpointQuery(String sqlQuery, String runId, double currentX, double currentY, int precision) {
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
+            pstmt.setString(1, runId);
+            pstmt.setString(2, "Point("+currentX+" "+currentY+")");
+            pstmt.setInt(3, precision);
+            pstmt.executeUpdate();
+        }catch(SQLException se){
+            se.printStackTrace();
+            throw new DeleteRunException(se.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new DeleteRunException(e.getMessage());
+        }
+    }
+
     private void executeDeleteRunQuery(String sqlQuery, String runId) {
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){

@@ -10,6 +10,8 @@ public interface RunRepository {
 
     void deleteRun(String runId);
 
+    void addCheckpointIfValid(String runId, double currentX, double currentY, int precision);
+
     class CreateRunException extends RuntimeException{
         public CreateRunException(String msg){
             super(msg);
