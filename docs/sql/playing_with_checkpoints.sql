@@ -1,4 +1,4 @@
-
+USE s133967;
 INSERT INTO `user` VALUES ('#user_id#','myusername', 'myemail','mypasword');
 INSERT INTO `route` (`id`,`creator_id`) VALUES ('#route_id#','#user_id#');
 INSERT INTO `waypoint` VALUES 
@@ -13,7 +13,7 @@ INSERT INTO `checkpoint` (`run_id`,`waypoint_index`,`visited_timestamp`)
 SELECT `run`.`id`, `index`, now()
 FROM `waypoint`
 JOIN `run` ON `waypoint`.`route_id` = `run`.`route_id`
-WHERE `run`.`id` = '#run_id#' AND                                          /*  ? ? i stedet af 2 2   i JBDC*/
+WHERE `run`.`id` = '#run_id#' AND                                          
 ST_Distance(`spatial_point`,ST_GeomFromText( 'POINT(1 1)' )) <= 1;  /*hvis der angives en loc som ikke eksistere i waypoints, så tilføjes der ikke noget til `checkpoint`*/
 
 /*query disitnct checkpoints with last visited timestamp */
@@ -42,4 +42,5 @@ SELECT * from `waypoint`;
 SELECT * from `route`;
 SELECT * from `user`;
 SELECT * FROM `checkpoint`;
+SELECT * FROM `run`;
 SELECT * FROM `checkpoint` WHERE `run_id` = '#second_run_id#';

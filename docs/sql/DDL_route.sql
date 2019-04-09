@@ -21,8 +21,8 @@ CREATE TABLE route(
 );
 
 SELECT * FROM route;
-
-SELECT * FROM user;
+SELECT * FROM waypoint;
+Delete FROM user;
 DROP TABLE route;
 DROP TABLE waypoint;
 DROP TABLE checkpoint;
