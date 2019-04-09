@@ -14,6 +14,8 @@ CREATE TABLE route(
     duration BIGINT,
     description VARCHAR(500),
     status VARCHAR(225),
+    max_participants INT,
+    min_participants INT,
     PRIMARY KEY (id),
     FOREIGN KEY (creator_id) REFERENCES user(id)
 );
@@ -22,6 +24,9 @@ SELECT * FROM route;
 
 SELECT * FROM user;
 DROP TABLE route;
+DROP TABLE waypoint;
+DROP TABLE checkpoint;
+DROP table run;
 
 
 INSERT INTO route (title, creator_id, location, distance, duration, description, status)

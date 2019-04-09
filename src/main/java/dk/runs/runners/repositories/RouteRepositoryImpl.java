@@ -103,13 +103,7 @@ public class RouteRepositoryImpl implements RouteRepository {
 
             if(rowsEffected == 1){
                 //create waypoints
-                for(WayPoint wayPoint : route.getWayPoints()){
-                    pstmtWaypoint.setInt(1, wayPoint.getIndex());
-                    pstmtWaypoint.setString(2, route.getId());
-                    pstmtWaypoint.setString(3, "POINT("+wayPoint.getX()+" "+wayPoint.getY()+")");
-                    pstmtWaypoint.setInt(4, wayPoint.getSRID());
-                    pstmtWaypoint.executeUpdate();
-                }
+                executeCreateWaypointsQuery(route, pstmtWaypoint);
                 conn.commit();
             }else {
                 conn.rollback();
@@ -272,13 +266,7 @@ public class RouteRepositoryImpl implements RouteRepository {
             int rowsEffected = pstmtRoute.executeUpdate();
 
             if(rowsEffected == 1){
-                for(WayPoint wayPoint : route.getWayPoints()){
-                    pstmtWaypoint.setInt(1, wayPoint.getIndex());
-                    pstmtWaypoint.setString(2, route.getId());
-                    pstmtWaypoint.setString(3, "POINT("+wayPoint.getX()+" "+wayPoint.getY()+")");
-                    pstmtWaypoint.setInt(4, wayPoint.getSRID());
-                    pstmtWaypoint.executeUpdate();
-                }
+                executeCreateWaypointsQuery(route, pstmtWaypoint);
                 conn.commit();
             }else {
                 conn.rollback();
@@ -318,6 +306,17 @@ public class RouteRepositoryImpl implements RouteRepository {
             }
         }
     }
+
+    private void executeCreateWaypointsQuery(Route route, PreparedStatement pstmtWaypoint) throws SQLException {
+        for (WayPoint wayPoint : route.getWayPoints()) {
+            pstmtWaypoint.setInt(1, wayPoint.getIndex());
+            pstmtWaypoint.setString(2, route.getId());
+            pstmtWaypoint.setString(3, "POINT(" + wayPoint.getX() + " " + wayPoint.getY() + ")");
+            pstmtWaypoint.setInt(4, wayPoint.getSRID());
+            pstmtWaypoint.executeUpdate();
+        }
+    }
+
 
     private void executeCreateRouteQuery(String sql, Route route, String creatorId) throws CreateRouteException {
         try(Connection conn = DriverManager.getConnection(url);
