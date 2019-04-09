@@ -45,6 +45,8 @@ public class RouteRepositoryImplTest {
         route.setStatus("active");
         route.setDuration(ONE_HOUR);
         route.setDistance(DISTANCE);
+        route.setMaxParticipants(5);
+        route.setMinParticipants(2);
         List<WayPoint> wayPoints = new LinkedList<>();
         WayPoint startWayPoint = new WayPoint(1.12, 1.13, 0);
         WayPoint endWayPoint = new WayPoint(5.12, 5.13, 1);
@@ -79,7 +81,7 @@ public class RouteRepositoryImplTest {
         Route returnedRoute = routeRepository.getRoute(route.getId());
 
         //assert
-        assertEquals(route.toString() + " - do an error", returnedRoute.toString());
+        assertEquals(route.toString() , returnedRoute.toString());
 
         //clean up
         RouteRepositoryImpl runRepositoryImpl = (RouteRepositoryImpl) routeRepository;
@@ -100,6 +102,14 @@ public class RouteRepositoryImplTest {
         updatedRoute.setDuration(2000);
         updatedRoute.setDescription("new Dwscription");
         updatedRoute.setStatus("new Status");
+        updatedRoute.setMaxParticipants(10);
+        updatedRoute.setMinParticipants(5);
+
+        updatedRoute.setWayPoints(new LinkedList<WayPoint>(){{
+                add(new WayPoint(0.12, 0.13, 0));
+                add(new WayPoint(2.12, 2.13, 1));
+                add(new WayPoint(5.12, 5.13, 2));
+        }});
 
         //act
         routeRepository.updateRoute(updatedRoute);

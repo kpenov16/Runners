@@ -15,8 +15,26 @@ public class Route {
     private String description = "";
     private String status = "active";
     private List<WayPoint> wayPoints = new LinkedList<>();
+    private int maxParticipants = -1;
+    private int minParticipants = -1;
 
     public Route(){}
+
+    public int getMaxParticipants() {
+        return maxParticipants;
+    }
+
+    public void setMaxParticipants(int maxParticipants) {
+        this.maxParticipants = maxParticipants;
+    }
+
+    public int getMinParticipants() {
+        return minParticipants;
+    }
+
+    public void setMinParticipants(int minParticipants) {
+        this.minParticipants = minParticipants;
+    }
 
     public Route(String id){
         setId(id);
@@ -88,9 +106,9 @@ public class Route {
 
     @Override
     public String toString(){
-        return String.format("id: %s, title: %s, location: %s, date: %s, distance: %d, duration: %s, description: %s, status: %s, waypoints: %s",
-                                id, title, location, String.valueOf(date.getTime()), distance, String.valueOf(duration), description, status,
-                Arrays.toString( wayPoints.toArray(new WayPoint[wayPoints.size()]) )
+        return String.format("id: %s, title: %s, location: %s, date: %s, distance: %d, duration: %s, description: %s, status: %s, maxParticipants: %s, minParticipants: %s, waypoints: %s",
+                                id, title, location, String.valueOf(date.getTime()), distance, String.valueOf(duration), description, status, maxParticipants, minParticipants,
+                Arrays.toString( wayPoints.toArray( new WayPoint[wayPoints.size()] ) )
         );
     }
 

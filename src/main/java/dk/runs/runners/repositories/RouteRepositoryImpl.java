@@ -15,14 +15,8 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     @Override
     public void createRoute(Route route, String creatorId) throws CreateRouteException {
-  /*      String sql = "INSERT INTO route (id, creator_id, title, location, date, distance, duration, description, status)" +
-                "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? )";
-*/
-
-        //executeCreateRouteQuery(sql, route, creatorId);
-
-        String routeSql = "INSERT INTO route (id, creator_id, title, location, date, distance, duration, description, status)" +
-                "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? )";
+        String routeSql = "INSERT INTO route (id, creator_id, title, location, date, distance, duration, description, status, max_participants, min_participants)" +
+                "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)";
 
         String waypointSql = "INSERT INTO waypoint (`index`, route_id, spatial_point)" +
                 "VALUES ( ? , ? , ST_GeomFromText( ? , ? ))";
@@ -65,11 +59,98 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     @Override
     public void updateRoute(Route route) {
-        String sql = "UPDATE route" +
-                " SET title = ?, location = ?, date = ?, distance = ?, duration = ?, description = ?, status = ?" +
+        String deleteWaypointsSql = "DELETE FROM waypoint WHERE route_id = ?";;
+
+        String routeSql = "UPDATE route" +
+                     " SET title = ?, location = ?, date = ?, distance = ?, duration = ?,"+
+                     " description = ?, status = ?, max_participants = ?, min_participants = ?" +
                 " WHERE id = ?";
-        executeUpdateRouteQuery(sql, route);
+
+        String waypointSql = "INSERT INTO waypoint (`index`, route_id, spatial_point)" +
+                "VALUES ( ? , ? , ST_GeomFromText( ? , ? ))";
+        executeUpdateRouteQueryAsUnitOfWork(deleteWaypointsSql, routeSql, waypointSql, route);
     }
+
+    private void executeUpdateRouteQueryAsUnitOfWork(String deleteWaypointsSql, String routeSql, String waypointSql, Route route) throws UpdateRouteException {
+        Connection conn = null;
+        PreparedStatement pstmtRoute = null;
+        PreparedStatement pstmtWaypoint = null;
+        PreparedStatement pstmtDeleteWaypoint = null;
+        try{
+            conn = DriverManager.getConnection(url);
+            conn.setAutoCommit(false);
+
+            pstmtDeleteWaypoint = conn.prepareStatement(deleteWaypointsSql);
+            pstmtRoute = conn.prepareStatement(routeSql);
+            pstmtWaypoint = conn.prepareStatement(waypointSql);
+
+            //delete waypoints
+            pstmtDeleteWaypoint.setString(1, route.getId());
+            pstmtDeleteWaypoint.executeUpdate();
+
+            //update route
+            pstmtRoute.setString(1, route.getTitle());
+            pstmtRoute.setString(2, route.getLocation());
+            pstmtRoute.setLong(3, route.getDate().getTime() );
+            pstmtRoute.setInt(4, route.getDistance());
+            pstmtRoute.setLong(5, route.getDuration() );
+            pstmtRoute.setString(6, route.getDescription() );
+            pstmtRoute.setString(7, route.getStatus() );
+            pstmtRoute.setInt(8, route.getMaxParticipants() );
+            pstmtRoute.setInt(9, route.getMinParticipants() );
+            pstmtRoute.setString(10, route.getId());
+            int rowsEffected = pstmtRoute.executeUpdate();
+
+            if(rowsEffected == 1){
+                //create waypoints
+                for(WayPoint wayPoint : route.getWayPoints()){
+                    pstmtWaypoint.setInt(1, wayPoint.getIndex());
+                    pstmtWaypoint.setString(2, route.getId());
+                    pstmtWaypoint.setString(3, "POINT("+wayPoint.getX()+" "+wayPoint.getY()+")");
+                    pstmtWaypoint.setInt(4, wayPoint.getSRID());
+                    pstmtWaypoint.executeUpdate();
+                }
+                conn.commit();
+            }else {
+                conn.rollback();
+            }
+        }catch (SQLIntegrityConstraintViolationException e){
+            try {
+                if(conn!=null){
+                    conn.rollback();
+                }
+                throw new RouteIdDuplicationException(e.getMessage());
+            }catch (SQLException rollBackException){
+                //??
+            }
+        }catch(SQLException se){
+            try {
+                conn.rollback();
+                se.printStackTrace();
+                throw new UpdateRouteException(se.getMessage());
+            }catch (SQLException rollBackException){
+                throw new UpdateRouteException(rollBackException.getMessage());
+            }
+        }catch(Exception e){
+            try {
+                conn.rollback();
+                e.printStackTrace();
+                throw new UpdateRouteException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new UpdateRouteException(rollBackException.getMessage());
+            }
+        }finally {
+            try {
+                if(pstmtRoute != null) pstmtRoute.close();
+                if(pstmtWaypoint != null) pstmtWaypoint.close();
+                if(conn != null) conn.close();
+            } catch (SQLException e) {
+                throw new UpdateRouteException(e.getMessage());
+            }
+        }
+    }
+
+
 
     @Override
     public List<Route> getRouteList() {
@@ -131,6 +212,8 @@ public class RouteRepositoryImpl implements RouteRepository {
             route.setDuration(rs.getLong("duration"));
             route.setDescription(rs.getString("description"));
             route.setStatus(rs.getString("status"));
+            route.setMaxParticipants(rs.getInt("max_participants"));
+            route.setMinParticipants(rs.getInt("min_participants"));
             rs.close();
         }catch(SQLException se){
             throw new RouteNotFoundException(se.getMessage());
@@ -184,6 +267,8 @@ public class RouteRepositoryImpl implements RouteRepository {
             pstmtRoute.setLong(7, route.getDuration() );
             pstmtRoute.setString(8, route.getDescription() );
             pstmtRoute.setString(9, route.getStatus() );
+            pstmtRoute.setInt(10, route.getMaxParticipants() );
+            pstmtRoute.setInt(11, route.getMinParticipants() );
             int rowsEffected = pstmtRoute.executeUpdate();
 
             if(rowsEffected == 1){
