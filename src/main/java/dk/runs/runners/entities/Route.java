@@ -104,12 +104,28 @@ public class Route {
         this.status = status;
     }
 
+//    @Override
+//    public String toString(){
+//        return String.format("id: %s, title: %s, location: %s, date: %s, distance: %d, duration: %s, description: %s, status: %s, maxParticipants: %s, minParticipants: %s, waypoints: %s",
+//                                id, title, location, String.valueOf(date.getTime()), distance, String.valueOf(duration), description, status, maxParticipants, minParticipants,
+//                Arrays.toString( wayPoints.toArray( new WayPoint[wayPoints.size()] ) )
+//        );
+//    }
+
+
     @Override
-    public String toString(){
-        return String.format("id: %s, title: %s, location: %s, date: %s, distance: %d, duration: %s, description: %s, status: %s, maxParticipants: %s, minParticipants: %s, waypoints: %s",
-                                id, title, location, String.valueOf(date.getTime()), distance, String.valueOf(duration), description, status, maxParticipants, minParticipants,
-                Arrays.toString( wayPoints.toArray( new WayPoint[wayPoints.size()] ) )
-        );
+    public String toString() {
+        return "id: " +id+
+                ", title: "+title+
+                ", location: "+location+
+                ", date: "+date+
+                ", distance: "+distance+
+                ", duration: "+duration+
+                ", description: "+description+
+                ", status: "+status+
+                ", maxParticipants"+maxParticipants+
+                ", minParticipants"+minParticipants+
+                ", " +wayPoints.toString();
     }
 
     public void setWayPoints(List<WayPoint> wayPoints) {

@@ -79,7 +79,7 @@ public class RouteRepositoryImplTest {
         routeRepository.createRoute(route, user.getId());//route and waypoints
 
         Route returnedRoute = routeRepository.getRoute(route.getId());
-
+        System.out.println(route);
         //assert
         assertEquals(route.toString() , returnedRoute.toString());
 

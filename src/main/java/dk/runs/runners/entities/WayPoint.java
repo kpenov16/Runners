@@ -39,8 +39,12 @@ public class WayPoint {
         return 0;
     }
 
+//    @Override
+//    public String toString() {
+//        return String.format("x: %s, y: %s, index: %s", String.valueOf(x), String.valueOf(y), String.valueOf(index));
+//    }
     @Override
-    public String toString() {
-        return String.format("x: %s, y: %s, index: %s", String.valueOf(x), String.valueOf(y), String.valueOf(index));
+    public String toString(){
+       return "[x: " + x + ", y:"+y+", index:"+index+"]";
     }
 }
