@@ -2,8 +2,6 @@ package dk.runs.runners.usecases;
 
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.User;
-import dk.runs.runners.repositories.RouteRepositoryImpl;
-import dk.runs.runners.repositories.UserRepositoryImpl;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
@@ -11,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ShowUserCreatedRoutesImplTest {
 
@@ -39,8 +36,8 @@ public class ShowUserCreatedRoutesImplTest {
         assertEquals("user_id", routeRepository.creatorId);
         assertEquals(1, routeRepository.timesCalled);
 
-         //we check if the route was added to the user
-         assertEquals(routeRepository.fakeRouteId, user.getRoutes().get(0).getId());
+        //we check if the route was added to the user
+        assertEquals(routeRepository.fakeRouteId, user.getRoutes().get(0).getId());
     }
 
     class FakeRouteRepo implements  RouteRepository{
@@ -107,5 +104,4 @@ public class ShowUserCreatedRoutesImplTest {
 
         }
     }
-
 }

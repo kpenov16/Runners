@@ -1,9 +1,5 @@
 USE s133967;
 
-
-/*##########################################
-DDL Creating tables
-############################################*/
 CREATE TABLE route(
 	id VARCHAR(225),
 	creator_id VARCHAR(225),
