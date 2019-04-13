@@ -16,7 +16,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RunRepositoryImplTest {
-
     private Run run;
     private RunRepositoryImpl runRepository;
     private UserRepository userRepository;
@@ -26,8 +25,6 @@ class RunRepositoryImplTest {
     private final long ms = System.currentTimeMillis();
     private final long ONE_HOUR = 60*60*1_000;
     private final int DISTANCE = 5_000;
-
-
 
     @BeforeEach
     void beforeEach(){
@@ -61,6 +58,7 @@ class RunRepositoryImplTest {
         run.setRoute(route);
         run.setId(UUID.randomUUID().toString());
         run.setCheckpoints(new LinkedList<Checkpoint>());
+
         runRepository = new RunRepositoryImpl();
         runRepository.setRouteRepository(routeRepository);
     }
@@ -72,10 +70,8 @@ class RunRepositoryImplTest {
         userRepository.deleteUser(user.getId());
     }
 
-
     @Test
     void givenCreateRun_returnRunCreated(){
-
         // Arrange
         runRepository.createRun(run, route.getId(), user.getId());
         Run returnedRun = runRepository.getRun(run.getId());
@@ -83,10 +79,8 @@ class RunRepositoryImplTest {
         assertEquals(run.toString(), returnedRun.toString());
     }
 
-
     @Test
     void givenRunnerAddsACheckpoint_returnCheckpointAddedForARun(){
-
         // Arrange
         runRepository.createRun(run, route.getId(), user.getId());
 
@@ -98,10 +92,10 @@ class RunRepositoryImplTest {
 
         Run returnedRun = runRepository.getRun(run.getId());
         List<Checkpoint> returnedCheckpoints = returnedRun.getCheckpoints();
-        List<Checkpoint> extecptedCheckpoint = new LinkedList<>();
-        extecptedCheckpoint.add(new Checkpoint( new WayPoint(5.12, 5.13, 1) ) );
+        List<Checkpoint> expectedCheckpoint = new LinkedList<>();
+        expectedCheckpoint.add(new Checkpoint( new WayPoint(5.12, 5.13, 1) ) );
 
         // Act
-        assertEquals(returnedCheckpoints.toString(), extecptedCheckpoint.toString());
+        assertEquals( expectedCheckpoint.toString(), returnedCheckpoints.toString() );
     }
 }

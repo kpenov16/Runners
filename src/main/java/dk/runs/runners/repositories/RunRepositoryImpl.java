@@ -59,8 +59,10 @@ public class RunRepositoryImpl implements RunRepository {
 
     @Override
     public void deleteRun(String runId) {
-        String sqlQuery = "DELETE FROM run WHERE run.id = ?";
-        executeDeleteRunQuery(sqlQuery, runId);
+        String runSqlQuery = "DELETE FROM run WHERE run.id = ?";
+        String checkpointsSqlQuery = "DELETE FROM checkpoint WHERE run_id = ?";
+
+        executeDeleteRunQuery(runSqlQuery, checkpointsSqlQuery, runId);
     }
 
     @Override
@@ -90,7 +92,48 @@ public class RunRepositoryImpl implements RunRepository {
         }
     }
 
-    private void executeDeleteRunQuery(String sqlQuery, String runId) {
+    private void executeDeleteRunQuery(String runSqlQuery, String checkpointsSqlQuery, String runId) {
+        Connection conn = null;
+        PreparedStatement pstmtRun = null;
+        PreparedStatement pstmtCheckpoint = null;
+        try{
+            conn = DriverManager.getConnection(url);
+            conn.setAutoCommit(false);
+
+            pstmtCheckpoint = conn.prepareStatement(checkpointsSqlQuery);
+            pstmtCheckpoint.setString(1, runId);
+            pstmtCheckpoint.executeUpdate();
+
+            pstmtRun = conn.prepareStatement(runSqlQuery);
+            pstmtRun.setString(1, runId);
+            pstmtRun.executeUpdate();
+
+            conn.commit();
+        }catch(SQLException se){
+            try {
+                conn.rollback();
+                throw new DeleteRunException(se.getMessage());
+            }catch (SQLException rollBackException){
+                throw new DeleteRunException(rollBackException.getMessage());
+            }
+        }catch(Exception e){
+            try {
+                conn.rollback();
+                throw new DeleteRunException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new DeleteRunException(rollBackException.getMessage());
+            }
+        }finally {
+            try {
+                if(pstmtRun != null) pstmtRun.close();
+                if(pstmtCheckpoint != null) pstmtCheckpoint.close();
+                if(conn != null) conn.close();
+            } catch (SQLException e) {
+                throw new DeleteRunException(e.getMessage());
+            }
+        }
+
+/*
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setString(1, runId);
@@ -102,6 +145,7 @@ public class RunRepositoryImpl implements RunRepository {
             e.printStackTrace();
             throw new DeleteRunException(e.getMessage());
         }
+        */
     }
 
     private String executeGetRouteIdQuery(String sqlQuery, String runId) {

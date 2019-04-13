@@ -23,4 +23,10 @@ public class Checkpoint {
     public void setVisitedTimestamp(long visitedTimestamp) {
         this.visitedTimestamp = visitedTimestamp;
     }
+
+    @Override
+    public String toString(){
+        return "waypoint: " + wayPoint + ", " +
+                "visitedTimestamp: " + visitedTimestamp;
+    }
 }

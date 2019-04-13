@@ -26,7 +26,10 @@ public class Run {
 
     @Override
     public String toString() {
-        return String.format("Run id: %s, route: %s", id, route.toString());
+        return  "Run " +
+                "id: " + id + ", " +
+                "route: " + route + ", " +
+                "checkpoints: " + checkpoints;
     }
 
     public List<Checkpoint> getCheckpoints() {
