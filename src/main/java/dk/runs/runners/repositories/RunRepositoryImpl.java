@@ -1,11 +1,16 @@
 package dk.runs.runners.repositories;
 
+import dk.runs.runners.entities.Checkpoint;
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.Run;
+import dk.runs.runners.entities.WayPoint;
 import dk.runs.runners.usecases.RouteRepository;
 import dk.runs.runners.usecases.RunRepository;
 
 import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class RunRepositoryImpl implements RunRepository {
 
@@ -54,8 +59,74 @@ public class RunRepositoryImpl implements RunRepository {
         run.setId(runId);
         run.setRoute(route);
 
+  //      List<Integer> waypointIndices = route.getWayPoints().stream().map(WayPoint::getIndex).collect(Collectors.toList());
+
+
+        List<Checkpoint> checkpoints = getCheckpoints(runId, route.getWayPoints());
+
+        run.setCheckpoints(checkpoints);
+
+
         return run;
     }
+
+    private List<Checkpoint> getCheckpoints(String runId, List<WayPoint> waypoints) {
+        String sql = "SELECT visited_timestamp" +
+                " FROM checkpoint " +
+                " WHERE checkpoint.run_id = ? AND checkpoint.waypoint_index = ?";
+        return executeGetCheckpointsQuery(sql, new LinkedList<Checkpoint>(), runId, waypoints);
+    }
+
+    private List<Checkpoint> executeGetCheckpointsQuery(String sql, LinkedList<Checkpoint> checkpoints, String runId, List<WayPoint> waypoints) {
+
+
+        Connection conn = null;
+        PreparedStatement pstmtCheckpoint = null;
+        try{
+            conn = DriverManager.getConnection(url);
+            conn.setAutoCommit(false);
+
+            pstmtCheckpoint = conn.prepareStatement(sql);
+            pstmtCheckpoint.setString(1, runId);
+
+            for(WayPoint wayPoint: waypoints){
+                pstmtCheckpoint.setInt(2, wayPoint.getIndex());
+                ResultSet rs = pstmtCheckpoint.executeQuery();
+                while(rs.next()){
+                    long timestamp= rs.getTimestamp("visited_timestamp").getTime();
+                    Checkpoint checkpoint = new Checkpoint(wayPoint);
+                    checkpoint.setVisitedTimestamp(timestamp);
+                    checkpoints.add(checkpoint);
+                }
+            }
+
+            conn.commit(); //TODO do we need commit here?
+        }catch(SQLException se){
+            try {
+                conn.rollback();
+                throw new CheckpointException(se.getMessage());
+            }catch (SQLException rollBackException){
+                throw new CheckpointException(rollBackException.getMessage());
+            }
+        }catch(Exception e){
+            try {
+                conn.rollback();
+                throw new CheckpointException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new CheckpointException(rollBackException.getMessage());
+            }
+        }finally {
+            try {
+                if(pstmtCheckpoint != null) pstmtCheckpoint.close();
+                if(conn != null) conn.close();
+            } catch (SQLException e) {
+                throw new CheckpointException(e.getMessage());
+            }
+        }
+
+        return checkpoints;
+    }
+
 
     @Override
     public void deleteRun(String runId) {

@@ -96,6 +96,9 @@ class RunRepositoryImplTest {
         expectedCheckpoint.add(new Checkpoint( new WayPoint(5.12, 5.13, 1) ) );
 
         // Act
-        assertEquals( expectedCheckpoint.toString(), returnedCheckpoints.toString() );
+        //assertEquals( expectedCheckpoint.toString(), returnedCheckpoints.toString() );
+        assertEquals(expectedCheckpoint.size(), returnedCheckpoints.size());
+        assertEquals(expectedCheckpoint.get(0).getWayPoint().toString(), returnedCheckpoints.get(0).getWayPoint().toString());
+
     }
 }

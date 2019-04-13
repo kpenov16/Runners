@@ -23,4 +23,7 @@ public interface RunRepository {
     class DeleteRunException extends RuntimeException{
         public DeleteRunException(String msg) {super(msg);}
     }
+    class CheckpointException extends RuntimeException{
+        public CheckpointException(String msg) {super(msg);}
+    }
 }

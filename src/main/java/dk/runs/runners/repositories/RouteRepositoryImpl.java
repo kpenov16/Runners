@@ -54,7 +54,7 @@ public class RouteRepositoryImpl implements RouteRepository {
         String sql = "SELECT `index`, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y " +
                 " FROM waypoint" +
                 " WHERE waypoint.route_id = ?";
-        return executeGetRouteQuery(sql, new LinkedList<WayPoint>(), routeId);
+        return executeGetWaypointsQuery(sql, new LinkedList<WayPoint>(), routeId);
     }
 
     @Override
@@ -217,10 +217,8 @@ public class RouteRepositoryImpl implements RouteRepository {
         return route;
     }
 
-    private List<WayPoint> executeGetRouteQuery(String sql, List<WayPoint> wayPoints, String routeId) throws RouteNotFoundException {
-        String s = "SELECT index, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y " +
-                " FROM waypoint" +
-                " WHERE waypoint.route_id = ?";
+    private List<WayPoint> executeGetWaypointsQuery(String sql, List<WayPoint> wayPoints, String routeId) throws RouteNotFoundException {
+
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, routeId);
