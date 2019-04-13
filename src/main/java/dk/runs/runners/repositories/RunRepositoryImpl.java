@@ -46,9 +46,8 @@ public class RunRepositoryImpl implements RunRepository {
         }
     }
 
-
     @Override
-    public Run getRun(String runId) {
+    public Run getRunWithAllCheckpoints(String runId) {
         String sqlQuery = "SELECT route_id FROM run WHERE run.id = ?";
 
         String routeId = executeGetRouteIdQuery(sqlQuery, runId);
@@ -59,15 +58,19 @@ public class RunRepositoryImpl implements RunRepository {
         run.setId(runId);
         run.setRoute(route);
 
-  //      List<Integer> waypointIndices = route.getWayPoints().stream().map(WayPoint::getIndex).collect(Collectors.toList());
-
-
         List<Checkpoint> checkpoints = getCheckpoints(runId, route.getWayPoints());
 
         run.setCheckpoints(checkpoints);
 
-
         return run;
+    }
+
+    private List<Checkpoint> getLatestCheckpoints(String runId, List<WayPoint> waypoints) {
+        String sql = "SELECT MAX(visited_timestamp) AS visited_timestamp" +
+                " FROM checkpoint " +
+                " WHERE checkpoint.run_id = ? AND checkpoint.waypoint_index = ?" +
+                " GROUP BY checkpoint.waypoint_index";
+        return executeGetCheckpointsQuery(sql, new LinkedList<Checkpoint>(), runId, waypoints);
     }
 
     private List<Checkpoint> getCheckpoints(String runId, List<WayPoint> waypoints) {
@@ -78,8 +81,6 @@ public class RunRepositoryImpl implements RunRepository {
     }
 
     private List<Checkpoint> executeGetCheckpointsQuery(String sql, LinkedList<Checkpoint> checkpoints, String runId, List<WayPoint> waypoints) {
-
-
         Connection conn = null;
         PreparedStatement pstmtCheckpoint = null;
         try{
@@ -138,6 +139,7 @@ public class RunRepositoryImpl implements RunRepository {
 
     @Override
     public void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) {
+        waitToAvoidDuplicateTimestamps(500);
         String sqlQuery = "INSERT INTO checkpoint (run_id, waypoint_index, visited_timestamp)" +
                           " SELECT run.id, `index`, now()" +
                           " FROM waypoint" +
@@ -145,6 +147,32 @@ public class RunRepositoryImpl implements RunRepository {
                           " WHERE run.id = ? AND " +
                           " ST_Distance(spatial_point, ST_GeomFromText( ? )) <= ?";
         executeInsertCheckpointQuery(sqlQuery, runId, currentX, currentY, precision);
+    }
+
+    private void waitToAvoidDuplicateTimestamps(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) { }
+    }
+
+    @Override
+    public Run getRunWithLastCheckpoints(String runId) {
+
+        String sqlQuery = "SELECT route_id FROM run WHERE run.id = ?";
+
+        String routeId = executeGetRouteIdQuery(sqlQuery, runId);
+
+        Route route = routeRepository.getRoute(routeId);
+
+        Run run = new Run();
+        run.setId(runId);
+        run.setRoute(route);
+
+        List<Checkpoint> checkpoints = getLatestCheckpoints(runId, route.getWayPoints());
+
+        run.setCheckpoints(checkpoints);
+
+        return run;
     }
 
     private void executeInsertCheckpointQuery(String sqlQuery, String runId, double currentX, double currentY, int precision) {

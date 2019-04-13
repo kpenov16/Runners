@@ -6,7 +6,9 @@ public interface RunRepository {
 
     void createRun(Run run, String routeId, String participantId);
 
-    Run getRun(String runId);
+    Run getRunWithAllCheckpoints(String runId);
+
+    Run getRunWithLastCheckpoints(String runId);
 
     void deleteRun(String runId);
 

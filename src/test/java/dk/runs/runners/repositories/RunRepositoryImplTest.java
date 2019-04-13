@@ -2,7 +2,6 @@ package dk.runs.runners.repositories;
 
 import dk.runs.runners.entities.*;
 import dk.runs.runners.usecases.RouteRepository;
-import dk.runs.runners.usecases.RunRepository;
 import dk.runs.runners.usecases.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,8 +47,10 @@ class RunRepositoryImplTest {
         route.setMinParticipants(2);
         List<WayPoint> wayPoints = new LinkedList<>();
         WayPoint startWayPoint = new WayPoint(1.12, 1.13, 0);
-        WayPoint endWayPoint = new WayPoint(5.12, 5.13, 1);
+        WayPoint middleWayPoint = new WayPoint(3.22, 4.22, 1);
+        WayPoint endWayPoint = new WayPoint(5.12, 5.13, 2);
         wayPoints.add(startWayPoint);
+        wayPoints.add(middleWayPoint);
         wayPoints.add(endWayPoint);
         route.setWayPoints(wayPoints);
         routeRepository.createRoute(route, user.getId());
@@ -74,31 +75,72 @@ class RunRepositoryImplTest {
     void givenCreateRun_returnRunCreated(){
         // Arrange
         runRepository.createRun(run, route.getId(), user.getId());
-        Run returnedRun = runRepository.getRun(run.getId());
+        Run returnedRun = runRepository.getRunWithAllCheckpoints(run.getId());
         // Act
         assertEquals(run.toString(), returnedRun.toString());
     }
 
     @Test
-    void givenRunnerAddsACheckpoint_returnCheckpointAddedForARun(){
+    void givenRunnerAddsCheckpoints_returnCreatedCheckpointsAddedForARun(){
         // Arrange
         runRepository.createRun(run, route.getId(), user.getId());
 
         //runRepository.isACheckpoint(run, currentX, currentY);
-        double currentY = 5.1;
-        double currentX = 5.1;
+        double currentX = 1.1;
+        double currentY = 1.1;
         int precision = 1;
         runRepository.addCheckpointIfValid(run.getId(), currentX, currentY, precision);
 
-        Run returnedRun = runRepository.getRun(run.getId());
+        currentX = 3.21;
+        currentY = 4.21;
+        precision = 1;
+        runRepository.addCheckpointIfValid(run.getId(), currentX, currentY, precision);
+
+        Run returnedRun = runRepository.getRunWithAllCheckpoints(run.getId());
         List<Checkpoint> returnedCheckpoints = returnedRun.getCheckpoints();
+
         List<Checkpoint> expectedCheckpoint = new LinkedList<>();
-        expectedCheckpoint.add(new Checkpoint( new WayPoint(5.12, 5.13, 1) ) );
+        expectedCheckpoint.add(new Checkpoint( new WayPoint(1.12, 1.13, 0) ));
+        expectedCheckpoint.add(new Checkpoint( new WayPoint(3.22, 4.22, 1) ));
 
         // Act
-        //assertEquals( expectedCheckpoint.toString(), returnedCheckpoints.toString() );
         assertEquals(expectedCheckpoint.size(), returnedCheckpoints.size());
-        assertEquals(expectedCheckpoint.get(0).getWayPoint().toString(), returnedCheckpoints.get(0).getWayPoint().toString());
+        for (int i=0; i < returnedCheckpoints.size(); i++){
+            assertEquals(expectedCheckpoint.get(i).getWayPoint().toString(),
+                         returnedCheckpoints.get(i).getWayPoint().toString());
+        }
+  }
 
+    @Test
+    void givenGetRunWithMoreThanOneCheckpointForAWaypoint_returnRunWithTheNewestCheckpointForWaypoint() throws InterruptedException {
+        // Arrange
+        runRepository.createRun(run, route.getId(), user.getId());
+
+        //runRepository.isACheckpoint(run, currentX, currentY);
+        double currentX = 1.1;
+        double currentY = 1.1;
+        int precision = 1;
+        runRepository.addCheckpointIfValid(run.getId(), currentX, currentY, precision);
+
+        currentX = 3.21;
+        currentY = 4.21;
+        precision = 1;
+        runRepository.addCheckpointIfValid(run.getId(), currentX, currentY, precision);
+        runRepository.addCheckpointIfValid(run.getId(), currentX, currentY, precision);
+
+        Run returnedRun = runRepository.getRunWithLastCheckpoints(run.getId());
+        List<Checkpoint> returnedCheckpoints = returnedRun.getCheckpoints();
+
+        List<Checkpoint> expectedCheckpoint = new LinkedList<>();
+        expectedCheckpoint.add(new Checkpoint( new WayPoint(1.12, 1.13, 0) ));
+        expectedCheckpoint.add(new Checkpoint( new WayPoint(3.22, 4.22, 1) ));
+
+        // Act
+        assertEquals(expectedCheckpoint.size(), returnedCheckpoints.size());
+        for (int i=0; i < returnedCheckpoints.size(); i++){
+            assertEquals(expectedCheckpoint.get(i).getWayPoint().toString(),
+                    returnedCheckpoints.get(i).getWayPoint().toString());
+        }
     }
+
 }
