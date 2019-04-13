@@ -174,7 +174,7 @@ public class UserRepositoryImplTest {
     }
 
     @Test
-    public void givenGetUsersList_returnListIsNotEmpty(){
+    public void given_return(){
 
     }
 

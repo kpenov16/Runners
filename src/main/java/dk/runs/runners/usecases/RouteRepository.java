@@ -7,13 +7,14 @@ import java.util.List;
 public interface RouteRepository {
     void createRoute(Route route, String creatorId) throws CreateRouteException, RouteIdDuplicationException;
 
-    Route getRoute(String id) throws RouteNotFoundException;
+    Route getRoute(String routeId) throws RouteNotFoundException;
+    List<Route> getRoutes(String creatorId);
 
     void updateRoute(Route updatedRoute);
 
     List<Route> getRouteList();
 
-    void deleteRoute(String id)throws DeleteRouteException;
+    void deleteRoute(String routeId)throws DeleteRouteException;
 
     class UpdateRouteException extends RuntimeException{
         public UpdateRouteException(String msg){

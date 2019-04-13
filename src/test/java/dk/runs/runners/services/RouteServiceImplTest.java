@@ -40,9 +40,15 @@ class RouteServiceImplTest {
             throw new RouteIdDuplicationException("PRIMARY KEY");
         }
         @Override
-        public Route getRoute(String id) throws RouteNotFoundException {
+        public Route getRoute(String routeId) throws RouteNotFoundException {
             return null;
         }
+
+        @Override
+        public List<Route> getRoutes(String creatorId) {
+            return null;
+        }
+
         @Override
         public void updateRoute(Route updatedRoute) {
 
@@ -52,7 +58,7 @@ class RouteServiceImplTest {
             return null;
         }
         @Override
-        public void deleteRoute(String id) throws DeleteRouteException {
+        public void deleteRoute(String routeId) throws DeleteRouteException {
 
         }
     }

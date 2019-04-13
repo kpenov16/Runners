@@ -1,10 +1,14 @@
 package dk.runs.runners.entities;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class User {
     private String id = "";
     private String userName = "";
     private String email = "";
     private String password = "";
+    private List<Route> routes = new LinkedList<>();
 
     public User(){}
     public User(String id){
@@ -41,5 +45,11 @@ public class User {
         this.password = password;
     }
 
+    public void setRoutes(List<Route> routes) {
+        this.routes = routes;
+    }
 
+    public List<Route> getRoutes() {
+        return this.routes;
+    }
 }

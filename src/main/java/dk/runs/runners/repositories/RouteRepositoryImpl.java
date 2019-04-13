@@ -41,13 +41,25 @@ public class RouteRepositoryImpl implements RouteRepository {
     }
 
     @Override
-    public Route getRoute(String id) throws RouteNotFoundException {
+    public Route getRoute(String routeId) throws RouteNotFoundException {
         String sql = "SELECT * " +
                 " FROM route" +
                 " WHERE route.id = ?";
-        Route route = executeGetRouteQuery(sql,new Route(id));
+        Route route = executeGetRouteQuery(sql,new Route(routeId));
         route.setWayPoints(getWaypoints(route.getId()));
         return route;
+    }
+
+    @Override
+    public List<Route> getRoutes(String creatorId) {
+        String sql = "SELECT * " +
+                     " FROM route" +
+                     " WHERE route.creator_id = ?";
+        List<Route> routes = executeGetRouteQuery( sql, creatorId );
+        for(Route r : routes){
+            r.setWayPoints( getWaypoints(r.getId()) );
+        }
+        return routes;
     }
 
     private List<WayPoint> getWaypoints(String routeId) {
@@ -192,6 +204,35 @@ public class RouteRepositoryImpl implements RouteRepository {
             throw new UpdateRouteException(e.getMessage());
         }
     }
+
+    private List<Route> executeGetRouteQuery(String sql, String creatorId) throws RouteNotFoundException {
+        List<Route> routes = new LinkedList<>();
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt= conn.prepareStatement(sql)){
+            pstmt.setString(1, creatorId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()){
+                Route route = new Route(rs.getString("id"));
+                route.setTitle(rs.getString("title"));
+                route.setLocation(rs.getString("location"));
+                route.setDate( new java.util.Date( rs.getLong("date") ));
+                route.setDistance(rs.getInt("distance"));
+                route.setDuration(rs.getLong("duration"));
+                route.setDescription(rs.getString("description"));
+                route.setStatus(rs.getString("status"));
+                route.setMaxParticipants(rs.getInt("max_participants"));
+                route.setMinParticipants(rs.getInt("min_participants"));
+                routes.add(route);
+            }
+            rs.close();
+        }catch(SQLException se){
+            throw new RouteNotFoundException(se.getMessage());
+        }catch(Exception e){
+            throw new RouteNotFoundException(e.getMessage());
+        }
+        return routes;
+    }
+
 
     private Route executeGetRouteQuery(String sql, Route route) throws RouteNotFoundException {
         try(Connection conn = DriverManager.getConnection(url);

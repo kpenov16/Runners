@@ -9,10 +9,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,6 +23,8 @@ public class RouteRepositoryImplTest {
     private User user;
     private Route secondRoute;
     private final long ms = System.currentTimeMillis();
+    private final long ms2 = System.currentTimeMillis() + 500;
+
     private final long ONE_HOUR = 60*60*1_000;
     private final int DISTANCE = 5_000;
 
@@ -58,7 +58,7 @@ public class RouteRepositoryImplTest {
         secondRoute.setTitle("Slow Route");
         secondRoute.setLocation("Copenhagen");
         secondRoute.setDescription("It is going to be very fun!!!");
-        secondRoute.setDate(new Date(ms));
+        secondRoute.setDate(new Date(ms2));
         secondRoute.setStatus("active");
         secondRoute.setDuration(ONE_HOUR);
         secondRoute.setDistance(DISTANCE);
@@ -79,14 +79,31 @@ public class RouteRepositoryImplTest {
         routeRepository.createRoute(route, user.getId());//route and waypoints
 
         Route returnedRoute = routeRepository.getRoute(route.getId());
-        System.out.println(route);
+
         //assert
         assertEquals(route.toString() , returnedRoute.toString());
-
-        //clean up
-        RouteRepositoryImpl runRepositoryImpl = (RouteRepositoryImpl) routeRepository;
-        runRepositoryImpl.deleteRoute(route.getId());
      }
+
+    @Test
+    public void givenUserCreatesTwoRoutes_returnRoutesCreated() {
+        //act
+        userRepository.createUser(user);
+        routeRepository.createRoute(route, user.getId());//route and waypoints
+        routeRepository.createRoute(secondRoute, user.getId());//route and waypoints
+
+        List<Route> returnedRoutes = routeRepository.getRoutes(user.getId());
+
+        List<Route> expectedRoutes = new LinkedList<Route>(){{
+            add(route);
+            add(secondRoute);
+        }};
+
+        Collections.sort(expectedRoutes, (r1,r2)->Long.compare(r1.getDate().getTime(),r2.getDate().getTime()));
+        Collections.sort(returnedRoutes, (r1,r2)->Long.compare(r1.getDate().getTime(),r2.getDate().getTime()));
+
+        //assert
+        assertEquals( expectedRoutes.toString() , returnedRoutes.toString() );
+    }
 
     @Test
     public void givenRouteUpdated_returnRouteUpdated() {

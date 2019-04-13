@@ -14,7 +14,7 @@ public class CreateRouteImpl {
     }
 
     public void execute(Route route, String userId){
-        // services
+        routeRepository.createRoute(route, userId);
     }
 
     public void setRouteRepository(RouteRepository routeRepository) {

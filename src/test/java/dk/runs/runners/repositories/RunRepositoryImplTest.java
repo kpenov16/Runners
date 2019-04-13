@@ -142,5 +142,4 @@ class RunRepositoryImplTest {
                     returnedCheckpoints.get(i).getWayPoint().toString());
         }
     }
-
 }
