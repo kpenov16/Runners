@@ -20,13 +20,21 @@ public class RouteTest {
         String id = UUID.randomUUID().toString();
         route = new Route(id);
         route.setTitle("Route three");
-        route.setLocation("Stockholm");
         route.setDescription("It is going to be very fun!!!");
         Date date = new Date(ms);
         route.setDate(date);
         route.setStatus("active");
         route.setDuration(ONE_HOUR);
         route.setDistance(DISTANCE);
+
+        Location location = new Location(UUID.randomUUID().toString());
+        location.setX(2.2123);
+        location.setY(2.3123);
+        location.setCity("Stockholm");
+        location.setCountry("Sweden");
+        location.setStreetName("Main street");
+        location.setStreetNumber("5A");
+        route.setLocation(location);
 
         List<WayPoint> wayPoints = new LinkedList<>();
         WayPoint startWayPoint = new WayPoint(1.12, 1.13, 0);
@@ -38,7 +46,7 @@ public class RouteTest {
 
         assertEquals(id, route.getId());
         assertEquals("Route three", route.getTitle());
-        assertEquals("Stockholm", route.getLocation());
+        assertEquals(location.toString(), route.getLocation().toString());
         assertEquals("It is going to be very fun!!!", route.getDescription());
         assertEquals(date.getTime(), route.getDate().getTime());
         assertEquals("active", route.getStatus());

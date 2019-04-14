@@ -1,5 +1,6 @@
 package dk.runs.runners.usecases;
 
+import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.User;
 import dk.runs.runners.repositories.RouteRepositoryImpl;
@@ -32,12 +33,20 @@ public class CreateRouteImplTest {
 
         route = new Route(UUID.randomUUID().toString());
         route.setTitle("Route three");
-        route.setLocation("Stockholm");
         route.setDescription("It is going to be very fun!!!");
         route.setDate(new Date(ms));
         route.setStatus("active");
         route.setDuration(ONE_HOUR);
         route.setDistance(DISTANCE);
+
+        Location location = new Location(UUID.randomUUID().toString());
+        location.setX(2.2123);
+        location.setY(2.3123);
+        location.setCity("Stockholm");
+        location.setCountry("Sweden");
+        location.setStreetName("Main street");
+        location.setStreetNumber("5A");
+        route.setLocation(location);
 
         user = new User(UUID.randomUUID().toString());
         user.setEmail("runner@runner.com");

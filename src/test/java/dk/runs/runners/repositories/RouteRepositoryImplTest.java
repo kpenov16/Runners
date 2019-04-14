@@ -44,7 +44,8 @@ public class RouteRepositoryImplTest {
         location.setY(2.3123);
         location.setCity("Stockholm");
         location.setCountry("Sweden");
-        location.setStreetName("Main street 5");
+        location.setStreetName("Main street");
+        location.setStreetNumber("5A");
         route.setLocation(location);
         route.setDescription("It is going to be very fun!!!");
         route.setDate(new Date(ms));
@@ -68,7 +69,8 @@ public class RouteRepositoryImplTest {
         secondRouteLocation.setY(2.3123);
         secondRouteLocation.setCity("Copenhagen");
         secondRouteLocation.setCountry("Denmark");
-        secondRouteLocation.setStreetName("Skolegade 10");
+        secondRouteLocation.setStreetName("Skolegade");
+        secondRouteLocation.setStreetNumber("10");
         secondRoute.setLocation(secondRouteLocation);
         secondRoute.setDescription("It is going to be very fun!!!");
         secondRoute.setDate(new Date(ms2));
@@ -81,7 +83,6 @@ public class RouteRepositoryImplTest {
     public void tearDown(){
         routeRepository.deleteRoute(route.getId());
         routeRepository.deleteRoute(secondRoute.getId());
-
         userRepository.deleteUser(user.getId());
     }
 
@@ -126,12 +127,13 @@ public class RouteRepositoryImplTest {
 
         Route updatedRoute = route;
         updatedRoute.setTitle("new Title");
-        Location newLocation = new Location();
-        newLocation.setX(22.2123);
-        newLocation.setY(23.3123);
+        Location newLocation = new Location(route.getLocation().getId());
+        newLocation.setX(11.2123);
+        newLocation.setY(33.3123);
         newLocation.setCity("Germany");
+        newLocation.setStreetName("Alabala street");
+        newLocation.setStreetNumber("6B");
         newLocation.setCountry("Berlin");
-        newLocation.setStreetName("Alabala street 5");
         updatedRoute.setLocation(newLocation);
         updatedRoute.setDate(new Date());
         updatedRoute.setDistance(1000);

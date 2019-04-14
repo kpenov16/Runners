@@ -37,7 +37,6 @@ class RunRepositoryImplTest {
         routeRepository = new RouteRepositoryImpl();
         route = new Route(UUID.randomUUID().toString());
         route.setTitle("Route three");
-        route.setLocation("Stockholm");
         route.setDescription("It is going to be very fun!!!");
         route.setDate(new Date(ms));
         route.setStatus("active");
@@ -45,6 +44,16 @@ class RunRepositoryImplTest {
         route.setDistance(DISTANCE);
         route.setMaxParticipants(5);
         route.setMinParticipants(2);
+
+        Location location = new Location(UUID.randomUUID().toString());
+        location.setX(2.2123);
+        location.setY(2.3123);
+        location.setCity("Stockholm");
+        location.setCountry("Sweden");
+        location.setStreetName("Main street");
+        location.setStreetNumber("5A");
+        route.setLocation(location);
+
         List<WayPoint> wayPoints = new LinkedList<>();
         WayPoint startWayPoint = new WayPoint(1.12, 1.13, 0);
         WayPoint middleWayPoint = new WayPoint(3.22, 4.22, 1);
