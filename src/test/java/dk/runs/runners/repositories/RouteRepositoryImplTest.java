@@ -78,13 +78,13 @@ public class RouteRepositoryImplTest {
         secondRoute.setDuration(ONE_HOUR);
         secondRoute.setDistance(DISTANCE);
     }
-
+    /*
     @AfterEach
     public void tearDown(){
         routeRepository.deleteRoute(route.getId());
         routeRepository.deleteRoute(secondRoute.getId());
         userRepository.deleteUser(user.getId());
-    }
+    }*/
 
     @Test
      public void givenCreateRoute_returnRouteCreated() {
@@ -96,7 +96,11 @@ public class RouteRepositoryImplTest {
 
         //assert
         assertEquals(route.toString() , returnedRoute.toString());
-     }
+
+        //clean-up
+        routeRepository.deleteRoute(route.getId());
+        userRepository.deleteUser(user.getId());
+    }
 
     @Test
     public void givenUserCreatesTwoRoutes_returnRoutesCreated() {
@@ -117,6 +121,11 @@ public class RouteRepositoryImplTest {
 
         //assert
         assertEquals( expectedRoutes.toString() , returnedRoutes.toString() );
+
+        //clean-up
+        routeRepository.deleteRoute(route.getId());
+        routeRepository.deleteRoute(secondRoute.getId());
+        userRepository.deleteUser(user.getId());
     }
 
     @Test
@@ -157,8 +166,8 @@ public class RouteRepositoryImplTest {
         assertEquals(updatedRoute.toString(), returnedRoute.toString());
 
         //clean up
-        RouteRepositoryImpl runRepositoryImpl = (RouteRepositoryImpl) routeRepository;
-        runRepositoryImpl.deleteRoute(route.getId());
+        routeRepository.deleteRoute(route.getId());
+        userRepository.deleteUser(user.getId());
     }
 
     @Test
@@ -179,6 +188,9 @@ public class RouteRepositoryImplTest {
                 () -> routeRepository.createRoute(route, user.getId())
         );
 
+        //clean up
+        routeRepository.deleteRoute(route.getId());
+        userRepository.deleteUser(user.getId());
     }
 
     @Test
@@ -188,9 +200,10 @@ public class RouteRepositoryImplTest {
         routeRepository.createRoute(route, user.getId());
         routeRepository.createRoute(secondRoute, user.getId());
         assertTrue(routeRepository.getRouteList().size() > 0);
+
         //clean up
-        RouteRepositoryImpl runRepositoryImpl = (RouteRepositoryImpl) routeRepository;
-        runRepositoryImpl.deleteRoute(route.getId());
-        runRepositoryImpl.deleteRoute(secondRoute.getId());
+        routeRepository.deleteRoute(route.getId());
+        routeRepository.deleteRoute(secondRoute.getId());
+        userRepository.deleteUser(user.getId());
     }
 }
