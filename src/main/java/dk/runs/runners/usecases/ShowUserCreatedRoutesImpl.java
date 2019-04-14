@@ -22,7 +22,6 @@ public class ShowUserCreatedRoutesImpl {
         return userRepository;
     }
 
-
     public void setRouteRepository(RouteRepository routeRepository) {
         this.routeRepository = routeRepository;
     }

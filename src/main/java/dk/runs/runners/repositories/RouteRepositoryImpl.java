@@ -1,5 +1,6 @@
 package dk.runs.runners.repositories;
 
+import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.WayPoint;
 import dk.runs.runners.usecases.RouteRepository;
@@ -15,12 +16,19 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     @Override
     public void createRoute(Route route, String creatorId) throws CreateRouteException {
-        String routeSql = "INSERT INTO route (id, creator_id, title, location, date, distance, duration, description, status, max_participants, min_participants)" +
-                "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)";
+        String routeSql = "INSERT INTO route (id, creator_id, title, date, distance, duration, description, status, max_participants, min_participants)" +
+                "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )";
+
+        String locationSql = "INSERT INTO location (id, street_name, street_number, city, country, spatial_point)" +
+                "VALUES ( ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";
+
+        String locationRouteSql = "INSERT INTO location_route ( location_id, route_id )" +
+                                  "VALUES ( ? , ? )";
 
         String waypointSql = "INSERT INTO waypoint (`index`, route_id, spatial_point)" +
                 "VALUES ( ? , ? , ST_GeomFromText( ? , ? ))";
-        executeCreateRouteQueryAsUnitOfWork(routeSql, waypointSql, route, creatorId);
+
+        executeCreateRouteQueryAsUnitOfWork(routeSql, waypointSql, locationSql, locationRouteSql, route, creatorId);
     }
 
     private long executeGetIdQuery(String sql, long creatorId) throws RouteNotFoundException {
@@ -46,7 +54,8 @@ public class RouteRepositoryImpl implements RouteRepository {
                 " FROM route" +
                 " WHERE route.id = ?";
         Route route = executeGetRouteQuery(sql,new Route(routeId));
-        route.setWayPoints(getWaypoints(route.getId()));
+        route.setWayPoints( getWaypoints(route.getId()) );
+        route.setLocation( getLocation(route.getId()) );
         return route;
     }
 
@@ -67,6 +76,14 @@ public class RouteRepositoryImpl implements RouteRepository {
                 " FROM waypoint" +
                 " WHERE waypoint.route_id = ?";
         return executeGetWaypointsQuery(sql, new LinkedList<WayPoint>(), routeId);
+    }
+
+    private Location getLocation(String routeId) {
+        String sql = " SELECT id, street_name, street_number, city, country, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y" +
+                     " FROM location JOIN location_route" +
+                     " ON location_route.location_id = location.id" +
+                     " WHERE location_route.route_id = ? ";
+        return executeGetLocationQuery(sql, routeId);
     }
 
     @Override
@@ -258,6 +275,31 @@ public class RouteRepositoryImpl implements RouteRepository {
         return route;
     }
 
+    private Location executeGetLocationQuery(String locationSql, String routeId) throws RouteNotFoundException {
+        Location location = null;
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt= conn.prepareStatement(locationSql)){
+            pstmt.setString(1, routeId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()){
+                location = new Location(rs.getString("id"));
+                location.setStreetName(rs.getString("street_name"));
+                location.setStreetNumber(rs.getString("street_number"));
+                location.setCity(rs.getString("city"));
+                location.setCountry(rs.getString("country"));
+                location.setX(rs.getDouble("X"));
+                location.setX(rs.getDouble("Y"));
+            }
+            rs.close();
+        }catch(SQLException se){
+            throw new RouteNotFoundException(se.getMessage());
+        }catch(Exception e){
+            throw new RouteNotFoundException(e.getMessage());
+        }
+        return location;
+    }
+
+
     private List<WayPoint> executeGetWaypointsQuery(String sql, List<WayPoint> wayPoints, String routeId) throws RouteNotFoundException {
 
         try(Connection conn = DriverManager.getConnection(url);
@@ -279,33 +321,43 @@ public class RouteRepositoryImpl implements RouteRepository {
         return wayPoints;
     }
 
-    private void executeCreateRouteQueryAsUnitOfWork(String routeSql, String waypointSql, Route route, String creatorId) throws CreateRouteException {
+    private void executeCreateRouteQueryAsUnitOfWork(String routeSql, String waypointSql, String locationSql,
+                                                     String locationRouteSql, Route route, String creatorId) throws CreateRouteException {
         Connection conn = null;
         PreparedStatement pstmtRoute = null;
         PreparedStatement pstmtWaypoint = null;
+        PreparedStatement pstmtLocation = null;
+        PreparedStatement pstmtLocationRoute = null;
+
         try{
             conn = DriverManager.getConnection(url);
             conn.setAutoCommit(false);
 
             pstmtRoute = conn.prepareStatement(routeSql);
             pstmtWaypoint = conn.prepareStatement(waypointSql);
+            pstmtLocation = conn.prepareStatement(locationSql);
+            pstmtLocationRoute = conn.prepareStatement(locationRouteSql);
 
 
             pstmtRoute.setString(1, route.getId());
             pstmtRoute.setString(2, creatorId);
             pstmtRoute.setString(3, route.getTitle());
-            pstmtRoute.setString(4, route.getLocation());
-            pstmtRoute.setLong(5, route.getDate().getTime() );
-            pstmtRoute.setInt(6, route.getDistance());
-            pstmtRoute.setLong(7, route.getDuration() );
-            pstmtRoute.setString(8, route.getDescription() );
-            pstmtRoute.setString(9, route.getStatus() );
-            pstmtRoute.setInt(10, route.getMaxParticipants() );
-            pstmtRoute.setInt(11, route.getMinParticipants() );
+            pstmtRoute.setLong(4, route.getDate().getTime() );
+            pstmtRoute.setInt(5, route.getDistance());
+            pstmtRoute.setLong(6, route.getDuration() );
+            pstmtRoute.setString(7, route.getDescription() );
+            pstmtRoute.setString(8, route.getStatus() );
+            pstmtRoute.setInt(9, route.getMaxParticipants() );
+            pstmtRoute.setInt(10, route.getMinParticipants() );
             int rowsEffected = pstmtRoute.executeUpdate();
 
             if(rowsEffected == 1){
+                executeCreateLocationQuery(route, pstmtLocation);
+
+                executeCreateLocationRouteQuery(route, pstmtLocationRoute);
+
                 executeCreateWaypointsQuery(route, pstmtWaypoint);
+
                 conn.commit();
             }else {
                 conn.rollback();
@@ -356,6 +408,30 @@ public class RouteRepositoryImpl implements RouteRepository {
         }
     }
 
+    private void executeCreateLocationRouteQuery(Route route, PreparedStatement pstmtLocationRoute) throws SQLException {
+        final Location location = route.getLocation();
+        if (location != null) {
+            pstmtLocationRoute.setString(1, location.getId());
+            pstmtLocationRoute.setString(2, route.getId());
+            pstmtLocationRoute.executeUpdate();
+        }
+    }
+
+    private void executeCreateLocationQuery(Route route, PreparedStatement pstmtLocation) throws SQLException {
+        /*"INSERT INTO location (route_id, street_name, street_number, city, country, spatial_point)" +
+                "VALUES ( ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";*/
+        final Location location = route.getLocation();
+        if (location !=null) {
+            pstmtLocation.setString(1, location.getId());
+            pstmtLocation.setString(2, location.getStreetName());
+            pstmtLocation.setString(3, location.getStreetNumber());
+            pstmtLocation.setString(4, location.getCity());
+            pstmtLocation.setString(5, location.getCountry());
+            pstmtLocation.setString(6, "POINT(" + location.getX() + " " + location.getY() + ")");
+            pstmtLocation.setInt(7, location.getSRID());
+            pstmtLocation.executeUpdate();
+        }
+    }
 
     private void executeCreateRouteQuery(String sql, Route route, String creatorId) throws CreateRouteException {
         try(Connection conn = DriverManager.getConnection(url);

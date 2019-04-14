@@ -1,5 +1,6 @@
 package dk.runs.runners.repositories;
 
+import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.User;
 import dk.runs.runners.entities.WayPoint;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,7 +39,13 @@ public class RouteRepositoryImplTest {
         routeRepository = new RouteRepositoryImpl();
         route = new Route(UUID.randomUUID().toString());
         route.setTitle("Route three");
-        route.setLocation("Stockholm");
+        Location location = new Location(UUID.randomUUID().toString());
+        location.setX(2.2123);
+        location.setY(2.3123);
+        location.setCity("Stockholm");
+        location.setCountry("Sweden");
+        location.setStreetName("Main street 5");
+        route.setLocation(location);
         route.setDescription("It is going to be very fun!!!");
         route.setDate(new Date(ms));
         route.setStatus("active");
@@ -47,6 +53,7 @@ public class RouteRepositoryImplTest {
         route.setDistance(DISTANCE);
         route.setMaxParticipants(5);
         route.setMinParticipants(2);
+
         List<WayPoint> wayPoints = new LinkedList<>();
         WayPoint startWayPoint = new WayPoint(1.12, 1.13, 0);
         WayPoint endWayPoint = new WayPoint(5.12, 5.13, 1);
@@ -56,7 +63,13 @@ public class RouteRepositoryImplTest {
 
         secondRoute = new Route(UUID.randomUUID().toString());
         secondRoute.setTitle("Slow Route");
-        secondRoute.setLocation("Copenhagen");
+        Location secondRouteLocation = new Location(UUID.randomUUID().toString());
+        secondRouteLocation.setX(2.2123);
+        secondRouteLocation.setY(2.3123);
+        secondRouteLocation.setCity("Copenhagen");
+        secondRouteLocation.setCountry("Denmark");
+        secondRouteLocation.setStreetName("Skolegade 10");
+        secondRoute.setLocation(secondRouteLocation);
         secondRoute.setDescription("It is going to be very fun!!!");
         secondRoute.setDate(new Date(ms2));
         secondRoute.setStatus("active");
@@ -113,7 +126,13 @@ public class RouteRepositoryImplTest {
 
         Route updatedRoute = route;
         updatedRoute.setTitle("new Title");
-        updatedRoute.setLocation("new Location");
+        Location newLocation = new Location();
+        newLocation.setX(22.2123);
+        newLocation.setY(23.3123);
+        newLocation.setCity("Germany");
+        newLocation.setCountry("Berlin");
+        newLocation.setStreetName("Alabala street 5");
+        updatedRoute.setLocation(newLocation);
         updatedRoute.setDate(new Date());
         updatedRoute.setDistance(1000);
         updatedRoute.setDuration(2000);
