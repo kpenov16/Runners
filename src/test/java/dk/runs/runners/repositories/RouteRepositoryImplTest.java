@@ -1,5 +1,6 @@
 package dk.runs.runners.repositories;
 
+import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.User;
 import dk.runs.runners.entities.WayPoint;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,7 +39,14 @@ public class RouteRepositoryImplTest {
         routeRepository = new RouteRepositoryImpl();
         route = new Route(UUID.randomUUID().toString());
         route.setTitle("Route three");
-        route.setLocation("Stockholm");
+        Location location = new Location(UUID.randomUUID().toString());
+        location.setX(2.2123);
+        location.setY(2.3123);
+        location.setCity("Stockholm");
+        location.setCountry("Sweden");
+        location.setStreetName("Main street");
+        location.setStreetNumber("5A");
+        route.setLocation(location);
         route.setDescription("It is going to be very fun!!!");
         route.setDate(new Date(ms));
         route.setStatus("active");
@@ -47,6 +54,7 @@ public class RouteRepositoryImplTest {
         route.setDistance(DISTANCE);
         route.setMaxParticipants(5);
         route.setMinParticipants(2);
+
         List<WayPoint> wayPoints = new LinkedList<>();
         WayPoint startWayPoint = new WayPoint(1.12, 1.13, 0);
         WayPoint endWayPoint = new WayPoint(5.12, 5.13, 1);
@@ -56,21 +64,27 @@ public class RouteRepositoryImplTest {
 
         secondRoute = new Route(UUID.randomUUID().toString());
         secondRoute.setTitle("Slow Route");
-        secondRoute.setLocation("Copenhagen");
+        Location secondRouteLocation = new Location(UUID.randomUUID().toString());
+        secondRouteLocation.setX(2.2123);
+        secondRouteLocation.setY(2.3123);
+        secondRouteLocation.setCity("Copenhagen");
+        secondRouteLocation.setCountry("Denmark");
+        secondRouteLocation.setStreetName("Skolegade");
+        secondRouteLocation.setStreetNumber("10");
+        secondRoute.setLocation(secondRouteLocation);
         secondRoute.setDescription("It is going to be very fun!!!");
         secondRoute.setDate(new Date(ms2));
         secondRoute.setStatus("active");
         secondRoute.setDuration(ONE_HOUR);
         secondRoute.setDistance(DISTANCE);
     }
-
+    /*
     @AfterEach
     public void tearDown(){
         routeRepository.deleteRoute(route.getId());
         routeRepository.deleteRoute(secondRoute.getId());
-
         userRepository.deleteUser(user.getId());
-    }
+    }*/
 
     @Test
      public void givenCreateRoute_returnRouteCreated() {
@@ -82,7 +96,11 @@ public class RouteRepositoryImplTest {
 
         //assert
         assertEquals(route.toString() , returnedRoute.toString());
-     }
+
+        //clean-up
+        routeRepository.deleteRoute(route.getId());
+        userRepository.deleteUser(user.getId());
+    }
 
     @Test
     public void givenUserCreatesTwoRoutes_returnRoutesCreated() {
@@ -103,6 +121,11 @@ public class RouteRepositoryImplTest {
 
         //assert
         assertEquals( expectedRoutes.toString() , returnedRoutes.toString() );
+
+        //clean-up
+        routeRepository.deleteRoute(route.getId());
+        routeRepository.deleteRoute(secondRoute.getId());
+        userRepository.deleteUser(user.getId());
     }
 
     @Test
@@ -113,7 +136,14 @@ public class RouteRepositoryImplTest {
 
         Route updatedRoute = route;
         updatedRoute.setTitle("new Title");
-        updatedRoute.setLocation("new Location");
+        Location newLocation = new Location(route.getLocation().getId());
+        newLocation.setX(11.2123);
+        newLocation.setY(33.3123);
+        newLocation.setCity("Germany");
+        newLocation.setStreetName("Alabala street");
+        newLocation.setStreetNumber("6B");
+        newLocation.setCountry("Berlin");
+        updatedRoute.setLocation(newLocation);
         updatedRoute.setDate(new Date());
         updatedRoute.setDistance(1000);
         updatedRoute.setDuration(2000);
@@ -136,8 +166,8 @@ public class RouteRepositoryImplTest {
         assertEquals(updatedRoute.toString(), returnedRoute.toString());
 
         //clean up
-        RouteRepositoryImpl runRepositoryImpl = (RouteRepositoryImpl) routeRepository;
-        runRepositoryImpl.deleteRoute(route.getId());
+        routeRepository.deleteRoute(route.getId());
+        userRepository.deleteUser(user.getId());
     }
 
     @Test
@@ -158,6 +188,9 @@ public class RouteRepositoryImplTest {
                 () -> routeRepository.createRoute(route, user.getId())
         );
 
+        //clean up
+        routeRepository.deleteRoute(route.getId());
+        userRepository.deleteUser(user.getId());
     }
 
     @Test
@@ -167,9 +200,10 @@ public class RouteRepositoryImplTest {
         routeRepository.createRoute(route, user.getId());
         routeRepository.createRoute(secondRoute, user.getId());
         assertTrue(routeRepository.getRouteList().size() > 0);
+
         //clean up
-        RouteRepositoryImpl runRepositoryImpl = (RouteRepositoryImpl) routeRepository;
-        runRepositoryImpl.deleteRoute(route.getId());
-        runRepositoryImpl.deleteRoute(secondRoute.getId());
+        routeRepository.deleteRoute(route.getId());
+        routeRepository.deleteRoute(secondRoute.getId());
+        userRepository.deleteUser(user.getId());
     }
 }

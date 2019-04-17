@@ -1,14 +1,11 @@
 package dk.runs.runners.entities;
 
-import org.springframework.util.comparator.Comparators;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Route {
     private String id = "";
     private String title = "";
-    private String location = "";
+    private Location location;
     private Date date = null;
     private int distance = 0;
     private long duration = 0;
@@ -56,11 +53,11 @@ public class Route {
         this.id = id;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 

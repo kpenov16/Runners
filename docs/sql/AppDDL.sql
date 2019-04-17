@@ -1,5 +1,7 @@
 USE s133967;
 
+DROP TABLE IF EXISTS location_user;
+DROP TABLE IF EXISTS location_route;
 DROP TABLE IF EXISTS checkpoint;
 DROP TABLE IF EXISTS run;
 DROP TABLE IF EXISTS waypoint;
@@ -19,7 +21,6 @@ CREATE TABLE IF NOT EXISTS route(
 	id VARCHAR(225),
 	creator_id VARCHAR(225),
     title VARCHAR(225),
-    location VARCHAR(225),
     `date` BIGINT,
     distance INT,
     duration BIGINT,
@@ -32,12 +33,29 @@ CREATE TABLE IF NOT EXISTS route(
 );
 
 CREATE TABLE IF NOT EXISTS location(
-	route_id VARCHAR(225),
-    address VARCHAR(225),
+	id VARCHAR(225),
+    street_name VARCHAR(225),
+    street_number VARCHAR(225),
     city VARCHAR(225),
     country VARCHAR(225),
     spatial_point POINT NOT NULL SRID 0,
-    FOREIGN KEY (route_id) REFERENCES route (id)
+    PRIMARY KEY (id)
+); 
+
+CREATE TABLE IF NOT EXISTS location_user(
+	location_id VARCHAR(225),
+    user_id VARCHAR(225),
+    PRIMARY KEY (user_id),
+    FOREIGN KEY (location_id ) REFERENCES location (id),
+    FOREIGN KEY (user_id ) REFERENCES `user` (id)
+); 
+
+CREATE TABLE IF NOT EXISTS location_route(
+	location_id VARCHAR(225),
+    route_id VARCHAR(225),
+    PRIMARY KEY (route_id),
+    FOREIGN KEY (location_id ) REFERENCES location (id),
+    FOREIGN KEY (route_id ) REFERENCES route (id)
 ); 
 
 CREATE TABLE IF NOT EXISTS waypoint(
