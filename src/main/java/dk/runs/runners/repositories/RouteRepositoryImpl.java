@@ -189,8 +189,6 @@ public class RouteRepositoryImpl implements RouteRepository {
         }
     }
 
-
-
     @Override
     public List<Route> getRouteList() {
         String sql = "SELECT route.id AS id " +
@@ -219,25 +217,6 @@ public class RouteRepositoryImpl implements RouteRepository {
         }
         return routes;
     }
-
- /*   private void executeUpdateRouteQuery(String sql, Route route) throws UpdateRouteException {
-        try(Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt= conn.prepareStatement(sql)){
-            pstmt.setString(1, route.getTitle());
-            pstmt.setString(2, route.getLocation());
-            pstmt.setLong(3, route.getDate().getTime() );
-            pstmt.setInt(4, route.getDistance());
-            pstmt.setLong(5, route.getDuration() );
-            pstmt.setString(6, route.getDescription() );
-            pstmt.setString(7, route.getStatus() );
-            pstmt.setString(8, route.getId() );
-            pstmt.executeUpdate();
-        }catch(SQLException se){
-            throw new UpdateRouteException(se.getMessage());
-        }catch(Exception e){
-            throw new UpdateRouteException(e.getMessage());
-        }
-    }*/
 
     private List<Route> executeGetRouteQuery(String sql, String creatorId) throws RouteNotFoundException {
         List<Route> routes = new LinkedList<>();
@@ -464,35 +443,6 @@ public class RouteRepositoryImpl implements RouteRepository {
             pstmtLocation.executeUpdate();
         }
     }
-/*
-    private void executeCreateRouteQuery(String sql, Route route, String creatorId) throws CreateRouteException {
-        try(Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt= conn.prepareStatement(sql)){
-            pstmt.setString(1, route.getId());
-            pstmt.setString(2, creatorId);
-            pstmt.setString(3, route.getTitle());
-            pstmt.setString(4, route.getLocation());
-            pstmt.setLong(5, route.getDate().getTime() );
-            pstmt.setInt(6, route.getDistance());
-            pstmt.setLong(7, route.getDuration() );
-            pstmt.setString(8, route.getDescription() );
-            pstmt.setString(9, route.getStatus() );
-            pstmt.executeUpdate();
-        }catch (SQLIntegrityConstraintViolationException e){
-            throw new RouteIdDuplicationException(e.getMessage());
-        }catch(SQLException se){
-            se.printStackTrace();
-            throw new CreateRouteException(se.getMessage());
-        }catch(Exception e){
-            e.printStackTrace();
-            throw new CreateRouteException(e.getMessage());
-        }
-    }*/
-
-   /* public void deleteRouteOld(String id) throws DeleteRouteException {
-        String sql = "DELETE FROM route WHERE id = ?";
-        executeDeleteRouteQueryOld(sql, id);
-    }*/
 
     public void deleteRoute(String routeId) throws DeleteRouteException {
         Route route = getRoute(routeId);
@@ -556,18 +506,5 @@ public class RouteRepositoryImpl implements RouteRepository {
             }
         }
     }
-
- /*   private void executeDeleteRouteQueryOld(String sql, String param01) throws DeleteRouteException {
-        try(Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt= conn.prepareStatement(sql)){
-            pstmt.setString(1, param01);
-            pstmt.executeUpdate();
-        }catch(SQLException se){
-            throw new DeleteRouteException(se.getMessage());
-        }catch(Exception e){
-            throw new DeleteRouteException(e.getMessage());
-        }
-    }*/
-
 
 }

@@ -231,20 +231,6 @@ public class RunRepositoryImpl implements RunRepository {
                 throw new DeleteRunException(e.getMessage());
             }
         }
-
-/*
-        try(Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
-            pstmt.setString(1, runId);
-            pstmt.executeUpdate();
-        }catch(SQLException se){
-            se.printStackTrace();
-            throw new DeleteRunException(se.getMessage());
-        }catch(Exception e){
-            e.printStackTrace();
-            throw new DeleteRunException(e.getMessage());
-        }
-        */
     }
 
     private String executeGetRouteIdQuery(String sqlQuery, String runId) {
