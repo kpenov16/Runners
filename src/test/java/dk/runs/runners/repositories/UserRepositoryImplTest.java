@@ -1,4 +1,5 @@
 package dk.runs.runners.repositories;
+import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.User;
 import dk.runs.runners.usecases.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +22,15 @@ public class UserRepositoryImplTest {
         user.setEmail("runner@runner.com");
         user.setUserName("BillGates");
         user.setPassword("bananas");
+
+        Location location = new Location(UUID.randomUUID().toString());
+        location.setX(2.2123);
+        location.setY(2.3123);
+        location.setCity("Stockholm");
+        location.setCountry("Sweden");
+        location.setStreetName("Main street");
+        location.setStreetNumber("5A");
+        user.setLocation(location);
     }
 
     @AfterEach
@@ -39,6 +49,9 @@ public class UserRepositoryImplTest {
         assertEquals(user.getEmail(), createdUser.getEmail());
         assertEquals(user.getPassword(), createdUser.getPassword());
         assertEquals(user.getUserName(), createdUser.getUserName());
+        assertEquals(user.getLocation().toString(), createdUser.getLocation().toString());
+
+        //tear down
     }
 
     @Test
@@ -174,8 +187,33 @@ public class UserRepositoryImplTest {
     }
 
     @Test
-    public void given_return(){
+    public void givenUserWithMissingLocation_returnUserMissingLocationException(){
+        String userId = UUID.randomUUID().toString();
+        User user = new User(userId);
+        //physical assert 1
+        UserRepository.UserMissingLocationException userMissingLocationException =
+                assertThrows(UserRepository.UserMissingLocationException.class,
+                        () -> userRepository.createUser(user)
+                );
+        assertEquals("User with id: " + userId + " is missing location.",
+                userMissingLocationException.getMessage());
 
+        //physical assert 2
+        Location location = new Location("");
+        user.setLocation(location);
+        userMissingLocationException = assertThrows(UserRepository.UserMissingLocationException.class,
+                () -> userRepository.createUser(user)
+        );
+        assertEquals("User with id: " + userId + " is missing location.",
+                userMissingLocationException.getMessage());
+
+        //physical assert 3
+        location.setId(null);
+        user.setLocation(location);
+        userMissingLocationException = assertThrows(UserRepository.UserMissingLocationException.class,
+                () -> userRepository.createUser(user)
+        );
+        assertEquals("User with id: " + userId + " is missing location.",
+                userMissingLocationException.getMessage());
     }
-
 }

@@ -392,6 +392,8 @@ public class RouteRepositoryImpl implements RouteRepository {
             try {
                 if(pstmtRoute != null) pstmtRoute.close();
                 if(pstmtWaypoint != null) pstmtWaypoint.close();
+                if(pstmtLocation != null) pstmtLocation.close();
+                if(pstmtLocationRoute != null) pstmtLocationRoute.close();
                 if(conn != null) conn.close();
             } catch (SQLException e) {
                 throw new CreateRouteException(e.getMessage());

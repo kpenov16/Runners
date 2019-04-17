@@ -43,5 +43,7 @@ public interface UserRepository {
     class UserEmailDuplicationException extends RuntimeException{
         public UserEmailDuplicationException(String msg) {super(msg);}
     }
-
+    class UserMissingLocationException extends RuntimeException{
+        public UserMissingLocationException(String msg) {super(msg);}
+    }
 }

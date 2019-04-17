@@ -9,6 +9,7 @@ public class User {
     private String email = "";
     private String password = "";
     private List<Route> routes = new LinkedList<>();
+    private Location location;
 
     public User(){}
     public User(String id){
@@ -51,5 +52,13 @@ public class User {
 
     public List<Route> getRoutes() {
         return this.routes;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }

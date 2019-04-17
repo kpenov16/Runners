@@ -29,13 +29,14 @@ public class RouteRepositoryImplTest {
 
     @BeforeEach
     public void beforeEach(){
+        userRepository = new UserRepositoryImpl();
+        routeRepository = new RouteRepositoryImpl();
+
         user = new User(UUID.randomUUID().toString());
         user.setEmail("runner@runner.com");
         user.setUserName("BillGates");
         user.setPassword("bananas");
 
-        userRepository = new UserRepositoryImpl();
-        routeRepository = new RouteRepositoryImpl();
         route = new Route(UUID.randomUUID().toString());
         route.setTitle("Route three");
         Location location = new Location(UUID.randomUUID().toString());
