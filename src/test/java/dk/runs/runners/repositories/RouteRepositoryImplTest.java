@@ -6,7 +6,6 @@ import dk.runs.runners.entities.User;
 import dk.runs.runners.entities.WayPoint;
 import dk.runs.runners.usecases.RouteRepository;
 import dk.runs.runners.usecases.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -205,5 +204,36 @@ public class RouteRepositoryImplTest {
         routeRepository.deleteRoute(route.getId());
         routeRepository.deleteRoute(secondRoute.getId());
         userRepository.deleteUser(user.getId());
+    }
+
+    @Test
+    public void givenRouteWithMissingLocation_returnRouteMissingLocationException(){
+        String routeId = UUID.randomUUID().toString();
+        Route route = new Route(routeId);
+        //physical assert 1
+        RouteRepository.RouteMissingLocationException routeMissingLocationException =
+                assertThrows(RouteRepository.RouteMissingLocationException.class,
+                () -> routeRepository.createRoute(route, UUID.randomUUID().toString())
+        );
+        assertEquals("Route with id: " + routeId + " is missing location.",
+                routeMissingLocationException.getMessage());
+
+        //physical assert 2
+        Location location = new Location("");
+        route.setLocation(location);
+        routeMissingLocationException = assertThrows(RouteRepository.RouteMissingLocationException.class,
+                () -> routeRepository.createRoute(route, UUID.randomUUID().toString())
+        );
+        assertEquals("Route with id: " + routeId + " is missing location.",
+                routeMissingLocationException.getMessage());
+
+        //physical assert 3
+        location.setId(null);
+        route.setLocation(location);
+        routeMissingLocationException = assertThrows(RouteRepository.RouteMissingLocationException.class,
+                () -> routeRepository.createRoute(route, UUID.randomUUID().toString())
+        );
+        assertEquals("Route with id: " + routeId + " is missing location.",
+                routeMissingLocationException.getMessage());
     }
 }

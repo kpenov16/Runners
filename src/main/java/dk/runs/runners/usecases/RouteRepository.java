@@ -42,4 +42,8 @@ public interface RouteRepository {
     class RouteIdDuplicationException extends RuntimeException{
         public RouteIdDuplicationException(String msg) {super(msg);}
     }
+
+    class RouteMissingLocationException extends RuntimeException{
+        public RouteMissingLocationException(String msg) {super(msg);}
+    }
 }

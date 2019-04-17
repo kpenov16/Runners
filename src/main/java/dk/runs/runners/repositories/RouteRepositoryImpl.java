@@ -16,6 +16,7 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     @Override
     public void createRoute(Route route, String creatorId) throws CreateRouteException {
+        validateRoute(route);
         String routeSql = "INSERT INTO route (id, creator_id, title, date, distance, duration, description, status, max_participants, min_participants)" +
                 "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )";
 
@@ -29,6 +30,12 @@ public class RouteRepositoryImpl implements RouteRepository {
                 "VALUES ( ? , ? , ST_GeomFromText( ? , ? ))";
 
         executeCreateRouteQueryAsUnitOfWork(routeSql, waypointSql, locationSql, locationRouteSql, route, creatorId);
+    }
+
+    private void validateRoute(Route route) {
+        if(route.getLocation() == null || route.getLocation().getId() == null || route.getLocation().getId().isEmpty()){
+            throw new RouteMissingLocationException("Route with id: " + route.getId() + " is missing location.");
+        }
     }
 
     private long executeGetIdQuery(String sql, long creatorId) throws RouteNotFoundException {
@@ -432,7 +439,7 @@ public class RouteRepositoryImpl implements RouteRepository {
         /*"INSERT INTO location (route_id, street_name, street_number, city, country, spatial_point)" +
                 "VALUES ( ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";*/
         final Location location = route.getLocation();
-        if (location !=null) {
+        if (location != null) {
             pstmtLocation.setString(1, location.getId());
             pstmtLocation.setString(2, location.getStreetName());
             pstmtLocation.setString(3, location.getStreetNumber());

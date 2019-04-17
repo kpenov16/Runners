@@ -11,8 +11,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ShowUserCreatedRoutesImplTest {
-
-
     private ShowUserCreatedRoutesImpl showUserCreatedRoutes;
     private FakeUserRepo userRepository;
     private FakeRouteRepo routeRepository;

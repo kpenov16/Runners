@@ -2,12 +2,12 @@ package dk.runs.runners.entities;
 
 public class Location {
     private String id;
-    private double x;
-    private double y;
-    private String city;
-    private String country;
-    private String streetName;
-    private String streetNumber;
+    private double x = 0;
+    private double y = 0;
+    private String city = "";
+    private String country = "";
+    private String streetName = "";
+    private String streetNumber = "";
     public Location(String id) {
         this.id = id;
     }
