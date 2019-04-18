@@ -129,9 +129,6 @@ public class RouteRepositoryImpl implements RouteRepository {
             pstmtWaypoint = conn.prepareStatement(waypointSql);
             pstmtRouteLocation = conn.prepareStatement(locationSql);
 
-            //delete waypoints
-            pstmtDeleteWaypoint.setString(1, route.getId());
-            pstmtDeleteWaypoint.executeUpdate();
 
             //update route
             pstmtRoute.setString(1, route.getTitle());
@@ -146,6 +143,11 @@ public class RouteRepositoryImpl implements RouteRepository {
             int rowsEffected = pstmtRoute.executeUpdate();
 
             if(rowsEffected == 1){
+                //delete waypoints
+                pstmtDeleteWaypoint.setString(1, route.getId());
+                pstmtDeleteWaypoint.executeUpdate();
+
+
                 //create waypoints
                 executeCreateWaypointsQuery(route, pstmtWaypoint);
 

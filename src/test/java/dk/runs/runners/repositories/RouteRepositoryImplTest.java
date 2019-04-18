@@ -36,9 +36,10 @@ public class RouteRepositoryImplTest {
         user.setEmail("runner@runner.com");
         user.setUserName("BillGates");
         user.setPassword("bananas");
+        Location userLocation = new Location(UUID.randomUUID().toString());
+        user.setLocation(userLocation);
 
         route = new Route(UUID.randomUUID().toString());
-        route.setTitle("Route three");
         Location location = new Location(UUID.randomUUID().toString());
         location.setX(2.2123);
         location.setY(2.3123);
@@ -46,6 +47,7 @@ public class RouteRepositoryImplTest {
         location.setCountry("Sweden");
         location.setStreetName("Main street");
         location.setStreetNumber("5A");
+        route.setTitle("Route three");
         route.setLocation(location);
         route.setDescription("It is going to be very fun!!!");
         route.setDate(new Date(ms));

@@ -24,19 +24,19 @@ public class Run {
         this.route = route;
     }
 
-    @Override
-    public String toString() {
-        return  "Run " +
-                "id: " + id + ", " +
-                "route: " + route + ", " +
-                "checkpoints: " + checkpoints;
-    }
-
     public List<Checkpoint> getCheckpoints() {
         return checkpoints;
     }
 
     public void setCheckpoints(List<Checkpoint> checkpoints) {
         this.checkpoints = checkpoints;
+    }
+
+    @Override
+    public String toString() {
+        return  "Run " +
+                "id: " + id + ", " +
+                "route: " + route + ", " +
+                "checkpoints: " + checkpoints;
     }
 }

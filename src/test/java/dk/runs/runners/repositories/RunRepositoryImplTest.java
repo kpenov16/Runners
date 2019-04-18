@@ -32,6 +32,14 @@ class RunRepositoryImplTest {
         user.setEmail("runner@runner.com");
         user.setUserName("BillGates");
         user.setPassword("bananas");
+        Location userLocation = new Location(UUID.randomUUID().toString());
+        userLocation.setX(2.2123);
+        userLocation.setY(2.3123);
+        userLocation.setCity("Stockholm");
+        userLocation.setCountry("Sweden");
+        userLocation.setStreetName("Main street");
+        userLocation.setStreetNumber("5A");
+        user.setLocation(userLocation);
         userRepository.createUser(user);
 
         routeRepository = new RouteRepositoryImpl();
