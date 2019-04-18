@@ -12,7 +12,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void createUser(User user) {
-        validateRoute(user);
+        validateUser(user);
 
         String userSql = "INSERT INTO user (id, user_name, email, password)" +
                                "VALUES ( ? , ? , ? , ? )";
@@ -23,16 +23,16 @@ public class UserRepositoryImpl implements UserRepository {
         String locationUserSql = "INSERT INTO location_user ( location_id, user_id )" +
                 "VALUES ( ? , ? )";
 
-        executeCreateRunQuery(userSql, locationSql, locationUserSql, user);
+        executeCreateUserQuery(userSql, locationSql, locationUserSql, user);
     }
 
-    private void validateRoute(User user) {
+    private void validateUser(User user) {
         if(user.getLocation() == null || user.getLocation().getId() == null || user.getLocation().getId().isEmpty()){
             throw new UserMissingLocationException("User with id: " + user.getId() + " is missing location.");
         }
     }
 
-    private void executeCreateRunQuery(String userSql, String locationSql, String locationUserSql, User user) throws CreateUserException {
+    private void executeCreateUserQuery(String userSql, String locationSql, String locationUserSql, User user) throws CreateUserException {
         Connection conn = null;
         PreparedStatement pstmtUser = null;
         PreparedStatement pstmtLocation = null;
@@ -111,15 +111,6 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
-       /*
-        }catch(SQLException se){
-            se.printStackTrace();
-            throw new CreateUserException(se.getMessage());
-        }catch(Exception e){
-            e.printStackTrace();
-            throw new CreateUserException(e.getMessage());
-        }
-    }*/
 
 
     private void executeCreateLocationQuery(User user, PreparedStatement pstmtLocation) throws SQLException {
@@ -286,33 +277,99 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void updateUser(User updatedUser) {
-        String sql = "UPDATE user" +
+        validateUser(updatedUser);
+        String userSql = "UPDATE user" +
                 " SET user_name = ?, email = ?, password = ?" +
                 " WHERE id = ?";
-        executeUpdateUserQuery(sql, updatedUser);
+        String locationSql = "UPDATE location SET street_name = ? , street_number = ? ," +
+                " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
+                "WHERE location.id = ?";
+        executeUpdateUserQuery(userSql, locationSql, updatedUser);
     }
-    private void executeUpdateUserQuery(String sql, User user) throws UpdateUserException {
-        try(Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt= conn.prepareStatement(sql)){
-            pstmt.setString(1, user.getUserName());
-            pstmt.setString(2, user.getEmail());
-            pstmt.setString(3, user.getPassword() );
-            pstmt.setString(4, user.getId());
-            pstmt.executeUpdate();
-    }   catch (SQLIntegrityConstraintViolationException e) {
-            final String MSG = e.getMessage();
-            if (MSG.contains("user_name")) {
-                throw new UserNameDuplicationException(MSG);
-            } else if (MSG.contains("email")) {
-                throw new UserEmailDuplicationException(MSG);
-            } else {
-                throw new UpdateUserException(MSG);
+    private void executeUpdateUserQuery(String sql, String locationSql, User user) throws UpdateUserException {
+
+        Connection conn = null;
+        PreparedStatement pstmtUser = null;
+        PreparedStatement pstmtLocation = null;
+        try{
+            conn = DriverManager.getConnection(url);
+            conn.setAutoCommit(false);
+
+            pstmtUser = conn.prepareStatement(sql);
+            pstmtLocation = conn.prepareStatement(locationSql);
+
+            pstmtUser.setString(1, user.getUserName());
+            pstmtUser.setString(2, user.getEmail());
+            pstmtUser.setString(3, user.getPassword() );
+            pstmtUser.setString(4, user.getId());
+
+            int rowsEffected = pstmtUser.executeUpdate();
+
+            if(rowsEffected == 1){
+                //update location
+                executeUpdateLocationQuery(user, pstmtLocation);
+                conn.commit();
+            }else {
+                conn.rollback();
+            }
+
+        }catch (SQLIntegrityConstraintViolationException e){
+
+            try {
+                if(conn!=null){
+                    conn.rollback();
+                }
+                final String MSG = e.getMessage();
+                if (MSG.contains("user_name")) {
+                    throw new UserNameDuplicationException(MSG);
+                } else if (MSG.contains("email")) {
+                    throw new UserEmailDuplicationException(MSG);
+                } else {
+                    throw new UpdateUserException(MSG);
+                }
+            }catch (SQLException rollBackException){
+                //??
             }
         }catch(SQLException se){
-            throw new UpdateUserException(se.getMessage());
+            try {
+                conn.rollback();
+                se.printStackTrace();
+                throw new UpdateUserException(se.getMessage());
+            }catch (SQLException rollBackException){
+                throw new UpdateUserException(rollBackException.getMessage());
+            }
         }catch(Exception e){
-            throw new UpdateUserException(e.getMessage());
+            try {
+                conn.rollback();
+                e.printStackTrace();
+                throw new UpdateUserException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new UpdateUserException(rollBackException.getMessage());
+            }
+        }finally {
+            try {
+                if(pstmtUser != null) pstmtUser.close();
+                if(pstmtLocation != null) pstmtLocation.close();
+                if(conn != null) conn.close();
+            } catch (SQLException e) {
+                throw new UpdateUserException(e.getMessage());
+            }
         }
     }
+
+    private void executeUpdateLocationQuery(User user, PreparedStatement pstmtLocation) throws SQLException {
+
+        final Location location = user.getLocation();
+        pstmtLocation.setString(1, location.getStreetName());
+        pstmtLocation.setString(2, location.getStreetNumber());
+        pstmtLocation.setString(3, location.getCity());
+        pstmtLocation.setString(4, location.getCountry());
+        pstmtLocation.setString(5, "POINT(" + location.getX() + " " + location.getY() + ")");
+        pstmtLocation.setInt(6, location.getSRID());
+        pstmtLocation.setString(7, location.getId());
+        pstmtLocation.executeUpdate();
+
+    }
+
 
 }

@@ -12,10 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserRepositoryImplTest {
     private User user;
+    private Location location;
+    private boolean afterToBeLaunched = true;
     UserRepository userRepository = null;
 
     @BeforeEach
     public void beforeEach(){
+        afterToBeLaunched = true;
         userRepository = new UserRepositoryImpl();
 
         user = new User(UUID.randomUUID().toString());
@@ -23,7 +26,7 @@ public class UserRepositoryImplTest {
         user.setUserName("BillGates");
         user.setPassword("bananas");
 
-        Location location = new Location(UUID.randomUUID().toString());
+        location = new Location(UUID.randomUUID().toString());
         location.setX(2.2123);
         location.setY(2.3123);
         location.setCity("Stockholm");
@@ -35,7 +38,9 @@ public class UserRepositoryImplTest {
 
     @AfterEach
     public void tearDown(){
-        userRepository.deleteUser(user.getId());
+        if(afterToBeLaunched){
+            userRepository.deleteUser(user.getId());
+        }
     }
 
     @Test
@@ -63,7 +68,12 @@ public class UserRepositoryImplTest {
         updatedUser.setUserName("updated_UserName");
         updatedUser.setEmail("updated_Email");
         updatedUser.setPassword("new_Password");
-
+        updatedUser.getLocation().setStreetName("Prince street");
+        updatedUser.getLocation().setStreetNumber("99a");
+        updatedUser.getLocation().setCity("Munchen");
+        updatedUser.getLocation().setCountry("Germany");
+        updatedUser.getLocation().setX(22.22);
+        updatedUser.getLocation().setY(11.11);
         //act
         userRepository.updateUser(updatedUser);
 
@@ -72,6 +82,7 @@ public class UserRepositoryImplTest {
         assertEquals(updatedUser.getUserName(), returnedUser.getUserName());
         assertEquals(updatedUser.getEmail(), returnedUser.getEmail());
         assertEquals(updatedUser.getPassword(), returnedUser.getPassword());
+        assertEquals(updatedUser.getLocation().toString(), returnedUser.getLocation().toString());
     }
 
 
@@ -88,6 +99,7 @@ public class UserRepositoryImplTest {
         userWithDuplicateUserName.setUserName(userName);
         userWithDuplicateUserName.setEmail("userWithDuplicateUserName@banana.com");
         userWithDuplicateUserName.setPassword("userWithDuplicateUserName_password");
+        userWithDuplicateUserName.setLocation(new Location(UUID.randomUUID().toString()));
         userRepository.createUser(userWithDuplicateUserName);
 
         //Act, Assert
@@ -119,6 +131,7 @@ public class UserRepositoryImplTest {
         userWithDuplicateEmail.setUserName(UUID.randomUUID().toString());
         userWithDuplicateEmail.setEmail(email);
         userWithDuplicateEmail.setPassword("userWithDuplicateUserName_password");
+        userWithDuplicateEmail.setLocation(new Location(UUID.randomUUID().toString()));
         userRepository.createUser(userWithDuplicateEmail);
 
         //Act, Assert
@@ -138,6 +151,7 @@ public class UserRepositoryImplTest {
 
     @Test
     public void givenRequestingNonExistingUserById_returnUserNotFoundException() {
+        afterToBeLaunched = false;
         assertThrows(UserRepository.UserNotFoundException.class,
                 () -> userRepository.getUser(UUID.randomUUID().toString())
         );
@@ -163,6 +177,7 @@ public class UserRepositoryImplTest {
         userWithDuplicateUserName.setUserName(user.getUserName());
         userWithDuplicateUserName.setEmail("userWithDuplicateUserName@banana.com");
         userWithDuplicateUserName.setPassword("userWithDuplicateUserName_password");
+        userWithDuplicateUserName.setLocation(new Location(UUID.randomUUID().toString()));
 
         //Act, Assert
         assertThrows(UserRepository.UserNameDuplicationException.class,
@@ -179,6 +194,8 @@ public class UserRepositoryImplTest {
         userWithDuplicateEmail.setEmail(user.getEmail());
         userWithDuplicateEmail.setUserName(UUID.randomUUID().toString());
         userWithDuplicateEmail.setPassword(UUID.randomUUID().toString());
+        userWithDuplicateEmail.setLocation(new Location(UUID.randomUUID().toString()));
+
 
         //Act, Assert
         assertThrows(UserRepository.UserEmailDuplicationException.class,
@@ -188,6 +205,7 @@ public class UserRepositoryImplTest {
 
     @Test
     public void givenUserWithMissingLocation_returnUserMissingLocationException(){
+        afterToBeLaunched = false;
         String userId = UUID.randomUUID().toString();
         User user = new User(userId);
         //physical assert 1
