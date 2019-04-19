@@ -99,6 +99,7 @@ public class RunRepositoryImpl implements RunRepository {
                     checkpoint.setVisitedTimestamp(timestamp);
                     checkpoints.add(checkpoint);
                 }
+                if(rs != null){  rs.close(); }
             }
 
             conn.commit(); //TODO do we need commit here?
@@ -234,14 +235,15 @@ public class RunRepositoryImpl implements RunRepository {
     }
 
     private String executeGetRouteIdQuery(String sqlQuery, String runId) {
-        String routeId;
-
+        String routeId = null;
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setString(1, runId);
             ResultSet rs = pstmt.executeQuery();
-            rs.next();
-            routeId = rs.getString("route_id");
+            if(rs.next()){
+                routeId = rs.getString("route_id");
+            }
+            if(rs != null){  rs.close(); }
         }catch (SQLIntegrityConstraintViolationException e){
             throw new RunIdDuplicationException(e.getMessage());
         }catch(SQLException se){

@@ -175,7 +175,7 @@ public class UserRepositoryImpl implements UserRepository {
                 location.setX(rs.getDouble("X"));
                 location.setY(rs.getDouble("Y"));
             }
-            rs.close();
+            if(rs != null){  rs.close(); }
         }catch(SQLException se){
             throw new UserNotFoundException(se.getMessage());
         }catch(Exception e){
@@ -185,19 +185,26 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private User executeGetUserQuery(String sql, User user) throws UserNotFoundException {
+        boolean isUserFound = false;
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, user.getId());
             ResultSet rs = pstmt.executeQuery();
-            rs.next();
-            user.setUserName(rs.getString("user_name"));
-            user.setEmail(rs.getString("email"));
-            user.setPassword( rs.getString("password") );
-            rs.close();
+            if(rs.next()){
+                isUserFound = true;
+                user.setUserName(rs.getString("user_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword( rs.getString("password") );
+            }
+            if(rs != null){  rs.close(); }
         }catch(SQLException se){
-            throw new UserNotFoundException(se.getMessage());
+            se.printStackTrace();
         }catch(Exception e){
-            throw new UserNotFoundException(e.getMessage());
+            e.printStackTrace();
+        }finally {
+            if(!isUserFound){
+                throw new UserNotFoundException("User with id: " + user.getId() + " was not found");
+            }
         }
         return user;
     }

@@ -14,6 +14,7 @@ public class RouteRepositoryImpl implements RouteRepository {
     private final String url = "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
             + "user=s133967&password=8JPOJuQcgUpUVIVHY4S2H";
 
+
     @Override
     public void createRoute(Route route, String creatorId) throws CreateRouteException {
         validateRoute(route);
@@ -44,9 +45,10 @@ public class RouteRepositoryImpl implements RouteRepository {
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setLong(1, creatorId);
             ResultSet rs = pstmt.executeQuery();
-            rs.next();
-            id = rs.getLong("id");
-            rs.close();
+            if(rs.next()){
+                id = rs.getLong("id");
+            }
+            if(rs != null){  rs.close(); }
         }catch(SQLException se){
             throw new RouteNotFoundException(se.getMessage());
         }catch(Exception e){
@@ -219,6 +221,7 @@ public class RouteRepositoryImpl implements RouteRepository {
                 route.setLocation(getLocation(route.getId()));
                 routes.add(route);
             }
+
         } catch (SQLException se){
             throw new GetRoutesException(se.getMessage());
         } catch (Exception e){
@@ -245,7 +248,7 @@ public class RouteRepositoryImpl implements RouteRepository {
                 route.setMinParticipants(rs.getInt("min_participants"));
                 routes.add(route);
             }
-            rs.close();
+            if(rs != null){  rs.close(); }
         }catch(SQLException se){
             throw new RouteNotFoundException(se.getMessage());
         }catch(Exception e){
@@ -256,24 +259,31 @@ public class RouteRepositoryImpl implements RouteRepository {
 
 
     private Route executeGetRouteQuery(String sql, Route route) throws RouteNotFoundException {
+        boolean isRouteFound = false;
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, route.getId());
             ResultSet rs = pstmt.executeQuery();
-            rs.next();
-            route.setTitle(rs.getString("title"));
-            route.setDate( new java.util.Date( rs.getLong("date") ));
-            route.setDistance(rs.getInt("distance"));
-            route.setDuration(rs.getLong("duration"));
-            route.setDescription(rs.getString("description"));
-            route.setStatus(rs.getString("status"));
-            route.setMaxParticipants(rs.getInt("max_participants"));
-            route.setMinParticipants(rs.getInt("min_participants"));
-            rs.close();
+            if(rs.next()){
+                isRouteFound = true;
+                route.setTitle(rs.getString("title"));
+                route.setDate( new java.util.Date( rs.getLong("date") ));
+                route.setDistance(rs.getInt("distance"));
+                route.setDuration(rs.getLong("duration"));
+                route.setDescription(rs.getString("description"));
+                route.setStatus(rs.getString("status"));
+                route.setMaxParticipants(rs.getInt("max_participants"));
+                route.setMinParticipants(rs.getInt("min_participants"));
+            }
+            if(rs != null){ rs.close(); }
         }catch(SQLException se){
-            throw new RouteNotFoundException(se.getMessage());
+            se.printStackTrace();
         }catch(Exception e){
-            throw new RouteNotFoundException(e.getMessage());
+            e.printStackTrace();
+        }finally {
+            if(!isRouteFound){
+                throw new RouteNotFoundException("Route with id: " + route.getId() + " was not found");
+            }
         }
         return route;
     }
@@ -293,7 +303,7 @@ public class RouteRepositoryImpl implements RouteRepository {
                 location.setX(rs.getDouble("X"));
                 location.setY(rs.getDouble("Y"));
             }
-            rs.close();
+            if(rs != null){  rs.close(); }
         }catch(SQLException se){
             throw new RouteNotFoundException(se.getMessage());
         }catch(Exception e){
@@ -315,7 +325,7 @@ public class RouteRepositoryImpl implements RouteRepository {
                 double y = rs.getDouble(3);
                 wayPoints.add( new WayPoint(x, y, index) );
             }
-            rs.close();
+            if(rs != null){  rs.close(); }
         }catch(SQLException se){
             throw new RouteNotFoundException(se.getMessage());
         }catch(Exception e){

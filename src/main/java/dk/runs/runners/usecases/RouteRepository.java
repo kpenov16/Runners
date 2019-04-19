@@ -5,6 +5,7 @@ import dk.runs.runners.entities.Route;
 import java.util.List;
 
 public interface RouteRepository {
+
     void createRoute(Route route, String creatorId) throws CreateRouteException, RouteIdDuplicationException;
 
     Route getRoute(String routeId) throws RouteNotFoundException;
@@ -42,7 +43,6 @@ public interface RouteRepository {
     class RouteIdDuplicationException extends RuntimeException{
         public RouteIdDuplicationException(String msg) {super(msg);}
     }
-
     class RouteMissingLocationException extends RuntimeException{
         public RouteMissingLocationException(String msg) {super(msg);}
     }
