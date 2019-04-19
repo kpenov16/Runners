@@ -2,7 +2,7 @@ package dk.runs.runners.entities;
 
 import java.util.*;
 
-public class Route {
+public class Route implements Locational {
     private String id = "";
     private String title = "";
     private Location location;
@@ -53,6 +53,7 @@ public class Route {
         this.id = id;
     }
 
+    @Override
     public Location getLocation() {
         return location;
     }

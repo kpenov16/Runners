@@ -3,7 +3,7 @@ package dk.runs.runners.entities;
 import java.util.LinkedList;
 import java.util.List;
 
-public class User {
+public class User implements Locational{
     private String id = "";
     private String userName = "";
     private String email = "";
@@ -58,6 +58,7 @@ public class User {
         this.location = location;
     }
 
+    @Override
     public Location getLocation() {
         return location;
     }

@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
-public class RouteRepositoryImpl implements RouteRepository {
+public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteRepository {
 
     private final String url = "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
             + "user=s133967&password=8JPOJuQcgUpUVIVHY4S2H";
@@ -448,10 +448,8 @@ public class RouteRepositoryImpl implements RouteRepository {
             pstmtLocationRoute.executeUpdate();
         }
     }
-
+/*
     private void executeCreateLocationQuery(Route route, PreparedStatement pstmtLocation) throws SQLException {
-        /*"INSERT INTO location (route_id, street_name, street_number, city, country, spatial_point)" +
-                "VALUES ( ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";*/
         final Location location = route.getLocation();
         if (location != null) {
             pstmtLocation.setString(1, location.getId());
@@ -463,7 +461,7 @@ public class RouteRepositoryImpl implements RouteRepository {
             pstmtLocation.setInt(7, location.getSRID());
             pstmtLocation.executeUpdate();
         }
-    }
+    }*/
 
     public void deleteRoute(String routeId) throws DeleteRouteException {
         Route route = getRoute(routeId);

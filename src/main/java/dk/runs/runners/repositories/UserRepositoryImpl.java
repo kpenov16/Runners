@@ -6,7 +6,7 @@ import dk.runs.runners.usecases.UserRepository;
 
 import java.sql.*;
 
-public class UserRepositoryImpl implements UserRepository {
+public class UserRepositoryImpl extends BaseRunnersRepository implements UserRepository {
     private final String url = "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
             + "user=s133967&password=8JPOJuQcgUpUVIVHY4S2H";
 
@@ -112,10 +112,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
 
-
+/*
     private void executeCreateLocationQuery(User user, PreparedStatement pstmtLocation) throws SQLException {
-        /*"INSERT INTO location (route_id, street_name, street_number, city, country, spatial_point)" +
-                "VALUES ( ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";*/
         final Location location = user.getLocation();
         if (location != null) {
             pstmtLocation.setString(1, location.getId());
@@ -128,7 +126,7 @@ public class UserRepositoryImpl implements UserRepository {
             pstmtLocation.executeUpdate();
         }
     }
-
+*/
     private void executeCreateLocationUserQuery(User user, PreparedStatement pstmtLocationUser) throws SQLException {
         final Location location = user.getLocation();
         if (location != null) {
@@ -218,17 +216,6 @@ public class UserRepositoryImpl implements UserRepository {
 
         executeDeleteUserQuery(locationRouteSql, locationSql, userSql, user);
     }
-   /* private void executeDeleteUserQuery(String sql, String userId) throws DeleteUserException {
-        try(Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt= conn.prepareStatement(sql)){
-            pstmt.setString(1, userId);
-            pstmt.executeUpdate();
-        }catch(SQLException se){
-            throw new DeleteUserException(se.getMessage());
-        }catch(Exception e){
-            throw new DeleteUserException(e.getMessage());
-        }
-    }*/
 
     private void executeDeleteUserQuery(String locationRouteSql, String locationSql,
                                          String userSql, User user)
