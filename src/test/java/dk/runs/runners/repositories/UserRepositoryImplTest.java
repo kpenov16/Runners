@@ -16,8 +16,8 @@ public class UserRepositoryImplTest {
     private Location location;
     private boolean afterToBeLaunched = true;
     private UserRepository userRepository = null;
-    private RouteRepository routeRepository = null;
-    private RunRepository runRepository = null;
+    //private RouteRepository routeRepository = null;
+    //private RunRepository runRepository = null;
 
     @BeforeEach
     public void beforeEach(){
@@ -38,9 +38,9 @@ public class UserRepositoryImplTest {
         location.setStreetNumber("5A");
         user.setLocation(location);
 
-        routeRepository = new RouteRepositoryImpl();
-        runRepository = new RunRepositoryImpl();
-        ((RunRepositoryImpl) runRepository).setRouteRepository(routeRepository);
+        //routeRepository = new RouteRepositoryImpl();
+        //runRepository = new RunRepositoryImpl();
+        //((RunRepositoryImpl) runRepository).setRouteRepository(routeRepository);
     }
 
     @AfterEach
@@ -50,149 +50,6 @@ public class UserRepositoryImplTest {
         }
     }
 
-    @Test
-    public void givenRequestForUserHavingMostParticipantsByRoute_returnUserHavingMostParticipants() throws InterruptedException {
-        afterToBeLaunched = false;
-
-        //arrange
-        User mostPopularUser = constructUser();
-        userRepository.createUser(mostPopularUser);
-        Route mostPopularRoute1 = constructRoute();
-        Route mostPopularRoute2 = constructRoute();
-        routeRepository.createRoute(mostPopularRoute1, mostPopularUser.getId());
-        routeRepository.createRoute(mostPopularRoute2, mostPopularUser.getId());
-        registerUsersForRoute(mostPopularRoute1, 9);
-        registerUsersForRoute(mostPopularRoute2, 8);
-
-        User popularUser = constructUser();
-        userRepository.createUser(popularUser);
-        Route popularRoute1 = constructRoute();
-        Route popularRoute2 = constructRoute();
-        routeRepository.createRoute(popularRoute1, popularUser.getId());
-        routeRepository.createRoute(popularRoute2, popularUser.getId());
-        registerUsersForRoute(popularRoute1, 7);
-        registerUsersForRoute(popularRoute2, 6);
-
-        User lessPopularUser = constructUser();
-        userRepository.createUser(lessPopularUser);
-        Route lessPopularRoute1 = constructRoute();
-        Route lessPopularRoute2 = constructRoute();
-        routeRepository.createRoute(lessPopularRoute1, lessPopularUser.getId());
-        routeRepository.createRoute(lessPopularRoute2, lessPopularUser.getId());
-        registerUsersForRoute(lessPopularRoute1, 4);
-        registerUsersForRoute(lessPopularRoute2, 5);
-
-        User nonPopularUser = constructUser();
-        userRepository.createUser(nonPopularUser);
-        Route nonPopularRoute1 = constructRoute();
-        Route nonPopularRoute2 = constructRoute();
-        routeRepository.createRoute(nonPopularRoute1, nonPopularUser.getId());
-        routeRepository.createRoute(nonPopularRoute2, nonPopularUser.getId());
-        registerUsersForRoute(nonPopularRoute1, 1);
-        registerUsersForRoute(nonPopularRoute2, 2);
-
-        Thread.sleep(500);
-
-        //act
-        int top = 3;
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -1);
-        System.out.println(calendar.getTime() + " " + calendar.getTime().getTime());
-        List<Route> returnedRoutes = routeRepository.getMostPopular(top, calendar.getTime());
-
-        //assert
-        assertEquals(mostPopularRoute1.toString(), returnedRoutes.get(0).toString());
-        assertEquals(mostPopularRoute2.toString(), returnedRoutes.get(1).toString());
-        assertEquals(popularRoute1.toString(), returnedRoutes.get(2).toString());
-
-        //clean up
-        usersToBeDeleted.add(mostPopularUser);
-        usersToBeDeleted.add(popularUser);
-        usersToBeDeleted.add(lessPopularUser);
-        usersToBeDeleted.add(nonPopularUser);
-
-        deleteCreatedEntities();
-
-    }
-    private void deleteCreatedEntities() {
-        runsToBeDeleted.stream().forEach(run->runRepository.deleteRun(run.getId()));
-        participantsToBeDeleted.stream().forEach(p->userRepository.deleteUser(p.getId()));
-        routesToBeDeleted.stream().forEach(route -> routeRepository.deleteRoute(route.getId()));
-        usersToBeDeleted.stream().forEach(u->userRepository.deleteUser(u.getId()));
-    }
-
-    private List<Run> runsToBeDeleted = new ArrayList<>();
-    private List<User> usersToBeDeleted = new ArrayList<>();
-    private List<User> participantsToBeDeleted = new ArrayList<>();
-    private List<Route> routesToBeDeleted = new ArrayList<>();
-
-    private void registerUsersForRoute(Route route, int numberOfParticipants) {
-        for (int i=0; i<numberOfParticipants; i++){
-            Run run = constructRun(route);
-            User user = constructUser();
-            userRepository.createUser(user);
-            runRepository.createRun(run, route.getId(), user.getId());
-
-            participantsToBeDeleted.add(user);
-        }
-    }
-
-    private Run constructRun(Route route) {
-        Run run = new Run();
-        run.setRoute(route);
-        run.setId(UUID.randomUUID().toString());
-        run.setCheckpoints(new LinkedList<Checkpoint>());
-        runsToBeDeleted.add(run);
-        return run;
-    }
-
-    private Route constructRoute(){
-        Route route = new Route(UUID.randomUUID().toString());
-        Location location = new Location(UUID.randomUUID().toString());
-        location.setX(2.2123);
-        location.setY(2.3123);
-        location.setCity("Stockholm");
-        location.setCountry("Sweden");
-        location.setStreetName("Main street");
-        location.setStreetNumber("5A");
-        route.setTitle("Route three");
-        route.setLocation(location);
-        route.setDescription("It is going to be very fun!!!");
-        route.setDate(new Date( System.currentTimeMillis() ));
-        route.setStatus("active");
-        route.setDuration(60*60*1_000);
-        route.setDistance(3_000);
-        route.setMaxParticipants(10);
-        route.setMinParticipants(2);
-
-        List<WayPoint> wayPoints = new LinkedList<>();
-        WayPoint startWayPoint = new WayPoint(1.12, 1.13, 0);
-        WayPoint endWayPoint = new WayPoint(5.12, 5.13, 1);
-        wayPoints.add(startWayPoint);
-        wayPoints.add(endWayPoint);
-        route.setWayPoints(wayPoints);
-
-        routesToBeDeleted.add(route);
-
-        return route;
-    }
-    private User constructUser(){
-        User user = new User(UUID.randomUUID().toString());
-        user.setEmail(UUID.randomUUID().toString());
-        user.setUserName(UUID.randomUUID().toString());
-        user.setPassword(UUID.randomUUID().toString());
-
-        location = new Location(UUID.randomUUID().toString());
-        location.setX(2.2123);
-        location.setY(2.3123);
-        location.setCity("Stockholm");
-        location.setCountry("Sweden");
-        location.setStreetName("Main street");
-        location.setStreetNumber("5A");
-        user.setLocation(location);
-
-        return user;
-    }
 
     @Test
     public void givenCreateUser_returnUserCreated() {

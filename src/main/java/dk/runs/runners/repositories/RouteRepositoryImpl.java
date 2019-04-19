@@ -167,7 +167,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 executeCreateWaypointsQuery(route, pstmtWaypoint);
 
                 //update location
-                executeUpdateLocationQuery(route, pstmtRouteLocation);
+                super.executeUpdateLocationQuery(route, pstmtRouteLocation);
 
                 conn.commit();
             }else {
@@ -380,7 +380,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             if(rowsEffected == 1){
                 executeCreateLocationQuery(route, pstmtLocation);
 
-                executeCreateLocationRouteQuery(route, pstmtLocationRoute);
+                executeCreateLocationReferenceQuery(route, pstmtLocationRoute);
 
                 executeCreateWaypointsQuery(route, pstmtWaypoint);
 
@@ -435,13 +435,9 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             pstmtWaypoint.executeUpdate();
         }
     }
+    /*
     private void executeUpdateLocationQuery(Route route, PreparedStatement pstmtRouteLocation) throws SQLException {
-
-        /*String locationSql = "UPDATE location SET street_name = ? , street_number = ? ," +
-                " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
-                "WHERE location.id = ?";*/
-
-        final Location location = route.getLocation();
+         final Location location = route.getLocation();
         pstmtRouteLocation.setString(1, location.getStreetName());
         pstmtRouteLocation.setString(2, location.getStreetNumber());
         pstmtRouteLocation.setString(3, location.getCity());
@@ -451,8 +447,8 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         pstmtRouteLocation.setString(7, location.getId());
         pstmtRouteLocation.executeUpdate();
 
-    }
-
+    }*/
+    /*
     private void executeCreateLocationRouteQuery(Route route, PreparedStatement pstmtLocationRoute) throws SQLException {
         final Location location = route.getLocation();
         if (location != null) {
@@ -461,6 +457,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             pstmtLocationRoute.executeUpdate();
         }
     }
+    */
 /*
     private void executeCreateLocationQuery(Route route, PreparedStatement pstmtLocation) throws SQLException {
         final Location location = route.getLocation();
@@ -495,13 +492,12 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 "ORDER BY COUNT(run.route_id) DESC " +
                 "LIMIT ? ";
 
-        List<Route> routes = executeMostPopularRoutesQuery(top, since, mostPopularRoutesSql);
+        List<Route> routes = executeMostPopularRoutesQuery( top, since, mostPopularRoutesSql);
         return postprocessMostPopularRoutes(routes);
     }
 
     private List<Route> executeMostPopularRoutesQuery(int top, long since, String mostPopularRoutesSql) {
         List<Route> routes = new ArrayList<>();
-
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt = conn.prepareStatement(mostPopularRoutesSql)){
             pstmt.setLong(1, since);
