@@ -10,6 +10,7 @@ public class WayPoint {
         setY(y);
         setIndex(index);
     }
+    public WayPoint(){}
 
     public double getX() {
         return x;

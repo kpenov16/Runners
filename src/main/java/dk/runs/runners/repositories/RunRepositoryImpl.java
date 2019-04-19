@@ -10,7 +10,6 @@ import dk.runs.runners.usecases.RunRepository;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RunRepositoryImpl implements RunRepository {
 
@@ -254,6 +253,50 @@ public class RunRepositoryImpl implements RunRepository {
             throw new CreateRunException(e.getMessage());
         }
         return routeId;
+    }
+
+    @Override
+    public List<WayPoint> getMissingWaypoints(String runId) {
+        List<WayPoint> wayPoints;
+        String sqlQuery = "SELECT ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y, `index` " +
+                "FROM waypoint JOIN run " +
+                "ON waypoint.route_id = run.route_id " +
+                "LEFT JOIN checkpoint ON waypoint.`index` = checkpoint.waypoint_index AND checkpoint.run_id = run.id " +
+                "WHERE run.id = ? AND " +
+                "visited_timestamp IS NULL";
+        wayPoints = executeGetMissingWaypointsQuery(sqlQuery, runId);
+
+        return wayPoints;
+    }
+
+    private List<WayPoint> executeGetMissingWaypointsQuery(String sqlQuery, String runId) {
+        List<WayPoint> wayPoints = new LinkedList<>();
+
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
+            pstmt.setString(1, runId);
+            ResultSet rs = pstmt.executeQuery();
+
+
+            while(rs.next()){
+                WayPoint wayPoint = new WayPoint();
+                wayPoint.setX(rs.getDouble("X"));
+                wayPoint.setY(rs.getDouble("Y"));
+                wayPoint.setIndex(rs.getInt("index"));
+                wayPoints.add(wayPoint);
+            }
+            if(rs != null){  rs.close(); }
+
+        }catch(SQLException se){
+            se.printStackTrace();
+            throw new GetMissingWaypointException(se.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new GetMissingWaypointException(e.getMessage());
+        }
+
+
+        return wayPoints;
     }
 
 

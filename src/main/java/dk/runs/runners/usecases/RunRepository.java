@@ -1,6 +1,9 @@
 package dk.runs.runners.usecases;
 
 import dk.runs.runners.entities.Run;
+import dk.runs.runners.entities.WayPoint;
+
+import java.util.List;
 
 public interface RunRepository {
 
@@ -13,6 +16,8 @@ public interface RunRepository {
     void deleteRun(String runId);
 
     void addCheckpointIfValid(String runId, double currentX, double currentY, int precision);
+
+    List<WayPoint> getMissingWaypoints(String runId);
 
     class CreateRunException extends RuntimeException{
         public CreateRunException(String msg){
@@ -27,5 +32,8 @@ public interface RunRepository {
     }
     class CheckpointException extends RuntimeException{
         public CheckpointException(String msg) {super(msg);}
+    }
+    class GetMissingWaypointException extends RuntimeException{
+        public GetMissingWaypointException(String msg) {super(msg);}
     }
 }
