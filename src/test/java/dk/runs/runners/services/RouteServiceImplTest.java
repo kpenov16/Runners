@@ -5,6 +5,7 @@ import dk.runs.runners.usecases.RouteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,6 +61,11 @@ class RouteServiceImplTest {
         @Override
         public void deleteRoute(String routeId) throws DeleteRouteException {
 
+        }
+
+        @Override
+        public List<Route> getMostPopular(int top, Date since) {
+            return null;
         }
     }
 }

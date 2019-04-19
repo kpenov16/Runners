@@ -4,6 +4,7 @@ import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.User;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -73,6 +74,11 @@ public class ShowUserCreatedRoutesImplTest {
         @Override
         public void deleteRoute(String routeId) throws DeleteRouteException {
 
+        }
+
+        @Override
+        public List<Route> getMostPopular(int top, Date since) {
+            return null;
         }
     }
 

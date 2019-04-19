@@ -6,6 +6,8 @@ import dk.runs.runners.entities.WayPoint;
 import dk.runs.runners.usecases.RouteRepository;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -67,6 +69,17 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         route.setLocation( getLocation(route.getId()) );
         return route;
     }
+
+    public List<Route> postprocessMostPopularRoutes(List<Route> routes) {
+        List<Route> returnedRoutes = new ArrayList<>();
+        for (Route r: routes){
+           Route route = getRoute(r.getId());
+           route.setNumberOfParticipants(r.getNumberOfParticipants());
+           returnedRoutes.add(route);
+        }
+        return returnedRoutes;
+    }
+
 
     @Override
     public List<Route> getRoutes(String creatorId) {
@@ -470,6 +483,43 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         String routeSql = "DELETE FROM route WHERE id = ?";
         String waypointSql = "DELETE FROM waypoint WHERE route_id = ?";
         executeDeleteRouteQuery(locationRouteSql, locationSql, routeSql, waypointSql, route);
+    }
+
+    @Override
+    public List<Route> getMostPopular(int top, Date sinceDate) {
+        long since = sinceDate.getTime();
+        String mostPopularRoutesSql = "SELECT COUNT(run.route_id) AS participants_number, run.route_id, route.`date` " +
+                "FROM run JOIN route ON run.route_id = route.id " +
+                "WHERE route.`date` <= ? " +
+                "GROUP BY run.route_id " +
+                "ORDER BY COUNT(run.route_id) DESC " +
+                "LIMIT ? ";
+
+        List<Route> routes = executeMostPopularRoutesQuery(top, since, mostPopularRoutesSql);
+        return postprocessMostPopularRoutes(routes);
+    }
+
+    private List<Route> executeMostPopularRoutesQuery(int top, long since, String mostPopularRoutesSql) {
+        List<Route> routes = new ArrayList<>();
+
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(mostPopularRoutesSql)){
+            pstmt.setLong(1, since);
+            pstmt.setInt(2, top);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()){
+                Route route = new Route();
+                route.setNumberOfParticipants( rs.getInt("participants_number"));
+                route.setId(rs.getString("route_id"));
+                routes.add(route);
+            }
+            if(rs != null){ rs.close(); }
+        }catch(SQLException se){
+            se.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return routes;
     }
 
     private void executeDeleteRouteQuery(String locationRouteSql, String locationSql,

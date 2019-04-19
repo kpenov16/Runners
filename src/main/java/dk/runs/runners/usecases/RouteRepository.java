@@ -2,6 +2,7 @@ package dk.runs.runners.usecases;
 
 import dk.runs.runners.entities.Route;
 
+import java.util.Date;
 import java.util.List;
 
 public interface RouteRepository {
@@ -16,6 +17,8 @@ public interface RouteRepository {
     List<Route> getRouteList();
 
     void deleteRoute(String routeId)throws DeleteRouteException;
+
+    List<Route> getMostPopular(int top, Date since);
 
     class UpdateRouteException extends RuntimeException{
         public UpdateRouteException(String msg){

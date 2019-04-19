@@ -5,7 +5,6 @@ import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.User;
 import dk.runs.runners.repositories.RouteRepositoryImpl;
 import dk.runs.runners.repositories.UserRepositoryImpl;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -101,6 +100,11 @@ public class CreateRouteImplTest {
         @Override
         public void deleteRoute(String routeId) throws DeleteRouteException {
 
+        }
+
+        @Override
+        public List<Route> getMostPopular(int top, Date since) {
+            return null;
         }
     }
 }
