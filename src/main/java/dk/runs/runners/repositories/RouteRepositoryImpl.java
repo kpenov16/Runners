@@ -490,7 +490,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         long since = sinceDate.getTime();
         String mostPopularRoutesSql = "SELECT COUNT(run.route_id) AS participants_number, run.route_id, route.`date` " +
                 "FROM run JOIN route ON run.route_id = route.id " +
-                "WHERE route.`date` <= ? " +
+                "WHERE route.`date` >= ? " +
                 "GROUP BY run.route_id " +
                 "ORDER BY COUNT(run.route_id) DESC " +
                 "LIMIT ? ";
@@ -507,7 +507,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             pstmt.setLong(1, since);
             pstmt.setInt(2, top);
             ResultSet rs = pstmt.executeQuery();
-            if(rs.next()){
+            while(rs.next()){
                 Route route = new Route();
                 route.setNumberOfParticipants( rs.getInt("participants_number"));
                 route.setId(rs.getString("route_id"));

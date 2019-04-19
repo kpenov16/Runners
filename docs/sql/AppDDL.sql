@@ -168,7 +168,7 @@ SELECT COUNT(*) FROM run;
  
 SELECT COUNT(run.route_id), run.route_id, route.`date`
 FROM run JOIN route ON run.route_id = route.id
-WHERE route.`date` <= 1555663568963
+WHERE route.`date` >= 1555663568963
 GROUP BY run.route_id
 ORDER BY COUNT(run.route_id) DESC
 LIMIT 3;

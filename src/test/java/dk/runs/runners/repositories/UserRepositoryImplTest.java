@@ -51,7 +51,7 @@ public class UserRepositoryImplTest {
     }
 
     @Test
-    public void givenRequestForUserHavingMostParticipantsByRoute_returnUserHavingMostParticipants(){
+    public void givenRequestForUserHavingMostParticipantsByRoute_returnUserHavingMostParticipants() throws InterruptedException {
         afterToBeLaunched = false;
 
         //arrange
@@ -91,11 +91,16 @@ public class UserRepositoryImplTest {
         registerUsersForRoute(nonPopularRoute1, 1);
         registerUsersForRoute(nonPopularRoute2, 2);
 
+        Thread.sleep(500);
+
+        //act
         int top = 3;
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
+        System.out.println(calendar.getTime() + " " + calendar.getTime().getTime());
         List<Route> returnedRoutes = routeRepository.getMostPopular(top, calendar.getTime());
 
+        //assert
         assertEquals(mostPopularRoute1.toString(), returnedRoutes.get(0).toString());
         assertEquals(mostPopularRoute2.toString(), returnedRoutes.get(1).toString());
         assertEquals(popularRoute1.toString(), returnedRoutes.get(2).toString());
