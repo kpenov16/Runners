@@ -16,10 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RunRepositoryImplTest {
     private Run run;
+    private Run secondRun;
     private RunRepositoryImpl runRepository;
     private UserRepository userRepository;
     private RouteRepository routeRepository;
     private Route route;
+    private Route secondRoute;
     private User user;
     private final long ms = System.currentTimeMillis();
     private final long ONE_HOUR = 60*60*1_000;
@@ -43,6 +45,8 @@ class RunRepositoryImplTest {
         userRepository.createUser(user);
 
         routeRepository = new RouteRepositoryImpl();
+
+
         route = new Route(UUID.randomUUID().toString());
         route.setTitle("Route three");
         route.setDescription("It is going to be very fun!!!");
@@ -72,16 +76,46 @@ class RunRepositoryImplTest {
         route.setWayPoints(wayPoints);
         routeRepository.createRoute(route, user.getId());
 
+
+        secondRoute = new Route(UUID.randomUUID().toString());
+        secondRoute.setTitle("Route three");
+        secondRoute.setDescription("It is going to be very fun!!!");
+        secondRoute.setDate(new Date(ms));
+        secondRoute.setStatus("active");
+        secondRoute.setDuration(ONE_HOUR);
+        secondRoute.setDistance(DISTANCE);
+        secondRoute.setMaxParticipants(5);
+        secondRoute.setMinParticipants(2);
+
+        Location secondLocation = new Location(UUID.randomUUID().toString());
+        secondLocation.setX(2.2123);
+        secondLocation.setY(2.3123);
+        secondLocation.setCity("Stockholm");
+        secondLocation.setCountry("Sweden");
+        secondLocation.setStreetName("Main street");
+        secondLocation.setStreetNumber("5A");
+        secondRoute.setLocation(secondLocation);
+
+        secondRoute.setWayPoints(wayPoints);
+        routeRepository.createRoute(secondRoute, user.getId());
+
+
+
         run = new Run();
         run.setRoute(route);
         run.setId(UUID.randomUUID().toString());
         run.setCheckpoints(new LinkedList<Checkpoint>());
 
+        secondRun = new Run();
+        secondRun.setRoute(secondRoute);
+        secondRun.setId(UUID.randomUUID().toString());
+        secondRun.setCheckpoints(new LinkedList<Checkpoint>());
+
         runRepository = new RunRepositoryImpl();
         runRepository.setRouteRepository(routeRepository);
     }
 
-    @AfterEach
+ //   @AfterEach
     void afterEach(){
         runRepository.deleteRun(run.getId());
         routeRepository.deleteRoute(route.getId());
@@ -158,5 +192,30 @@ class RunRepositoryImplTest {
             assertEquals(expectedCheckpoint.get(i).getWayPoint().toString(),
                     returnedCheckpoints.get(i).getWayPoint().toString());
         }
+    }
+
+    @Test
+    void givenRunWithSomeCheckedWaypoint_ReturnMissingWaypoints(){
+        //Arrange
+        runRepository.createRun(run, route.getId(), user.getId());
+        runRepository.addCheckpointIfValid(run.getId(), 1, 1, 1);
+
+        runRepository.createRun(secondRun, secondRoute.getId(), user.getId());
+        runRepository.addCheckpointIfValid(secondRun.getId(), 1, 1, 1);
+        runRepository.addCheckpointIfValid(secondRun.getId(), 3, 4, 1);
+        runRepository.addCheckpointIfValid(secondRun.getId(), 5, 5, 1);
+
+        List<WayPoint> expectedMissingWayPoints = new LinkedList<>();
+        WayPoint middleWayPoint = new WayPoint(3.22, 4.22, 1);
+        WayPoint endWayPoint = new WayPoint(5.12, 5.13, 2);
+        expectedMissingWayPoints.add(middleWayPoint);
+        expectedMissingWayPoints.add(endWayPoint);
+        //Act & assert
+        assertEquals(expectedMissingWayPoints.toString(), runRepository.getMissingWaypoints(run.getId()).toString());
+
+        // clean up
+   //     runRepository.deleteRun(secondRun.getId());
+   //     routeRepository.deleteRoute(secondRoute.getId());
+
     }
 }
