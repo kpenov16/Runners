@@ -56,8 +56,8 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             int rowsEffected = pstmtUser.executeUpdate();
 
             if(rowsEffected == 1){
-                executeCreateLocationQuery(user, pstmtLocation);
-                executeCreateLocationUserQuery(user, pstmtUserLocation);
+                super.executeCreateLocationQuery(user, pstmtLocation);
+                executeCreateLocationReferenceQuery(user, pstmtUserLocation);
                 conn.commit();
             }else {
                 conn.rollback();
@@ -127,7 +127,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         }
     }
 */
-    private void executeCreateLocationUserQuery(User user, PreparedStatement pstmtLocationUser) throws SQLException {
+  /*  private void executeCreateLocationUserQuery(User user, PreparedStatement pstmtLocationUser) throws SQLException {
         final Location location = user.getLocation();
         if (location != null) {
             pstmtLocationUser.setString(1, location.getId());
@@ -135,7 +135,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             pstmtLocationUser.executeUpdate();
         }
     }
-
+*/
 
 
 
@@ -301,7 +301,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
 
             if(rowsEffected == 1){
                 //update location
-                executeUpdateLocationQuery(user, pstmtLocation);
+                super.executeUpdateLocationQuery(user, pstmtLocation);
                 conn.commit();
             }else {
                 conn.rollback();
@@ -350,7 +350,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             }
         }
     }
-
+/*
     private void executeUpdateLocationQuery(User user, PreparedStatement pstmtLocation) throws SQLException {
 
         final Location location = user.getLocation();
@@ -364,6 +364,6 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         pstmtLocation.executeUpdate();
 
     }
-
+*/
 
 }

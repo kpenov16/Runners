@@ -1,12 +1,13 @@
 package dk.runs.runners.repositories;
-import dk.runs.runners.entities.Location;
-import dk.runs.runners.entities.User;
+import dk.runs.runners.entities.*;
+import dk.runs.runners.usecases.RouteRepository;
+import dk.runs.runners.usecases.RunRepository;
 import dk.runs.runners.usecases.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +15,9 @@ public class UserRepositoryImplTest {
     private User user;
     private Location location;
     private boolean afterToBeLaunched = true;
-    UserRepository userRepository = null;
+    private UserRepository userRepository = null;
+    //private RouteRepository routeRepository = null;
+    //private RunRepository runRepository = null;
 
     @BeforeEach
     public void beforeEach(){
@@ -34,6 +37,10 @@ public class UserRepositoryImplTest {
         location.setStreetName("Main street");
         location.setStreetNumber("5A");
         user.setLocation(location);
+
+        //routeRepository = new RouteRepositoryImpl();
+        //runRepository = new RunRepositoryImpl();
+        //((RunRepositoryImpl) runRepository).setRouteRepository(routeRepository);
     }
 
     @AfterEach
@@ -42,6 +49,7 @@ public class UserRepositoryImplTest {
             userRepository.deleteUser(user.getId());
         }
     }
+
 
     @Test
     public void givenCreateUser_returnUserCreated() {

@@ -14,8 +14,17 @@ public class Route implements Locational {
     private List<WayPoint> wayPoints = new LinkedList<>();
     private int maxParticipants = -1;
     private int minParticipants = -1;
+    private int numberOfParticipants = 0;
 
     public Route(){}
+
+    public int getNumberOfParticipants() {
+        return numberOfParticipants;
+    }
+
+    public void setNumberOfParticipants(int numberOfParticipants) {
+        this.numberOfParticipants = numberOfParticipants;
+    }
 
     public int getMaxParticipants() {
         return maxParticipants;
@@ -44,7 +53,7 @@ public class Route implements Locational {
     public void setTitle(String title) {
         this.title = title;
     }
-
+    @Override
     public String getId() {
         return id;
     }

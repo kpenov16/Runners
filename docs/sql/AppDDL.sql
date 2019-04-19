@@ -159,3 +159,20 @@ CREATE TABLE IF NOT EXISTS waypoint(
     SPATIAL INDEX (spatial_point)
 );
 */
+
+SELECT COUNT(*) FROM user;
+
+SELECT COUNT(*) FROM route; 
+
+SELECT COUNT(*) FROM run;
+ 
+SELECT COUNT(run.route_id), run.route_id, route.`date`
+FROM run JOIN route ON run.route_id = route.id
+WHERE route.`date` >= 1555663568963
+GROUP BY run.route_id
+ORDER BY COUNT(run.route_id) DESC
+LIMIT 3;
+
+SELECT * FROM route; 
+
+ 
