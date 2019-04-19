@@ -50,6 +50,7 @@ SELECT * FROM `checkpoint`;
 SELECT * FROM `run`;
 SELECT * FROM `checkpoint` WHERE `run_id` = '#second_run_id#';
 
+
 SELECT ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y, `index` 
 FROM waypoint LEFT JOIN run 
 ON waypoint.route_id = run.route_id 
@@ -74,3 +75,23 @@ ON `waypoint`.`route_id` = `run`.`route_id`
 LEFT JOIN `checkpoint` ON `waypoint`.`index` = `checkpoint`.`waypoint_index`
 WHERE `run`.`id` = '#run_id#' AND 
 `visited_timestamp` IS null;
+
+
+
+SELECT *  FROM `waypoint` LEFT JOIN `run` 
+ON `waypoint`.`route_id` = `run`.`route_id`
+LEFT JOIN `checkpoint` ON `waypoint`.`index` = `checkpoint`.`waypoint_index`
+WHERE `run`.`id` = '#run_id#' AND 
+`visited_timestamp` IS null;
+
+SELECT * 
+FROM waypoint JOIN run 
+ON waypoint.route_id = run.route_id
+LEFT JOIN checkpoint ON waypoint.`index` = checkpoint.waypoint_index AND checkpoint.run_id = run.id;
+
+SELECT *
+FROM waypoint JOIN run 
+ON waypoint.route_id = run.route_id 
+LEFT JOIN checkpoint
+ON id = checkpoint.run_id AND waypoint.`index` = checkpoint.waypoint_index
+AND run.id = 'fbdaccb6-ce0d-41b5-b740-3f17752e343a';

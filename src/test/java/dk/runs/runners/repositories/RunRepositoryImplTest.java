@@ -115,12 +115,39 @@ class RunRepositoryImplTest {
         runRepository.setRouteRepository(routeRepository);
     }
 
- //   @AfterEach
+    //@AfterEach
     void afterEach(){
         runRepository.deleteRun(run.getId());
+
         routeRepository.deleteRoute(route.getId());
         userRepository.deleteUser(user.getId());
     }
+
+    @Test
+    void givenRunWithSomeCheckedWaypoint_ReturnMissingWaypoints(){
+        //Arrange
+        runRepository.createRun(run, route.getId(), user.getId());
+        runRepository.addCheckpointIfValid(run.getId(), 1, 1, 1);
+
+        runRepository.createRun(secondRun, secondRoute.getId(), user.getId());
+        runRepository.addCheckpointIfValid(secondRun.getId(), 1, 1, 1);
+        runRepository.addCheckpointIfValid(secondRun.getId(), 3, 4, 1);
+        runRepository.addCheckpointIfValid(secondRun.getId(), 5, 5, 1);
+
+        List<WayPoint> expectedMissingWayPoints = new LinkedList<>();
+        WayPoint middleWayPoint = new WayPoint(3.22, 4.22, 1);
+        WayPoint endWayPoint = new WayPoint(5.12, 5.13, 2);
+        expectedMissingWayPoints.add(middleWayPoint);
+        expectedMissingWayPoints.add(endWayPoint);
+        //Act & assert
+        assertEquals(expectedMissingWayPoints.toString(), runRepository.getMissingWaypoints(run.getId()).toString());
+
+        // clean up
+        runRepository.deleteRun(secondRun.getId());
+        routeRepository.deleteRoute(secondRoute.getId());
+
+    }
+
 
     @Test
     void givenCreateRun_returnRunCreated(){
@@ -194,28 +221,5 @@ class RunRepositoryImplTest {
         }
     }
 
-    @Test
-    void givenRunWithSomeCheckedWaypoint_ReturnMissingWaypoints(){
-        //Arrange
-        runRepository.createRun(run, route.getId(), user.getId());
-        runRepository.addCheckpointIfValid(run.getId(), 1, 1, 1);
 
-        runRepository.createRun(secondRun, secondRoute.getId(), user.getId());
-        runRepository.addCheckpointIfValid(secondRun.getId(), 1, 1, 1);
-        runRepository.addCheckpointIfValid(secondRun.getId(), 3, 4, 1);
-        runRepository.addCheckpointIfValid(secondRun.getId(), 5, 5, 1);
-
-        List<WayPoint> expectedMissingWayPoints = new LinkedList<>();
-        WayPoint middleWayPoint = new WayPoint(3.22, 4.22, 1);
-        WayPoint endWayPoint = new WayPoint(5.12, 5.13, 2);
-        expectedMissingWayPoints.add(middleWayPoint);
-        expectedMissingWayPoints.add(endWayPoint);
-        //Act & assert
-        assertEquals(expectedMissingWayPoints.toString(), runRepository.getMissingWaypoints(run.getId()).toString());
-
-        // clean up
-   //     runRepository.deleteRun(secondRun.getId());
-   //     routeRepository.deleteRoute(secondRoute.getId());
-
-    }
 }
