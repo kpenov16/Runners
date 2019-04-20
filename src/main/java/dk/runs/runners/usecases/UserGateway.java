@@ -7,8 +7,6 @@ import dk.runs.runners.entities.WayPoint;
 import java.util.List;
 
 public interface UserGateway {
-    //try gateway interface
-
     void createUser(User user);
     void addRoute(Route route, String userId);
     void addWayPoint(WayPoint wayPoint, String routeId);

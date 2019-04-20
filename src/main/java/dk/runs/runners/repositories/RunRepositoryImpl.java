@@ -13,6 +13,8 @@ import java.util.List;
 
 public class RunRepositoryImpl implements RunRepository {
 
+    public static final String RUN_ID_IS_NOT_DEFINED = "Run id is not defined";
+    public static final String RUN_WITH_ID_S_IS_MISSING_ROUTE_OBJECT = "Run with id: %s is missing route object.";
     private final String url = "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
             + "user=s133967&password=8JPOJuQcgUpUVIVHY4S2H";
 
@@ -23,11 +25,21 @@ public class RunRepositoryImpl implements RunRepository {
     }
 
     @Override
-    public void createRun(Run run, String routeId, String participantId) {
+    public void createRun(Run run, String participantId) {
+        validate(run);
         String sqlQuery = "INSERT INTO run VALUES ( ? , ? , ? )";
         executeCreateRunQuery(sqlQuery,run, participantId);
     }
-    private void executeCreateRunQuery(String sql, Run run, String paticipantId) throws CreateRunException {
+
+    private void validate(Run run) {
+        if(run.getId()==null){
+            throw new RunValidationException(RUN_ID_IS_NOT_DEFINED);
+        }else if(run.getRoute()==null){
+            throw new RunValidationException( String.format(RUN_WITH_ID_S_IS_MISSING_ROUTE_OBJECT, run.getId()) );
+        }
+    }
+
+    private void executeCreateRunQuery(String sql, Run run, String paticipantId) {
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, run.getId());
@@ -35,7 +47,13 @@ public class RunRepositoryImpl implements RunRepository {
             pstmt.setString(3, paticipantId);
             pstmt.executeUpdate();
         }catch (SQLIntegrityConstraintViolationException e){
-            throw new RunIdDuplicationException(e.getMessage());
+            final String MSG = e.getMessage();
+            if (MSG.contains("FOREIGN KEY (`route_id`)")){
+                throw new UnknownRouteException(MSG);
+            }else if(MSG.contains("FOREIGN KEY (`user_id`)")){
+                throw new UnknownUserException(MSG);
+            }
+            throw new RunIdDuplicationException(MSG);
         }catch(SQLException se){
             se.printStackTrace();
             throw new CreateRunException(se.getMessage());

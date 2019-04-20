@@ -172,7 +172,8 @@ public class RouteRepositoryImplTest {
             Run run = constructRun(route);
             User user = constructUser();
             userRepository.createUser(user);
-            runRepository.createRun(run, route.getId(), user.getId());
+            run.setRoute(route);
+            runRepository.createRun(run, user.getId());
 
             participantsToBeDeleted.add(user);
         }

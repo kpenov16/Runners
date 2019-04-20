@@ -2,6 +2,7 @@ package dk.runs.runners.repositories;
 
 import dk.runs.runners.entities.*;
 import dk.runs.runners.usecases.RouteRepository;
+import dk.runs.runners.usecases.RunRepository;
 import dk.runs.runners.usecases.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -122,11 +123,13 @@ class RunRepositoryImplTest {
 
         //Arrange
         routeRepository.createRoute(secondRoute, user.getId());
+        run.setRoute(route);
 
-        runRepository.createRun(run, route.getId(), user.getId());
+        runRepository.createRun(run, user.getId());
         runRepository.addCheckpointIfValid(run.getId(), 1, 1, 1);
 
-        runRepository.createRun(secondRun, secondRoute.getId(), user.getId());
+        secondRun.setRoute(secondRoute);
+        runRepository.createRun(secondRun, user.getId());
         runRepository.addCheckpointIfValid(secondRun.getId(), 1, 1, 1);
         runRepository.addCheckpointIfValid(secondRun.getId(), 3, 4, 1);
         runRepository.addCheckpointIfValid(secondRun.getId(), 5, 5, 1);
@@ -149,21 +152,105 @@ class RunRepositoryImplTest {
     void givenCreateRun_returnRunCreated(){
         userRepository.createUser(user);
         routeRepository.createRoute(route, user.getId());
+        run.setRoute(route);
 
         // Arrange
-        runRepository.createRun(run, route.getId(), user.getId());
+        runRepository.createRun(run, user.getId());
         Run returnedRun = runRepository.getRunWithAllCheckpoints(run.getId());
         // Act
         assertEquals(run.toString(), returnedRun.toString());
     }
 
     @Test
-    void givenRunnerAddsCheckpoints_returnCreatedCheckpointsAddedForARun(){
+    void givenCreateRunWithIdThatIsAlreadyUsed_returnRunIdDuplicationException(){
+        // Arrange
+        userRepository.createUser(user);
+        routeRepository.createRoute(route, user.getId());
+        run.setRoute(route);
+        runRepository.createRun(run, user.getId());
+
+        //act, assert
+        RunRepository.RunIdDuplicationException runIdDuplicationException =
+                assertThrows(RunRepository.RunIdDuplicationException.class,
+                        () -> runRepository.createRun(run, user.getId())
+                );
+    }
+
+    @Test
+    void givenCreateRunWithUnknownRouteId_returnUnknownRouteException(){
+        // Arrange
         userRepository.createUser(user);
         routeRepository.createRoute(route, user.getId());
 
+        run.setRoute(constructRoute());
+
+        //act, assert
+        RunRepository.UnknownRouteException runUnknownRouteException =
+                assertThrows(RunRepository.UnknownRouteException.class,
+                        () -> runRepository.createRun(run, user.getId())
+                );
+    }
+
+    @Test
+    void givenCreateRunWithUnknownUserId_returnUnknownUserException(){
         // Arrange
-        runRepository.createRun(run, route.getId(), user.getId());
+        userRepository.createUser(user);
+        routeRepository.createRoute(route, user.getId());
+        run.setRoute(route);
+
+        //act, assert
+        RunRepository.UnknownUserException runUnknownUserException =
+                assertThrows(RunRepository.UnknownUserException.class,
+                        () -> {
+                            String unknownParticipantId = UUID.randomUUID().toString();
+                            runRepository.createRun(run, unknownParticipantId);
+                        }
+                );
+    }
+
+    @Test
+    void givenCreateRunWithNullId_returnRunValidationException(){
+        // Arrange
+        userRepository.createUser(user);
+        routeRepository.createRoute(route, user.getId());
+        run.setRoute(route);
+        run.setId(null);
+
+        //act, assert
+        RunRepository.RunValidationException runValidationException =
+                assertThrows(RunRepository.RunValidationException.class,
+                        () -> runRepository.createRun(run, user.getId())
+                );
+        assertEquals(RunRepositoryImpl.RUN_ID_IS_NOT_DEFINED ,
+                runValidationException.getMessage());
+    }
+
+    @Test
+    void givenCreateRunWithNullRoute_returnRunValidationException(){
+        // Arrange
+        userRepository.createUser(user);
+        routeRepository.createRoute(route, user.getId());
+        run.setRoute(null);
+
+        //act, assert
+        RunRepository.RunValidationException runValidationException =
+                assertThrows(RunRepository.RunValidationException.class,
+                        () -> runRepository.createRun(run, user.getId())
+                );
+        assertEquals(
+                String.format(RunRepositoryImpl.RUN_WITH_ID_S_IS_MISSING_ROUTE_OBJECT, run.getId()),
+                runValidationException.getMessage()
+        );
+    }
+
+    @Test
+    void givenRunnerAddsCheckpoints_returnCreatedCheckpointsAddedForARun(){
+        userRepository.createUser(user);
+        routeRepository.createRoute(route, user.getId());
+        run.setRoute(route);
+
+        // Arrange
+        runRepository.createRun(run, user.getId());
 
         //runRepository.isACheckpoint(run, currentX, currentY);
         double currentX = 1.1;
@@ -195,9 +282,10 @@ class RunRepositoryImplTest {
     void givenGetRunWithMoreThanOneCheckpointForAWaypoint_returnRunWithTheNewestCheckpointForWaypoint() throws InterruptedException {
         userRepository.createUser(user);
         routeRepository.createRoute(route, user.getId());
+        run.setRoute(route);
 
         // Arrange
-        runRepository.createRun(run, route.getId(), user.getId());
+        runRepository.createRun(run, user.getId());
 
         //runRepository.isACheckpoint(run, currentX, currentY);
         double currentX = 1.1;
@@ -238,13 +326,13 @@ class RunRepositoryImplTest {
         User user1 = constructUser(); participantsToBeDeleted.add(user1);
         userRepository.createUser(user1);
         Run runUser1 = constructRun(newRoute);
-        runRepository.createRun(runUser1, newRoute.getId(), user1.getId());
+        runRepository.createRun(runUser1, user1.getId());
         runRepository.addCheckpointIfValid(runUser1.getId(), 1, 1, 1);
 
         User user2 = constructUser(); participantsToBeDeleted.add(user2);
         userRepository.createUser(user2);
         Run runUser2 = constructRun(newRoute);
-        runRepository.createRun(runUser2, newRoute.getId(), user2.getId());
+        runRepository.createRun(runUser2, user2.getId());
         runRepository.addCheckpointIfValid(runUser2.getId(), 1, 1, 1);
         runRepository.addCheckpointIfValid(runUser2.getId(), 5, 5, 1);
 
@@ -284,7 +372,8 @@ class RunRepositoryImplTest {
             Run run = constructRun(route);
             User user = constructUser();
             userRepository.createUser(user);
-            runRepository.createRun(run, route.getId(), user.getId());
+            run.setRoute(route);
+            runRepository.createRun(run, user.getId());
 
             participantsToBeDeleted.add(user);
         }
