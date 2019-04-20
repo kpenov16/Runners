@@ -15,6 +15,7 @@ public class RunRepositoryImpl implements RunRepository {
 
     public static final String RUN_ID_IS_NOT_DEFINED = "Run id is not defined";
     public static final String RUN_WITH_ID_S_IS_MISSING_ROUTE_OBJECT = "Run with id: %s is missing route object.";
+    public static final String ROUTE_ID_S_HAS_REACHED_MAX_PARTICIPANTS_D = "Route Id: %s has reached max participants: %d";
     private final String url = "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
             + "user=s133967&password=8JPOJuQcgUpUVIVHY4S2H";
 
@@ -27,6 +28,7 @@ public class RunRepositoryImpl implements RunRepository {
     @Override
     public void createRun(Run run, String participantId) {
         validate(run);
+
         String sqlQuery = "INSERT INTO run VALUES ( ? , ? , ? )";
         executeCreateRunQuery(sqlQuery,run, participantId);
     }
@@ -40,26 +42,91 @@ public class RunRepositoryImpl implements RunRepository {
     }
 
     private void executeCreateRunQuery(String sql, Run run, String paticipantId) {
-        try(Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt= conn.prepareStatement(sql)){
-            pstmt.setString(1, run.getId());
-            pstmt.setString(2, run.getRoute().getId());
-            pstmt.setString(3, paticipantId);
-            pstmt.executeUpdate();
-        }catch (SQLIntegrityConstraintViolationException e){
-            final String MSG = e.getMessage();
-            if (MSG.contains("FOREIGN KEY (`route_id`)")){
-                throw new UnknownRouteException(MSG);
-            }else if(MSG.contains("FOREIGN KEY (`user_id`)")){
-                throw new UnknownUserException(MSG);
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try{
+            conn = DriverManager.getConnection(url);
+            conn.setAutoCommit(false);
+
+            pstmt = conn.prepareStatement(sql);
+
+            Route route = routeRepository.getRoute( run.getRoute().getId() );
+            if(route.getNumberOfParticipants() == route.getMaxParticipants() ){
+                if(conn!=null){
+                    conn.rollback();
+                }
+                throw new MaxParticipansReachedException(
+                  String.format(ROUTE_ID_S_HAS_REACHED_MAX_PARTICIPANTS_D, route.getId(), route.getMaxParticipants())
+                );
+            }else {
+                pstmt.setString(1, run.getId());
+                pstmt.setString(2, run.getRoute().getId());
+                pstmt.setString(3, paticipantId);
+                int rowsEffected = pstmt.executeUpdate();
+                conn.commit();
             }
-            throw new RunIdDuplicationException(MSG);
-        }catch(SQLException se){
-            se.printStackTrace();
-            throw new CreateRunException(se.getMessage());
-        }catch(Exception e){
-            e.printStackTrace();
-            throw new CreateRunException(e.getMessage());
+
+        }catch (Throwable t){
+            handleCreationExceptions(t, conn);
+        }finally {
+            try {
+                if(pstmt != null) pstmt.close();
+                if(conn != null) conn.close();
+            } catch (SQLException e) {
+                throw new CreateRunException(e.getMessage());
+            }
+        }
+    }
+
+    private void handleCreationExceptions(Throwable t, Connection conn) {
+        if(t instanceof MaxParticipansReachedException){
+            MaxParticipansReachedException e = (MaxParticipansReachedException)t;
+            throw new MaxParticipansReachedException(e.getMessage());
+        }else if(t instanceof SQLIntegrityConstraintViolationException){
+            SQLIntegrityConstraintViolationException e =
+                    (SQLIntegrityConstraintViolationException)t;
+            try {
+                if(conn!=null){
+                    conn.rollback();
+                }
+                final String MSG = e.getMessage();
+                if (MSG.contains("FOREIGN KEY (`route_id`)")){
+                    throw new UnknownRouteException(MSG);
+                }else if(MSG.contains("FOREIGN KEY (`user_id`)")){
+                    throw new UnknownUserException(MSG);
+                }
+                throw new RunIdDuplicationException(MSG);
+            }catch (SQLException rollBackException){
+                rollBackException.printStackTrace();
+            }
+        }else if(t instanceof RouteRepository.RouteNotFoundException){
+            if(conn!=null){
+                try {
+                    conn.rollback();
+                    RouteRepository.RouteNotFoundException e =(RouteRepository.RouteNotFoundException)t;
+                    throw new UnknownRouteException(e.getMessage());
+                } catch (SQLException rollBackException) {
+                    rollBackException.printStackTrace();
+                }
+            }
+        }else if(t instanceof SQLException){
+            SQLException se = (SQLException)t;
+            try {
+                conn.rollback();
+                se.printStackTrace();
+                throw new CreateRunException(se.getMessage());
+            }catch (SQLException rollBackException){
+                throw new CreateRunException(rollBackException.getMessage());
+            }
+        }else if(t instanceof Exception){
+            Exception e = (SQLException)t;
+            try {
+                conn.rollback();
+                e.printStackTrace();
+                throw new CreateRunException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new CreateRunException(rollBackException.getMessage());
+            }
         }
     }
 

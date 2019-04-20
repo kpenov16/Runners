@@ -107,6 +107,8 @@ public class RouteRepositoryImplTest {
         Route mostPopularRoute2 = constructRoute();
         routeRepository.createRoute(mostPopularRoute1, mostPopularUser.getId());
         routeRepository.createRoute(mostPopularRoute2, mostPopularUser.getId());
+        mostPopularRoute1.setNumberOfParticipants(9);
+        mostPopularRoute2.setNumberOfParticipants(8);
         registerUsersForRoute(mostPopularRoute1, 9);
         registerUsersForRoute(mostPopularRoute2, 8);
 
@@ -116,6 +118,7 @@ public class RouteRepositoryImplTest {
         Route popularRoute2 = constructRoute();
         routeRepository.createRoute(popularRoute1, popularUser.getId());
         routeRepository.createRoute(popularRoute2, popularUser.getId());
+        popularRoute1.setNumberOfParticipants(7);
         registerUsersForRoute(popularRoute1, 7);
         registerUsersForRoute(popularRoute2, 6);
 
@@ -134,7 +137,8 @@ public class RouteRepositoryImplTest {
         Route nonPopularRoute2 = constructRoute();
         routeRepository.createRoute(nonPopularRoute1, nonPopularUser.getId());
         routeRepository.createRoute(nonPopularRoute2, nonPopularUser.getId());
-        registerUsersForRoute(nonPopularRoute1, 1);
+        registerUsersForRoute(nonPopularRoute1, 0);
+        //System.out.println(nonPopularRoute1.getId());
         registerUsersForRoute(nonPopularRoute2, 2);
 
         Thread.sleep(500);
@@ -240,13 +244,16 @@ public class RouteRepositoryImplTest {
         //act
         userRepository.createUser(user);
         routeRepository.createRoute(route, user.getId());//route and waypoints
+        Run run = constructRun(route);
+        runRepository.createRun(run, user.getId());
+        route.setNumberOfParticipants(route.getNumberOfParticipants()+1);
 
         Route returnedRoute = routeRepository.getRoute(route.getId());
-
         //assert
         assertEquals(route.toString() , returnedRoute.toString());
 
         //clean-up
+        runRepository.deleteRun(run.getId());
         routeRepository.deleteRoute(route.getId());
         userRepository.deleteUser(user.getId());
     }

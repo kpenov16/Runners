@@ -54,7 +54,9 @@ public interface RunRepository {
     class GetMissingWaypointException extends RuntimeException{
         public GetMissingWaypointException(String msg) {super(msg);}
     }
-
+    class MaxParticipansReachedException extends RuntimeException{
+        public MaxParticipansReachedException(String msg) {super(msg);}
+    }
 
 
 }

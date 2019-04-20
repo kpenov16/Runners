@@ -163,9 +163,21 @@ CREATE TABLE IF NOT EXISTS waypoint(
 SELECT COUNT(*) FROM user;
 
 SELECT COUNT(*) FROM route; 
+SELECT * FROM route; 
+SELECT * FROM run; 
 
-SELECT COUNT(*) FROM run;
+#getRoute + number of participants
+SELECT route.id, COUNT(run.route_id) AS participants_number 
+FROM route LEFT JOIN run 
+ON route.id = run.route_id 
+where route.id = '9bda3c78-dbb1-47e1-8bb1-467acc0317b7'#'a4533417-bf38-4204-8e98-36153de7b5ea'
+;
  
+SELECT *
+FROM route LEFT JOIN run 
+ON route.id = run.route_id and route.id = 'fd2f5769-ad3a-4ca0-aab6-563f9883026e';
+ 
+#get top3 most popuar routes since date  
 SELECT COUNT(run.route_id), run.route_id, route.`date`
 FROM run JOIN route ON run.route_id = route.id
 WHERE route.`date` >= 1555663568963

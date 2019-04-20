@@ -121,8 +121,9 @@ public class Route implements Locational {
                 ", duration: "+duration+
                 ", description: "+description+
                 ", status: "+status+
-                ", maxParticipants"+maxParticipants+
-                ", minParticipants"+minParticipants+
+                ", maxParticipants: " + maxParticipants +
+                ", minParticipants: " + minParticipants +
+                ", numberOfParticipants: " + numberOfParticipants +
                 ", " +wayPoints.toString();
     }
 
