@@ -86,8 +86,8 @@ CREATE TABLE IF NOT EXISTS checkpoint(
 	waypoint_index INT,
     visited_timestamp TIMESTAMP,
     PRIMARY KEY (run_id, waypoint_index, visited_timestamp), 
-    FOREIGN KEY (run_id) REFERENCES run (id),
-    FOREIGN KEY (waypoint_index) REFERENCES waypoint (`index`)    
+    FOREIGN KEY (run_id) REFERENCES run (id)
+  ##  , FOREIGN KEY (waypoint_index) REFERENCES waypoint (`index`)    ## here is the fail
 );
 
 CREATE TABLE IF NOT EXISTS route_archive(

@@ -2,15 +2,13 @@ package dk.runs.runners.repositories;
 
 import dk.runs.runners.entities.*;
 import dk.runs.runners.usecases.RouteRepository;
+import dk.runs.runners.usecases.RunRepository;
 import dk.runs.runners.usecases.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,14 +55,6 @@ class RunRepositoryImplTest {
         route.setMaxParticipants(5);
         route.setMinParticipants(2);
 
-        Location location = new Location(UUID.randomUUID().toString());
-        location.setX(2.2123);
-        location.setY(2.3123);
-        location.setCity("Stockholm");
-        location.setCountry("Sweden");
-        location.setStreetName("Main street");
-        location.setStreetNumber("5A");
-        route.setLocation(location);
 
         List<WayPoint> wayPoints = new LinkedList<>();
         WayPoint startWayPoint = new WayPoint(1.12, 1.13, 0);
@@ -97,7 +87,7 @@ class RunRepositoryImplTest {
         secondRoute.setLocation(secondLocation);
 
         secondRoute.setWayPoints(wayPoints);
-        routeRepository.createRoute(secondRoute, user.getId());
+
 
 
 
@@ -113,12 +103,12 @@ class RunRepositoryImplTest {
 
         runRepository = new RunRepositoryImpl();
         runRepository.setRouteRepository(routeRepository);
+
     }
 
-    //@AfterEach
+    @AfterEach
     void afterEach(){
         runRepository.deleteRun(run.getId());
-
         routeRepository.deleteRoute(route.getId());
         userRepository.deleteUser(user.getId());
     }
@@ -126,6 +116,8 @@ class RunRepositoryImplTest {
     @Test
     void givenRunWithSomeCheckedWaypoint_ReturnMissingWaypoints(){
         //Arrange
+        routeRepository.createRoute(secondRoute, user.getId());
+
         runRepository.createRun(run, route.getId(), user.getId());
         runRepository.addCheckpointIfValid(run.getId(), 1, 1, 1);
 
@@ -145,7 +137,36 @@ class RunRepositoryImplTest {
         // clean up
         runRepository.deleteRun(secondRun.getId());
         routeRepository.deleteRoute(secondRoute.getId());
+    }
 
+    @Test
+    void givenDifferentRunsForSameRouteWithSomeCheckedWaypoint_ReturnMissingWaypoints(){
+        //Arrange
+        constructUser();
+
+
+
+        routeRepository.createRoute(secondRoute, user.getId());
+
+        runRepository.createRun(run, route.getId(), user.getId());
+        runRepository.addCheckpointIfValid(run.getId(), 1, 1, 1);
+
+        runRepository.createRun(secondRun, secondRoute.getId(), user.getId());
+        runRepository.addCheckpointIfValid(secondRun.getId(), 1, 1, 1);
+        runRepository.addCheckpointIfValid(secondRun.getId(), 3, 4, 1);
+        runRepository.addCheckpointIfValid(secondRun.getId(), 5, 5, 1);
+
+        List<WayPoint> expectedMissingWayPoints = new LinkedList<>();
+        WayPoint middleWayPoint = new WayPoint(3.22, 4.22, 1);
+        WayPoint endWayPoint = new WayPoint(5.12, 5.13, 2);
+        expectedMissingWayPoints.add(middleWayPoint);
+        expectedMissingWayPoints.add(endWayPoint);
+        //Act & assert
+        assertEquals(expectedMissingWayPoints.toString(), runRepository.getMissingWaypoints(run.getId()).toString());
+
+        // clean up
+        runRepository.deleteRun(secondRun.getId());
+        routeRepository.deleteRoute(secondRoute.getId());
     }
 
 
@@ -219,6 +240,84 @@ class RunRepositoryImplTest {
             assertEquals(expectedCheckpoint.get(i).getWayPoint().toString(),
                     returnedCheckpoints.get(i).getWayPoint().toString());
         }
+    }
+
+    private Location newLocation = null;
+    private List<Run> runsToBeDeleted = new ArrayList<>();
+    private List<User> usersToBeDeleted = new ArrayList<>();
+    private List<User> participantsToBeDeleted = new ArrayList<>();
+    private List<Route> routesToBeDeleted = new ArrayList<>();
+
+    private void deleteCreatedEntities() {
+        runsToBeDeleted.stream().forEach(run->runRepository.deleteRun(run.getId()));
+        participantsToBeDeleted.stream().forEach(p->userRepository.deleteUser(p.getId()));
+        routesToBeDeleted.stream().forEach(route -> routeRepository.deleteRoute(route.getId()));
+        usersToBeDeleted.stream().forEach(u->userRepository.deleteUser(u.getId()));
+    }
+    private void registerUsersForRoute(Route route, int numberOfParticipants) {
+        for (int i=0; i<numberOfParticipants; i++){
+            Run run = constructRun(route);
+            User user = constructUser();
+            userRepository.createUser(user);
+            runRepository.createRun(run, route.getId(), user.getId());
+
+            participantsToBeDeleted.add(user);
+        }
+    }
+    private Run constructRun(Route route) {
+        Run run = new Run();
+        run.setRoute(route);
+        run.setId(UUID.randomUUID().toString());
+        run.setCheckpoints(new LinkedList<Checkpoint>());
+        runsToBeDeleted.add(run);
+        return run;
+    }
+    private Route constructRoute(){
+        Route route = new Route(UUID.randomUUID().toString());
+        Location location = new Location(UUID.randomUUID().toString());
+        location.setX(2.2123);
+        location.setY(2.3123);
+        location.setCity("Stockholm");
+        location.setCountry("Sweden");
+        location.setStreetName("Main street");
+        location.setStreetNumber("5A");
+        route.setTitle("Route three");
+        route.setLocation(location);
+        route.setDescription("It is going to be very fun!!!");
+        route.setDate(new Date( System.currentTimeMillis() ));
+        route.setStatus("active");
+        route.setDuration(60*60*1_000);
+        route.setDistance(3_000);
+        route.setMaxParticipants(10);
+        route.setMinParticipants(2);
+
+        List<WayPoint> wayPoints = new LinkedList<>();
+        WayPoint startWayPoint = new WayPoint(1.12, 1.13, 0);
+        WayPoint endWayPoint = new WayPoint(5.12, 5.13, 1);
+        wayPoints.add(startWayPoint);
+        wayPoints.add(endWayPoint);
+        route.setWayPoints(wayPoints);
+
+        routesToBeDeleted.add(route);
+
+        return route;
+    }
+    private User constructUser(){
+        User user = new User(UUID.randomUUID().toString());
+        user.setEmail(UUID.randomUUID().toString());
+        user.setUserName(UUID.randomUUID().toString());
+        user.setPassword(UUID.randomUUID().toString());
+
+        newLocation = new Location(UUID.randomUUID().toString());
+        newLocation.setX(2.2123);
+        newLocation.setY(2.3123);
+        newLocation.setCity("Stockholm");
+        newLocation.setCountry("Sweden");
+        newLocation.setStreetName("Main street");
+        newLocation.setStreetNumber("5A");
+        user.setLocation(newLocation);
+
+        return user;
     }
 
 
