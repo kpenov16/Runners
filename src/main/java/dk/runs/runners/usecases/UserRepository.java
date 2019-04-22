@@ -26,7 +26,6 @@ public interface UserRepository {
      */
     User getUser(String userName) throws UserNotFoundException, UserRepositoryException;
 
-
     User getUserById(String userId);
 
     void deleteUser(String userId);
@@ -36,9 +35,10 @@ public interface UserRepository {
      * @param updatedUser the updated User object
      * @throws UserNameDuplicationException if the new userName is already taken by another user
      * @throws UserEmailDuplicationException if the new email is already taken by another user
+     * @throws UserNotFoundException if the id of updatedUser is not found in the data layer
      * @throws UpdateUserException if other exceptions occurred
      */
-    void updateUser(User updatedUser) throws UserNameDuplicationException, UserEmailDuplicationException, UpdateUserException;
+    void updateUser(User updatedUser) throws UserNameDuplicationException, UserEmailDuplicationException, UpdateUserException, UserNotFoundException;
 
     class UserRepositoryException extends RuntimeException{
         public UserRepositoryException(String msg){
