@@ -169,6 +169,24 @@ public class UserRepositoryImplTest {
 
 
     @Test
+    public void givenUpdateOfNonExistingUser_returnUserNotFoundException(){
+        //arrange
+        userRepository.createUser(user);
+
+        User unknownUser = new User(UUID.randomUUID().toString());
+        unknownUser.setUserName(user.getUserName());
+        unknownUser.setEmail(user.getEmail());
+        unknownUser.setPassword(user.getPassword());
+        unknownUser.setLocation(user.getLocation());
+
+        //Act, Assert
+        assertThrows(UserRepository.UserNotFoundException.class,
+                () -> userRepository.updateUser(unknownUser)
+        );
+    }
+
+
+    @Test
     public void givenRequestingNonExistingUserById_returnUserNotFoundException() {
         afterToBeLaunched = false;
         assertThrows(UserRepository.UserNotFoundException.class,

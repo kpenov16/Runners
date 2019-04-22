@@ -26,11 +26,19 @@ public interface UserRepository {
      */
     User getUser(String userName) throws UserNotFoundException, UserRepositoryException;
 
+
     User getUserById(String userId);
 
     void deleteUser(String userId);
 
-    void updateUser(User updatedUser);
+    /**
+     * Updates an existing user in the data layer.
+     * @param updatedUser the updated User object
+     * @throws UserNameDuplicationException if the new userName is already taken by another user
+     * @throws UserEmailDuplicationException if the new email is already taken by another user
+     * @throws UpdateUserException if other exceptions occurred
+     */
+    void updateUser(User updatedUser) throws UserNameDuplicationException, UserEmailDuplicationException, UpdateUserException;
 
     class UserRepositoryException extends RuntimeException{
         public UserRepositoryException(String msg){

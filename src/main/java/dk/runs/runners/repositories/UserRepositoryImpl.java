@@ -3,6 +3,7 @@ package dk.runs.runners.repositories;
 import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.User;
 import dk.runs.runners.usecases.UserRepository;
+import org.omg.PortableInterceptor.USER_EXCEPTION;
 
 import java.sql.*;
 
@@ -287,7 +288,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         executeUpdateUserQuery(userSql, locationSql, updatedUser);
     }
     private void executeUpdateUserQuery(String sql, String locationSql, User user) throws UpdateUserException {
-
+        boolean isUserFound = true;
         Connection conn = null;
         PreparedStatement pstmtUser = null;
         PreparedStatement pstmtLocation = null;
@@ -311,10 +312,9 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
                 conn.commit();
             }else {
                 conn.rollback();
+                isUserFound = false;
             }
-
         }catch (SQLIntegrityConstraintViolationException e){
-
             try {
                 if(conn!=null){
                     conn.rollback();
@@ -328,7 +328,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
                     throw new UpdateUserException(MSG);
                 }
             }catch (SQLException rollBackException){
-                //??
+                throw new UpdateUserException(rollBackException.getMessage());
             }
         }catch(SQLException se){
             try {
@@ -342,7 +342,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             try {
                 conn.rollback();
                 e.printStackTrace();
-                throw new UpdateUserException(e.getMessage());
+                    throw new UpdateUserException(e.getMessage());
             }catch (SQLException rollBackException){
                 throw new UpdateUserException(rollBackException.getMessage());
             }
@@ -354,6 +354,10 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             } catch (SQLException e) {
                 throw new UpdateUserException(e.getMessage());
             }
+            if(!isUserFound){
+                throw new UserNotFoundException("Update of user. " +"User with id: "+ user.getId() + " was not found.");
+            }
+
         }
     }
 
