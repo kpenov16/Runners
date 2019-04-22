@@ -61,9 +61,16 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     @Override
     public Route getRoute(String routeId) throws RouteNotFoundException {
-        String sql = "SELECT * " +
+        String sql2 = "SELECT * " +
                 " FROM route" +
                 " WHERE route.id = ?";
+        String sql = "SELECT route.id, route.title, route.date, route.distance, route.duration, " +
+                "route.description, route.status, route.max_participants, " +
+                "route.min_participants, " +
+                "COUNT(run.route_id) AS participants_number " +
+                "FROM route LEFT JOIN run " +
+                "ON route.id = run.route_id " +
+                "WHERE route.id = ? ";
         Route route = executeGetRouteQuery(sql,new Route(routeId));
         route.setWayPoints( getWaypoints(route.getId()) );
         route.setLocation( getLocation(route.getId()) );
@@ -278,7 +285,8 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             pstmt.setString(1, route.getId());
             ResultSet rs = pstmt.executeQuery();
             if(rs.next()){
-                isRouteFound = true;
+                String returnedId = rs.getString("id");
+                if(returnedId != null){ isRouteFound = true; }
                 route.setTitle(rs.getString("title"));
                 route.setDate( new java.util.Date( rs.getLong("date") ));
                 route.setDistance(rs.getInt("distance"));
@@ -287,6 +295,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 route.setStatus(rs.getString("status"));
                 route.setMaxParticipants(rs.getInt("max_participants"));
                 route.setMinParticipants(rs.getInt("min_participants"));
+                route.setNumberOfParticipants(rs.getInt("participants_number"));
             }
             if(rs != null){ rs.close(); }
         }catch(SQLException se){

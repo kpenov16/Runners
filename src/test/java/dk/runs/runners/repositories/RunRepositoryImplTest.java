@@ -157,6 +157,7 @@ class RunRepositoryImplTest {
         // Arrange
         runRepository.createRun(run, user.getId());
         Run returnedRun = runRepository.getRunWithAllCheckpoints(run.getId());
+        run.getRoute().setNumberOfParticipants(run.getRoute().getNumberOfParticipants()+1);
         // Act
         assertEquals(run.toString(), returnedRun.toString());
     }
@@ -355,6 +356,34 @@ class RunRepositoryImplTest {
         deleteCreatedEntities();
     }
 
+    @Test
+    void givenAUserTryToRegisterRouteThatHasReachedMaxParticipants_returnMaxParticipansReachedException(){
+        ignoreAfterEach = true;
+        //Arrange
+        User routeUser = constructUser(); usersToBeDeleted.add(routeUser);
+        userRepository.createUser(routeUser);
+        Route newRoute = constructRoute();
+        newRoute.setMinParticipants(10);
+        routeRepository.createRoute(newRoute, routeUser.getId());
+
+        registerUsersForRoute(newRoute, 10);
+
+        //Act
+        //registerUsersForRoute(newRoute, 1);
+
+        //Assert
+        RunRepository.MaxParticipansReachedException maxParticipansReachedException =
+                assertThrows(RunRepository.MaxParticipansReachedException.class,
+                        () -> registerUsersForRoute(newRoute, 1)
+                );
+        assertEquals(
+               String.format(RunRepositoryImpl.ROUTE_ID_S_HAS_REACHED_MAX_PARTICIPANTS_D,newRoute.getId(),newRoute.getMaxParticipants()),
+                maxParticipansReachedException.getMessage());
+
+        // clean up
+        deleteCreatedEntities();
+    }
+
     private Location newLocation = null;
     private List<Run> runsToBeDeleted = new ArrayList<>();
     private List<User> usersToBeDeleted = new ArrayList<>();
@@ -435,5 +464,7 @@ class RunRepositoryImplTest {
 
         return user;
     }
+
+
 
 }

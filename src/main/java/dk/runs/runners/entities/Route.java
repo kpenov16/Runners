@@ -12,8 +12,8 @@ public class Route implements Locational {
     private String description = "";
     private String status = "active";
     private List<WayPoint> wayPoints = new LinkedList<>();
-    private int maxParticipants = -1;
-    private int minParticipants = -1;
+    private int maxParticipants = Integer.MAX_VALUE;
+    private int minParticipants = 0;
     private int numberOfParticipants = 0;
 
     public Route(){}
@@ -121,8 +121,9 @@ public class Route implements Locational {
                 ", duration: "+duration+
                 ", description: "+description+
                 ", status: "+status+
-                ", maxParticipants"+maxParticipants+
-                ", minParticipants"+minParticipants+
+                ", maxParticipants: " + maxParticipants +
+                ", minParticipants: " + minParticipants +
+                ", numberOfParticipants: " + numberOfParticipants +
                 ", " +wayPoints.toString();
     }
 
