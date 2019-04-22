@@ -38,8 +38,6 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         PreparedStatement pstmtLocation = null;
         PreparedStatement pstmtUserLocation = null;
 
-
-
         try{
             conn = DriverManager.getConnection(url);
             conn.setAutoCommit(false);
@@ -111,37 +109,18 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         }
     }
 
-
-/*
-    private void executeCreateLocationQuery(User user, PreparedStatement pstmtLocation) throws SQLException {
-        final Location location = user.getLocation();
-        if (location != null) {
-            pstmtLocation.setString(1, location.getId());
-            pstmtLocation.setString(2, location.getStreetName());
-            pstmtLocation.setString(3, location.getStreetNumber());
-            pstmtLocation.setString(4, location.getCity());
-            pstmtLocation.setString(5, location.getCountry());
-            pstmtLocation.setString(6, "POINT(" + location.getX() + " " + location.getY() + ")");
-            pstmtLocation.setInt(7, location.getSRID());
-            pstmtLocation.executeUpdate();
-        }
+    @Override
+    public User getUser(String userName) {
+        String sql = "SELECT * " +
+                " FROM user" +
+                " WHERE user.user_name = ?";
+        User user = executeGetUserQuery(sql, userName);
+        user.setLocation(getLocation(user.getId()));
+        return user;
     }
-*/
-  /*  private void executeCreateLocationUserQuery(User user, PreparedStatement pstmtLocationUser) throws SQLException {
-        final Location location = user.getLocation();
-        if (location != null) {
-            pstmtLocationUser.setString(1, location.getId());
-            pstmtLocationUser.setString(2, user.getId());
-            pstmtLocationUser.executeUpdate();
-        }
-    }
-*/
-
-
-
 
     @Override
-    public User getUser(String userId) {
+    public User getUserById(String userId) {
         String sql = "SELECT * " +
                 " FROM user" +
                 " WHERE user.id = ?";
@@ -182,6 +161,33 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         return location;
     }
 
+    private User executeGetUserQuery(String sql, String userName) throws UserNotFoundException {
+        boolean isUserFound = false;
+        User user = new User();
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt= conn.prepareStatement(sql)){
+            pstmt.setString(1, userName);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()){
+                isUserFound = true;
+                user.setId(rs.getString("id"));
+                user.setUserName(rs.getString("user_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword( rs.getString("password") );
+            }
+            if(rs != null){  rs.close(); }
+        }catch(SQLException se){
+            throw new UserRepositoryException(se.getMessage());
+        }catch(Exception e){
+            throw new UserRepositoryException(e.getMessage());
+        }finally {
+            if(!isUserFound){
+                throw new UserNotFoundException("User with userName: " + userName + " was not found");
+            }
+        }
+        return user;
+    }
+
     private User executeGetUserQuery(String sql, User user) throws UserNotFoundException {
         boolean isUserFound = false;
         try(Connection conn = DriverManager.getConnection(url);
@@ -209,7 +215,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
 
     @Override
     public void deleteUser(String userId) throws DeleteUserException {
-        User user = getUser(userId);
+        User user = getUserById(userId);
         String locationRouteSql = "DELETE FROM location_user WHERE user_id = ?";
         String locationSql = "DELETE FROM location WHERE id = ?";
         String userSql = "DELETE FROM user WHERE id = ?";
@@ -350,20 +356,5 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             }
         }
     }
-/*
-    private void executeUpdateLocationQuery(User user, PreparedStatement pstmtLocation) throws SQLException {
-
-        final Location location = user.getLocation();
-        pstmtLocation.setString(1, location.getStreetName());
-        pstmtLocation.setString(2, location.getStreetNumber());
-        pstmtLocation.setString(3, location.getCity());
-        pstmtLocation.setString(4, location.getCountry());
-        pstmtLocation.setString(5, "POINT(" + location.getX() + " " + location.getY() + ")");
-        pstmtLocation.setInt(6, location.getSRID());
-        pstmtLocation.setString(7, location.getId());
-        pstmtLocation.executeUpdate();
-
-    }
-*/
 
 }

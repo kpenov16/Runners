@@ -3,14 +3,40 @@ package dk.runs.runners.usecases;
 import dk.runs.runners.entities.User;
 
 public interface UserRepository {
-    void createUser(User user);
+    /**
+     * Creates a user in the data layer.
+     * @param user an instance of the User class with mandatory fields id, userName, email, and password
+     * @throws UserMissingLocationException if user object is missing valid location object (only unique location id is required)
+     * @throws UserIdDuplicationException if user has id already existing in the data layer
+     * @throws UserNameDuplicationException if user has userName already existing in the data layer
+     * @throws UserEmailDuplicationException if user has email already existing in the data layer
+     * @throws CreateUserException if some other unexpected error occurred
+     */
+    void createUser(User user) throws UserIdDuplicationException,
+            UserNameDuplicationException, UserEmailDuplicationException,
+            CreateUserException, UserMissingLocationException ;
 
-    User getUser(String userId);
+
+    /**
+     * Retrieves a user from the data layer.
+     * @param userName is the user name of an existing user in the data layer
+     * @return User object retrieved from the data layer
+     * @throws UserNotFoundException if the user with that userName is not found in the data layer
+     * @throws UserRepositoryException if other exceptions occurred
+     */
+    User getUser(String userName) throws UserNotFoundException, UserRepositoryException;
+
+    User getUserById(String userId);
 
     void deleteUser(String userId);
 
     void updateUser(User updatedUser);
 
+    class UserRepositoryException extends RuntimeException{
+        public UserRepositoryException(String msg){
+            super(msg);
+        }
+    }
     class UpdateUserException extends RuntimeException{
         public UpdateUserException(String msg){
             super(msg);

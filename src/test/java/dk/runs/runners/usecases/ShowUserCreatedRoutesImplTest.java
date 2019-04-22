@@ -92,7 +92,12 @@ public class ShowUserCreatedRoutesImplTest {
         }
 
         @Override
-        public User getUser(String userId) {
+        public User getUser(String userName) {
+            return null;
+        }
+
+        @Override
+        public User getUserById(String userId) {
             this.userId = userId;
             this.timesCalled++;
             return new User(userId);

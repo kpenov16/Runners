@@ -8,16 +8,18 @@ import java.util.List;
 public interface RunRepository {
     /**
      * Creates a run in the data layer for an existing route and a user.
-     * @param run the new run object with unique id and attached existing route
+     * @param run the new run object with unique id and attached existing route, the route object as minimum needs the correct route id
      * @param participantId is the id of the user, if the id is not existing in the data layer UnknownUserException exception is thrown
      * @throws RunIdDuplicationException if there is a run with the same id in the data layer
      * @throws UnknownRouteException if the route by id is not an existing route in the data layer
      * @throws UnknownUserException if the participantId not the id of an existing user in the data layer
      * @throws CreateRunException other not predefined exceptions are wrapped in this exception
      * @throws RunValidationException if run object is not constructed properly
+     * @throws MaxParticipansReachedException if route has reached max number of participants
      */
     void createRun(Run run, String participantId) throws RunIdDuplicationException,
-            UnknownRouteException, UnknownUserException, CreateRunException, RunValidationException;
+            UnknownRouteException, UnknownUserException, CreateRunException, RunValidationException,
+            MaxParticipansReachedException;
 
     Run getRunWithAllCheckpoints(String runId);
 

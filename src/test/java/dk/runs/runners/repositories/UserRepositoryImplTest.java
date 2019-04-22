@@ -1,7 +1,5 @@
 package dk.runs.runners.repositories;
 import dk.runs.runners.entities.*;
-import dk.runs.runners.usecases.RouteRepository;
-import dk.runs.runners.usecases.RunRepository;
 import dk.runs.runners.usecases.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +13,7 @@ public class UserRepositoryImplTest {
     private User user;
     private Location location;
     private boolean afterToBeLaunched = true;
-    private UserRepository userRepository = null;
+    private UserRepositoryImpl userRepository = null;
     //private RouteRepository routeRepository = null;
     //private RunRepository runRepository = null;
 
@@ -52,10 +50,26 @@ public class UserRepositoryImplTest {
 
 
     @Test
-    public void givenCreateUser_returnUserCreated() {
+    public void givenCreateUserById_returnUserCreated() {
         userRepository.createUser(user);
 
-        User createdUser = userRepository.getUser(user.getId());
+        User createdUser = userRepository.getUserById(user.getId());
+
+        //assert
+        assertEquals(user.getId(), createdUser.getId());
+        assertEquals(user.getEmail(), createdUser.getEmail());
+        assertEquals(user.getPassword(), createdUser.getPassword());
+        assertEquals(user.getUserName(), createdUser.getUserName());
+        assertEquals(user.getLocation().toString(), createdUser.getLocation().toString());
+
+        //tear down
+    }
+
+    @Test
+    public void givenRequestOfUserByUserName_returnUser() {
+        userRepository.createUser(user);
+
+        User createdUser = userRepository.getUser(user.getUserName());
 
         //assert
         assertEquals(user.getId(), createdUser.getId());
@@ -86,13 +100,12 @@ public class UserRepositoryImplTest {
         userRepository.updateUser(updatedUser);
 
         //assert
-        User returnedUser = userRepository.getUser(user.getId());
+        User returnedUser = userRepository.getUserById(user.getId());
         assertEquals(updatedUser.getUserName(), returnedUser.getUserName());
         assertEquals(updatedUser.getEmail(), returnedUser.getEmail());
         assertEquals(updatedUser.getPassword(), returnedUser.getPassword());
         assertEquals(updatedUser.getLocation().toString(), returnedUser.getLocation().toString());
     }
-
 
     @Test
     public void givenUserUpdateWithExistingUserName_returnUserNameDuplicationException(){
@@ -123,8 +136,6 @@ public class UserRepositoryImplTest {
             userRepository.deleteUser(userWithDuplicateUserName.getId());
         }
     }
-
-
 
     @Test
     public void givenUserUpdateWithExistingEmail_returnEmailDuplicationException(){
@@ -161,7 +172,7 @@ public class UserRepositoryImplTest {
     public void givenRequestingNonExistingUserById_returnUserNotFoundException() {
         afterToBeLaunched = false;
         assertThrows(UserRepository.UserNotFoundException.class,
-                () -> userRepository.getUser(UUID.randomUUID().toString())
+                () -> userRepository.getUserById(UUID.randomUUID().toString())
         );
     }
 

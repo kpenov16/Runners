@@ -1,15 +1,13 @@
 package dk.runs.runners.usecases;
 
 import dk.runs.runners.entities.User;
-import dk.runs.runners.repositories.RouteRepositoryImpl;
-import dk.runs.runners.repositories.UserRepositoryImpl;
 
 public class ShowUserCreatedRoutesImpl {
     private UserRepository userRepository;
     private RouteRepository routeRepository;
 
     public User execute(String userId) {
-        User user = userRepository.getUser(userId);
+        User user = userRepository.getUserById(userId);
         user.setRoutes( routeRepository.getRoutes(userId) );
         return user;
     }
