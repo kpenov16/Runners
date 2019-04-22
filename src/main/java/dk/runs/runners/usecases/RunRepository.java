@@ -27,7 +27,16 @@ public interface RunRepository {
 
     void deleteRun(String runId);
 
-    void addCheckpointIfValid(String runId, double currentX, double currentY, int precision);
+    /** Adds a checkpoint to the run if the user is close to
+     *  one of the waypoints of the route.
+     *
+     * @param runId the id of the current run, which a user is running
+     * @param currentX the latitude value of the user's current coordinate
+     * @param currentY the longitude value of the user's current coordinate
+     * @param precision describes how close a user should be to the waypoint in order to mark a waypoint as checked
+     * @throws CheckpointException if there is occurred any error inserting a checkpoint
+     */
+    void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) throws CheckpointException;
 
     List<WayPoint> getMissingWaypoints(String runId);
 

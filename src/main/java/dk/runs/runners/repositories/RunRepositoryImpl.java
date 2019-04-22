@@ -269,10 +269,10 @@ public class RunRepositoryImpl implements RunRepository {
             pstmt.executeUpdate();
         }catch(SQLException se){
             se.printStackTrace();
-            throw new DeleteRunException(se.getMessage());
+            throw new CheckpointException(se.getMessage());
         }catch(Exception e){
             e.printStackTrace();
-            throw new DeleteRunException(e.getMessage());
+            throw new CheckpointException(e.getMessage());
         }
     }
 
