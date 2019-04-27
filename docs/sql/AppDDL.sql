@@ -134,17 +134,17 @@ BEGIN
 	INSERT INTO route_archive (route_id, updated_timestamp, creator_id, title, `date`, 
 							   distance, duration,`description`, `status`, max_participants, min_participants,
                                location_id, location_street_name, location_street_number, location_city, location_country, location_spatial_point)
-			SELECT OLD.id, `current_time`, OLD.creator_id, OLD.title, OLD.`date`, 
-			OLD.distance, OLD.duration, OLD.`description`, OLD.`status`, OLD.max_participants, OLD.min_participants,
-            
-            location.id, location.street_name, location.street_number, location.city, location.country, location.spatial_point
-			FROM location_route JOIN location ON location_route.location_id = location.id
-			WHERE location_route.route_id = OLD.id;
+		SELECT OLD.id, `current_time`, OLD.creator_id, OLD.title, OLD.`date`, 
+		OLD.distance, OLD.duration, OLD.`description`, OLD.`status`, OLD.max_participants, OLD.min_participants,
+		
+		location.id, location.street_name, location.street_number, location.city, location.country, location.spatial_point
+		FROM location_route JOIN location ON location_route.location_id = location.id
+		WHERE location_route.route_id = OLD.id;
     
     INSERT INTO waypoint_archive
-    SELECT `index`, route_id, spatial_point, `current_time` 
-    FROM waypoint 
-    WHERE waypoint.route_id = OLD.id;
+		SELECT `index`, route_id, spatial_point, `current_time` 
+		FROM waypoint 
+		WHERE waypoint.route_id = OLD.id;
 END//
 DELIMITER ;
     
