@@ -10,11 +10,12 @@ public interface RouteRepository {
     void createRoute(Route route, String creatorId) throws CreateRouteException, RouteIdDuplicationException;
 
     Route getRoute(String routeId) throws RouteNotFoundException;
+
     List<Route> getRoutes(String creatorId);
 
     void updateRoute(Route updatedRoute);
 
-    List<Route> getRouteList();
+    List<Route> getRouteList(int numberOfRoutes, Date sinceDate);
 
     void deleteRoute(String routeId)throws DeleteRouteException;
 

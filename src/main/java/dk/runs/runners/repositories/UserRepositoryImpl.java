@@ -84,7 +84,9 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             }
         }catch(SQLException se){
             try {
-                conn.rollback();
+                if(conn!=null){
+                    conn.rollback();
+                }
                 se.printStackTrace();
                 throw new CreateUserException(se.getMessage());
             }catch (SQLException rollBackException){
@@ -92,7 +94,9 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             }
         }catch(Exception e){
             try {
-                conn.rollback();
+                if(conn!=null){
+                    conn.rollback();
+                }
                 e.printStackTrace();
                 throw new CreateUserException(e.getMessage());
             }catch (SQLException rollBackException){

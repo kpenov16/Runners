@@ -6,10 +6,8 @@ import dk.runs.runners.entities.WayPoint;
 import dk.runs.runners.usecases.RouteRepository;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteRepository {
 
@@ -221,27 +219,32 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     }
 
     @Override
-    public List<Route> getRouteList() {
+    public List<Route> getRouteList(int numberOfRoutes, Date sinceDate) {
+        long since = sinceDate.getTime();
         String sql = "SELECT route.id AS id " +
-                    "FROM route"; //TODO select only comming runs. That is where dato > now
-        return executeGetRoutesQuery(sql);
+                     "FROM route " +
+                     "WHERE `date` >= ? " +
+                     "ORDER BY `date` DESC " +
+                     "LIMIT ? "; //TODO select only comming runs. That is where dato > now
+        return executeGetRoutesQuery(sql, numberOfRoutes, since);
     }
 
-    private List<Route> executeGetRoutesQuery(String sql) {
+    private List<Route> executeGetRoutesQuery(String sql, int limit, long since) {
 
         List<Route> routes = new LinkedList<>();
 
         try(Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery()){
-
+            PreparedStatement pstmt = conn.prepareStatement(sql);){
+            pstmt.setLong(1, since);
+            pstmt.setInt(2, limit);
+            ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
                 Route route = new Route(rs.getString(1));
-                //route.setLocation(rs.getString(2));
+                route.setWayPoints(getWaypoints(route.getId()));
                 route.setLocation(getLocation(route.getId()));
                 routes.add(route);
             }
-
+            if(rs != null){ rs.close(); }
         } catch (SQLException se){
             throw new GetRoutesException(se.getMessage());
         } catch (Exception e){

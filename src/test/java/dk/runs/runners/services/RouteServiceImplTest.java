@@ -55,7 +55,7 @@ class RouteServiceImplTest {
 
         }
         @Override
-        public List<Route> getRouteList() {
+        public List<Route> getRouteList(int numberOfRoutes, Date sinceDate) {
             return null;
         }
         @Override

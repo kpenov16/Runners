@@ -3,6 +3,7 @@ package dk.runs.runners.services;
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.usecases.RouteRepository;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class RouteServiceImpl implements RouteService {
@@ -20,8 +21,10 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public List<Route> getRoutesList() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
         try {
-            return routeRepository.getRouteList();
+            return routeRepository.getRouteList(1, calendar.getTime());
         }catch (RouteRepository.GetRoutesException e){
             throw new RouteServiceException("Could not receive routes from database");
         }

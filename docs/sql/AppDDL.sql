@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS location(
 CREATE TABLE IF NOT EXISTS location_user(
 	location_id VARCHAR(225),
     user_id VARCHAR(225),
-    PRIMARY KEY (user_id),
+    PRIMARY KEY (user_id, location_id),
     FOREIGN KEY (location_id ) REFERENCES location (id),
     FOREIGN KEY (user_id ) REFERENCES `user` (id)
 ); 
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS location_user(
 CREATE TABLE IF NOT EXISTS location_route(
 	location_id VARCHAR(225),
     route_id VARCHAR(225),
-    PRIMARY KEY (route_id),
+    PRIMARY KEY (route_id, location_id),
     FOREIGN KEY (location_id ) REFERENCES location (id),
     FOREIGN KEY (route_id ) REFERENCES route (id)
 ); 

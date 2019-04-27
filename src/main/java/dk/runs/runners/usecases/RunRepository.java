@@ -40,10 +40,11 @@ public interface RunRepository {
 
     List<WayPoint> getMissingWaypoints(String runId);
 
+
+
     class RunValidationException extends RuntimeException{
         public RunValidationException(String msg) {super(msg);}
     }
-
     class CreateRunException extends RuntimeException{
         public CreateRunException(String msg){ super(msg); }
     }
@@ -68,6 +69,4 @@ public interface RunRepository {
     class MaxParticipansReachedException extends RuntimeException{
         public MaxParticipansReachedException(String msg) {super(msg);}
     }
-
-
 }

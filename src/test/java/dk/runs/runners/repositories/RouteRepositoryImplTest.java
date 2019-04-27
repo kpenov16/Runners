@@ -355,7 +355,10 @@ public class RouteRepositoryImplTest {
 
         routeRepository.createRoute(route, user.getId());
         routeRepository.createRoute(secondRoute, user.getId());
-        assertTrue(routeRepository.getRouteList().size() > 0);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+        assertTrue(routeRepository.getRouteList(2, calendar.getTime()).size() > 0);
 
         //clean up
         routeRepository.deleteRoute(route.getId());
