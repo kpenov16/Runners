@@ -112,7 +112,9 @@ public class RunRepositoryImpl implements RunRepository {
         }else if(t instanceof SQLException){
             SQLException se = (SQLException)t;
             try {
-                conn.rollback();
+                if(conn!=null){
+                    conn.rollback();
+                }
                 se.printStackTrace();
                 throw new CreateRunException(se.getMessage());
             }catch (SQLException rollBackException){
@@ -121,7 +123,9 @@ public class RunRepositoryImpl implements RunRepository {
         }else if(t instanceof Exception){
             Exception e = (SQLException)t;
             try {
-                conn.rollback();
+                if(conn!=null){
+                    conn.rollback();
+                }
                 e.printStackTrace();
                 throw new CreateRunException(e.getMessage());
             }catch (SQLException rollBackException){

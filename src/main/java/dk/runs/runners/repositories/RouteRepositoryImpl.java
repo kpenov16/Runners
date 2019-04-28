@@ -75,7 +75,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         return route;
     }
 
-    public List<Route> postprocessMostPopularRoutes(List<Route> routes) {
+    public List<Route> postprocesMostPopularRoutes(List<Route> routes) {
         List<Route> returnedRoutes = new ArrayList<>();
         for (Route r: routes){
            Route route = getRoute(r.getId());
@@ -505,7 +505,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 "LIMIT ? ";
 
         List<Route> routes = executeMostPopularRoutesQuery( top, since, mostPopularRoutesSql);
-        return postprocessMostPopularRoutes(routes);
+        return postprocesMostPopularRoutes(routes);
     }
 
     private List<Route> executeMostPopularRoutesQuery(int top, long since, String mostPopularRoutesSql) {

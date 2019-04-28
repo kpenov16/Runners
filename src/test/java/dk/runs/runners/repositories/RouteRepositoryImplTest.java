@@ -105,12 +105,14 @@ public class RouteRepositoryImplTest {
         userRepository.createUser(mostPopularUser);
         Route mostPopularRoute1 = constructRoute();
         Route mostPopularRoute2 = constructRoute();
+        int mostPopular1Number = 5;
+        int mostPopular2Number = 4;
         routeRepository.createRoute(mostPopularRoute1, mostPopularUser.getId());
         routeRepository.createRoute(mostPopularRoute2, mostPopularUser.getId());
-        mostPopularRoute1.setNumberOfParticipants(9);
-        mostPopularRoute2.setNumberOfParticipants(8);
-        registerUsersForRoute(mostPopularRoute1, 9);
-        registerUsersForRoute(mostPopularRoute2, 8);
+        mostPopularRoute1.setNumberOfParticipants(mostPopular1Number);
+        mostPopularRoute2.setNumberOfParticipants(mostPopular2Number);
+        registerUsersForRoute(mostPopularRoute1, mostPopular1Number);
+        registerUsersForRoute(mostPopularRoute2, mostPopular2Number);
 
         User popularUser = constructUser();
         userRepository.createUser(popularUser);
@@ -118,10 +120,13 @@ public class RouteRepositoryImplTest {
         Route popularRoute2 = constructRoute();
         routeRepository.createRoute(popularRoute1, popularUser.getId());
         routeRepository.createRoute(popularRoute2, popularUser.getId());
-        popularRoute1.setNumberOfParticipants(7);
-        registerUsersForRoute(popularRoute1, 7);
-        registerUsersForRoute(popularRoute2, 6);
-
+        int popular1Number = 3;
+        int popular2Number = 2;
+        popularRoute1.setNumberOfParticipants(popular1Number);
+        //popularRoute2.setNumberOfParticipants(6);
+        registerUsersForRoute(popularRoute1, popular1Number);
+        registerUsersForRoute(popularRoute2, popular2Number);
+/*
         User lessPopularUser = constructUser();
         userRepository.createUser(lessPopularUser);
         Route lessPopularRoute1 = constructRoute();
@@ -130,7 +135,7 @@ public class RouteRepositoryImplTest {
         routeRepository.createRoute(lessPopularRoute2, lessPopularUser.getId());
         registerUsersForRoute(lessPopularRoute1, 4);
         registerUsersForRoute(lessPopularRoute2, 5);
-
+*/
         User nonPopularUser = constructUser();
         userRepository.createUser(nonPopularUser);
         Route nonPopularRoute1 = constructRoute();
@@ -139,7 +144,7 @@ public class RouteRepositoryImplTest {
         routeRepository.createRoute(nonPopularRoute2, nonPopularUser.getId());
         registerUsersForRoute(nonPopularRoute1, 0);
         //System.out.println(nonPopularRoute1.getId());
-        registerUsersForRoute(nonPopularRoute2, 2);
+        registerUsersForRoute(nonPopularRoute2, 1);
 
         Thread.sleep(500);
 
@@ -158,7 +163,7 @@ public class RouteRepositoryImplTest {
         //clean up
         usersToBeDeleted.add(mostPopularUser);
         usersToBeDeleted.add(popularUser);
-        usersToBeDeleted.add(lessPopularUser);
+  //      usersToBeDeleted.add(lessPopularUser);
         usersToBeDeleted.add(nonPopularUser);
 
         deleteCreatedEntities();
@@ -237,7 +242,6 @@ public class RouteRepositoryImplTest {
 
         return user;
     }
-
 
     @Test
      public void givenCreateRoute_returnRouteCreated() {
