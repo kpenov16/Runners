@@ -21,16 +21,13 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         String routeSql = "INSERT INTO route (id, creator_id, title, date, distance, duration, description, status, max_participants, min_participants)" +
                 "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )";
 
-        String locationSql = "INSERT INTO location (id, street_name, street_number, city, country, spatial_point)" +
-                "VALUES ( ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";
-
-        String locationRouteSql = "INSERT INTO location_route ( location_id, route_id )" +
-                                  "VALUES ( ? , ? )";
+        String locationSql = "INSERT INTO route_location (id, route_id, street_name, street_number, city, country, spatial_point)" +
+                "VALUES ( ? , ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";
 
         String waypointSql = "INSERT INTO waypoint (`index`, route_id, spatial_point)" +
                 "VALUES ( ? , ? , ST_GeomFromText( ? , ? ))";
 
-        executeCreateRouteQueryAsUnitOfWork(routeSql, waypointSql, locationSql, locationRouteSql, route, creatorId);
+        executeCreateRouteQueryAsUnitOfWork(routeSql, waypointSql, locationSql, route, creatorId);
     }
 
     private void validateRoute(Route route) {
@@ -108,9 +105,8 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     private Location getLocation(String routeId) {
         String sql = " SELECT id, street_name, street_number, city, country, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y" +
-                     " FROM location JOIN location_route" +
-                     " ON location_route.location_id = location.id" +
-                     " WHERE location_route.route_id = ? ";
+                " FROM route_location" +
+                " WHERE route_location.route_id = ? ";
         return executeGetLocationQuery(sql, routeId);
     }
 
@@ -121,14 +117,14 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         String routeSql = "UPDATE route" +
                      " SET title = ?, date = ?, distance = ?, duration = ?,"+
                      " description = ?, status = ?, max_participants = ?, min_participants = ?" +
-                " WHERE id = ?";
+                     " WHERE id = ?";
 
         String waypointSql = "INSERT INTO waypoint (`index`, route_id, spatial_point)" +
-                "VALUES ( ? , ? , ST_GeomFromText( ? , ? ))";
+                             " VALUES ( ? , ? , ST_GeomFromText( ? , ? )) ";
 
-        String locationSql = "UPDATE location SET street_name = ? , street_number = ? ," +
-                                " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
-                                "WHERE location.id = ?";
+        String locationSql = "UPDATE route_location SET street_name = ? , street_number = ? ," +
+                            " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
+                            " WHERE route_location.id = ? ";
         executeUpdateRouteQueryAsUnitOfWork(deleteWaypointsSql, routeSql, waypointSql, locationSql, route);
     }
 
@@ -149,7 +145,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             pstmtWaypoint = conn.prepareStatement(waypointSql);
             pstmtRouteLocation = conn.prepareStatement(locationSql);
 
-
             //update route
             pstmtRoute.setString(1, route.getTitle());
             pstmtRoute.setLong(2, route.getDate().getTime() );
@@ -166,7 +161,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 //delete waypoints
                 pstmtDeleteWaypoint.setString(1, route.getId());
                 pstmtDeleteWaypoint.executeUpdate();
-
 
                 //create waypoints
                 executeCreateWaypointsQuery(route, pstmtWaypoint);
@@ -360,12 +354,11 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     }
 
     private void executeCreateRouteQueryAsUnitOfWork(String routeSql, String waypointSql, String locationSql,
-                                                     String locationRouteSql, Route route, String creatorId) throws CreateRouteException {
+                                                     Route route, String creatorId) throws CreateRouteException {
         Connection conn = null;
         PreparedStatement pstmtRoute = null;
         PreparedStatement pstmtWaypoint = null;
         PreparedStatement pstmtLocation = null;
-        PreparedStatement pstmtLocationRoute = null;
 
         try{
             conn = DriverManager.getConnection(url);
@@ -374,8 +367,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             pstmtRoute = conn.prepareStatement(routeSql);
             pstmtWaypoint = conn.prepareStatement(waypointSql);
             pstmtLocation = conn.prepareStatement(locationSql);
-            pstmtLocationRoute = conn.prepareStatement(locationRouteSql);
-
 
             pstmtRoute.setString(1, route.getId());
             pstmtRoute.setString(2, creatorId);
@@ -392,7 +383,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             if(rowsEffected == 1){
                 executeCreateLocationQuery(route, pstmtLocation);
 
-                executeCreateLocationReferenceQuery(route, pstmtLocationRoute);
+                //executeCreateLocationReferenceQuery(route, pstmtLocationRoute);
 
                 executeCreateWaypointsQuery(route, pstmtWaypoint);
 
@@ -430,7 +421,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 if(pstmtRoute != null) pstmtRoute.close();
                 if(pstmtWaypoint != null) pstmtWaypoint.close();
                 if(pstmtLocation != null) pstmtLocation.close();
-                if(pstmtLocationRoute != null) pstmtLocationRoute.close();
                 if(conn != null) conn.close();
             } catch (SQLException e) {
                 throw new CreateRouteException(e.getMessage());
@@ -487,11 +477,13 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     public void deleteRoute(String routeId) throws DeleteRouteException {
         Route route = getRoute(routeId);
-        String locationRouteSql = "DELETE FROM location_route WHERE route_id = ?";
-        String locationSql = "DELETE FROM location WHERE id = ?";
+
+        String locationRouteSql = "DELETE FROM route_location WHERE route_id = ?";
+
         String routeSql = "DELETE FROM route WHERE id = ?";
         String waypointSql = "DELETE FROM waypoint WHERE route_id = ?";
-        executeDeleteRouteQuery(locationRouteSql, locationSql, routeSql, waypointSql, route);
+        executeDeleteRouteQuery(locationRouteSql, routeSql, waypointSql, route);
+        //executeDeleteRouteQuery(locationRouteSql, locationSql, routeSql, waypointSql, route);
     }
 
     @Override
@@ -530,12 +522,11 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         return routes;
     }
 
-    private void executeDeleteRouteQuery(String locationRouteSql, String locationSql,
-                                         String routeSql, String waypointSql, Route route)
+    private void executeDeleteRouteQuery(String locationRouteSql, String routeSql,
+                                         String waypointSql, Route route)
                                         throws DeleteRouteException {
         Connection conn = null;
         PreparedStatement pstmtLocationRoute = null;
-        PreparedStatement pstmtLocation = null;
         PreparedStatement pstmtRoute = null;
         PreparedStatement pstmtWaypoint = null;
         try{
@@ -545,10 +536,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             pstmtLocationRoute = conn.prepareStatement(locationRouteSql);
             pstmtLocationRoute.setString(1, route.getId());
             pstmtLocationRoute.executeUpdate();
-
-            pstmtLocation = conn.prepareStatement(locationSql);
-            pstmtLocation.setString(1, route.getLocation().getId());
-            pstmtLocation.executeUpdate();
 
             pstmtWaypoint = conn.prepareStatement(waypointSql);
             pstmtWaypoint.setString(1, route.getId());
