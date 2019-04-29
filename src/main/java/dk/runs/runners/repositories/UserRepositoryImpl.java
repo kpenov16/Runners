@@ -18,13 +18,18 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         String userSql = "INSERT INTO user (id, user_name, email, password)" +
                                "VALUES ( ? , ? , ? , ? )";
 
-        String locationSql = "INSERT INTO location (id, street_name, street_number, city, country, spatial_point)" +
+        String locationSqlOld = "INSERT INTO location (id, street_name, street_number, city, country, spatial_point)" +
                 "VALUES ( ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";
 
-        String locationUserSql = "INSERT INTO location_user ( location_id, user_id )" +
+        String locationUserSqlOld = "INSERT INTO location_user ( location_id, user_id )" +
                 "VALUES ( ? , ? )";
 
-        executeCreateUserQuery(userSql, locationSql, locationUserSql, user);
+
+        String locationSql = "INSERT INTO user_location (id, user_id, street_name, street_number, city, country, spatial_point)" +
+                "VALUES ( ? , ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";
+
+        executeCreateUserQuery(userSql, locationSql, user);
+        //executeCreateUserQuery(userSql, locationSql, locationUserSql, user);
     }
 
     private void validateUser(User user) {
@@ -33,18 +38,16 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         }
     }
 
-    private void executeCreateUserQuery(String userSql, String locationSql, String locationUserSql, User user) throws CreateUserException {
+    private void executeCreateUserQuery(String userSql, String locationSql, User user) throws CreateUserException {
         Connection conn = null;
         PreparedStatement pstmtUser = null;
         PreparedStatement pstmtLocation = null;
-        PreparedStatement pstmtUserLocation = null;
 
         try{
             conn = DriverManager.getConnection(url);
             conn.setAutoCommit(false);
 
             pstmtLocation = conn.prepareStatement(locationSql);
-            pstmtUserLocation = conn.prepareStatement(locationUserSql);
 
             pstmtUser= conn.prepareStatement(userSql);
             pstmtUser.setString(1, user.getId());
@@ -56,7 +59,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
 
             if(rowsEffected == 1){
                 super.executeCreateLocationQuery(user, pstmtLocation);
-                executeCreateLocationReferenceQuery(user, pstmtUserLocation);
+                //executeCreateLocationReferenceQuery(user, pstmtUserLocation);
                 conn.commit();
             }else {
                 conn.rollback();
@@ -106,7 +109,6 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             try {
                 if(pstmtUser != null) pstmtUser.close();
                 if(pstmtLocation != null) pstmtLocation.close();
-                if(pstmtUserLocation != null) pstmtUserLocation.close();
                 if(conn != null) conn.close();
             } catch (SQLException e) {
                 throw new CreateUserException(e.getMessage());
@@ -120,7 +122,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
                 " FROM user" +
                 " WHERE user.user_name = ?";
         User user = executeGetUserQuery(sql, userName);
-        user.setLocation(getLocation(user.getId()));
+        user.setLocation( getLocation(user.getId()) ); //if only one location per user
         return user;
     }
 
@@ -135,10 +137,14 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
     }
 
     private Location getLocation(String userId) {
-        String sql = " SELECT id, street_name, street_number, city, country, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y" +
+        String sqlOld = " SELECT id, street_name, street_number, city, country, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y" +
                 " FROM location JOIN location_user" +
                 " ON location_user.location_id = location.id" +
                 " WHERE location_user.user_id = ? ";
+
+        String sql = " SELECT id, street_name, street_number, city, country, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y" +
+                " FROM user_location" +
+                " WHERE user_location.user_id = ? ";
         return executeGetLocationQuery(sql, userId);
     }
 
@@ -221,31 +227,30 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
     @Override
     public void deleteUser(String userId) throws DeleteUserException {
         User user = getUserById(userId);
-        String locationRouteSql = "DELETE FROM location_user WHERE user_id = ?";
-        String locationSql = "DELETE FROM location WHERE id = ?";
-        String userSql = "DELETE FROM user WHERE id = ?";
+        String locationRouteSqlOld = "DELETE FROM location_user WHERE user_id = ?";
+        String locationSqlOld = "DELETE FROM location WHERE id = ?";
 
-        executeDeleteUserQuery(locationRouteSql, locationSql, userSql, user);
+        String locationRouteSql = "DELETE FROM user_location WHERE user_id = ?";
+        //String locationSql = "DELETE FROM location WHERE id = ?";
+
+        String userSql = "DELETE FROM user WHERE id = ?";
+        executeDeleteUserQuery(locationRouteSql, userSql, user);
+        //executeDeleteUserQuery(locationRouteSql, locationSql, userSql, user);
     }
 
-    private void executeDeleteUserQuery(String locationRouteSql, String locationSql,
+    private void executeDeleteUserQuery(String locationUserSql,
                                          String userSql, User user)
             throws DeleteUserException {
         Connection conn = null;
         PreparedStatement pstmtLocationUser = null;
-        PreparedStatement pstmtLocation = null;
         PreparedStatement pstmtUser = null;
         try{
             conn = DriverManager.getConnection(url);
             conn.setAutoCommit(false);
 
-            pstmtLocationUser = conn.prepareStatement(locationRouteSql);
+            pstmtLocationUser = conn.prepareStatement(locationUserSql);
             pstmtLocationUser.setString(1, user.getId());
             pstmtLocationUser.executeUpdate();
-
-            pstmtLocation = conn.prepareStatement(locationSql);
-            pstmtLocation.setString(1, user.getLocation().getId());
-            pstmtLocation.executeUpdate();
 
             pstmtUser = conn.prepareStatement(userSql);
             pstmtUser.setString(1, user.getId());
@@ -269,7 +274,6 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         }finally {
             try {
                 if(pstmtUser != null) pstmtUser.close();
-                if(pstmtLocation != null) pstmtLocation.close();
                 if(pstmtLocationUser != null) pstmtLocationUser.close();
                 if(conn != null) conn.close();
             } catch (SQLException e) {
@@ -286,9 +290,13 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         String userSql = "UPDATE user" +
                 " SET user_name = ?, email = ?, password = ?" +
                 " WHERE id = ?";
-        String locationSql = "UPDATE location SET street_name = ? , street_number = ? ," +
+        String locationSqlOld = "UPDATE location SET street_name = ? , street_number = ? ," +
                 " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
                 "WHERE location.id = ?";
+
+        String locationSql = "UPDATE user_location SET street_name = ? , street_number = ? ," +
+                " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
+                "WHERE user_location.id = ?";
         executeUpdateUserQuery(userSql, locationSql, updatedUser);
     }
     private void executeUpdateUserQuery(String sql, String locationSql, User user) throws UpdateUserException {

@@ -4,14 +4,20 @@ DROP TRIGGER IF EXISTS AfterUpdateOnRoute;
 
 DROP TABLE IF EXISTS waypoint_archive;
 DROP TABLE IF EXISTS route_archive;
-
+/*
 DROP TABLE IF EXISTS location_user;
 DROP TABLE IF EXISTS location_route;
+*/
+DROP TABLE IF EXISTS user_location;
+DROP TABLE IF EXISTS route_location;
+
 DROP TABLE IF EXISTS checkpoint;
 DROP TABLE IF EXISTS run;
 DROP TABLE IF EXISTS waypoint;
 DROP TABLE IF EXISTS route;
+
 DROP TABLE IF EXISTS location;
+
 DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE IF NOT EXISTS `user`(
@@ -36,7 +42,7 @@ CREATE TABLE IF NOT EXISTS route(
     PRIMARY KEY (id),
     FOREIGN KEY (creator_id) REFERENCES `user` (id)
 );
-
+/*
 CREATE TABLE IF NOT EXISTS location(
 	id VARCHAR(225),
     street_name VARCHAR(225),
@@ -46,7 +52,31 @@ CREATE TABLE IF NOT EXISTS location(
     spatial_point POINT NOT NULL SRID 0,
     PRIMARY KEY (id)
 ); 
+*/
+CREATE TABLE IF NOT EXISTS route_location(
+	id VARCHAR(225),
+    route_id VARCHAR(225) NOT NULL UNIQUE,
+    street_name VARCHAR(225),
+    street_number VARCHAR(225),
+    city VARCHAR(225),
+    country VARCHAR(225),
+    spatial_point POINT NOT NULL SRID 0,
+    PRIMARY KEY (id),
+    FOREIGN KEY (route_id) REFERENCES route (id)
+); 
 
+CREATE TABLE IF NOT EXISTS user_location(
+	id VARCHAR(225),
+    user_id VARCHAR(225),
+    street_name VARCHAR(225),
+    street_number VARCHAR(225),
+    city VARCHAR(225),
+    country VARCHAR(225),
+    spatial_point POINT NOT NULL SRID 0,
+    PRIMARY KEY (id),
+	FOREIGN KEY (user_id ) REFERENCES `user` (id)
+); 
+/*
 CREATE TABLE IF NOT EXISTS location_user(
 	location_id VARCHAR(225),
     user_id VARCHAR(225),
@@ -62,6 +92,7 @@ CREATE TABLE IF NOT EXISTS location_route(
     FOREIGN KEY (location_id ) REFERENCES location (id),
     FOREIGN KEY (route_id ) REFERENCES route (id)
 ); 
+*/
 
 CREATE TABLE IF NOT EXISTS waypoint(
 	`index` INT,
@@ -186,5 +217,6 @@ ORDER BY COUNT(run.route_id) DESC
 LIMIT 3;
 
 SELECT * FROM route; 
-
+SELECT * FROM user;
+SELECT * FROM run; 
  

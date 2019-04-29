@@ -13,12 +13,14 @@ public abstract class BaseRunnersRepository {
         final Location location = locational.getLocation();
         if (location != null) {
             pstmtLocation.setString(1, location.getId());
-            pstmtLocation.setString(2, location.getStreetName());
-            pstmtLocation.setString(3, location.getStreetNumber());
-            pstmtLocation.setString(4, location.getCity());
-            pstmtLocation.setString(5, location.getCountry());
-            pstmtLocation.setString(6, "POINT(" + location.getX() + " " + location.getY() + ")");
-            pstmtLocation.setInt(7, location.getSRID());
+            pstmtLocation.setString(2, locational.getId());
+
+            pstmtLocation.setString(3, location.getStreetName());
+            pstmtLocation.setString(4, location.getStreetNumber());
+            pstmtLocation.setString(5, location.getCity());
+            pstmtLocation.setString(6, location.getCountry());
+            pstmtLocation.setString(7, "POINT(" + location.getX() + " " + location.getY() + ")");
+            pstmtLocation.setInt(8, location.getSRID());
             pstmtLocation.executeUpdate();
         }
     }
@@ -33,6 +35,11 @@ public abstract class BaseRunnersRepository {
         pstmtLocation.setInt(6, location.getSRID());
         pstmtLocation.setString(7, location.getId());
         pstmtLocation.executeUpdate();
+
+        String locationSql = "UPDATE route_location SET street_name = ?, street_number = ?," +
+                " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
+                " WHERE route_location.id = ? ";
+
     }
 
     protected void executeCreateLocationReferenceQuery(Locational locational, PreparedStatement pstmtLocationUser) throws SQLException {
