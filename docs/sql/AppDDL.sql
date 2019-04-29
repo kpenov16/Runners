@@ -16,7 +16,7 @@ DROP TABLE IF EXISTS run;
 DROP TABLE IF EXISTS waypoint;
 DROP TABLE IF EXISTS route;
 
-DROP TABLE IF EXISTS location;
+#DROP TABLE IF EXISTS location;
 
 DROP TABLE IF EXISTS `user`;
 
@@ -114,9 +114,9 @@ CREATE TABLE run(
 
 CREATE TABLE IF NOT EXISTS checkpoint(
 	run_id VARCHAR(100),
-	waypoint_index INT,
-    visited_timestamp TIMESTAMP,
-    PRIMARY KEY (run_id, waypoint_index, visited_timestamp), 
+	waypoint_index INT NOT NULL,
+    visited_timestamp TIMESTAMP NOT NULL,
+    #PRIMARY KEY (run_id, waypoint_index, visited_timestamp), 
     FOREIGN KEY (run_id) REFERENCES run (id)
   ##  , FOREIGN KEY (waypoint_index) REFERENCES waypoint (`index`)    ## here is the fail
 );
@@ -168,9 +168,9 @@ BEGIN
 		SELECT OLD.id, `current_time`, OLD.creator_id, OLD.title, OLD.`date`, 
 		OLD.distance, OLD.duration, OLD.`description`, OLD.`status`, OLD.max_participants, OLD.min_participants,
 		
-		location.id, location.street_name, location.street_number, location.city, location.country, location.spatial_point
-		FROM location_route JOIN location ON location_route.location_id = location.id
-		WHERE location_route.route_id = OLD.id;
+		route_location.id, route_location.street_name, route_location.street_number, route_location.city, route_location.country, route_location.spatial_point
+		FROM route_location  
+        WHERE route_location.route_id = OLD.id;
     
     INSERT INTO waypoint_archive
 		SELECT `index`, route_id, spatial_point, `current_time` 
@@ -216,7 +216,3 @@ GROUP BY run.route_id
 ORDER BY COUNT(run.route_id) DESC
 LIMIT 3;
 
-SELECT * FROM route; 
-SELECT * FROM user;
-SELECT * FROM run; 
- 

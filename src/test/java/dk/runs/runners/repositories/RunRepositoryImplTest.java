@@ -298,6 +298,7 @@ class RunRepositoryImplTest {
         currentY = 4.21;
         precision = 1;
         runRepository.addCheckpointIfValid(run.getId(), currentX, currentY, precision);
+
         runRepository.addCheckpointIfValid(run.getId(), currentX, currentY, precision);
 
         Run returnedRun = runRepository.getRunWithLastCheckpoints(run.getId());
