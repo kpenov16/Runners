@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS checkpoint(
 	run_id VARCHAR(100),
 	waypoint_index INT NOT NULL,
     visited_timestamp TIMESTAMP NOT NULL,
-    #PRIMARY KEY (run_id, waypoint_index, visited_timestamp), 
+    PRIMARY KEY (run_id, waypoint_index, visited_timestamp), 
     FOREIGN KEY (run_id) REFERENCES run (id)
   ##  , FOREIGN KEY (waypoint_index) REFERENCES waypoint (`index`)    ## here is the fail
 );
