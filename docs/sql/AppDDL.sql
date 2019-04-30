@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS waypoint(
     PRIMARY KEY (`index`, route_id),
     FOREIGN KEY (route_id) REFERENCES route(id),
     SPATIAL INDEX (spatial_point)
-);
+    );
 
 CREATE TABLE run(
 	id VARCHAR(225),
@@ -114,12 +114,11 @@ CREATE TABLE run(
 
 CREATE TABLE IF NOT EXISTS checkpoint(
 	run_id VARCHAR(100),
-	waypoint_index INT NOT NULL,
-    visited_timestamp TIMESTAMP NOT NULL,
+	waypoint_index INT,
+    visited_timestamp TIMESTAMP,
     PRIMARY KEY (run_id, waypoint_index, visited_timestamp), 
     FOREIGN KEY (run_id) REFERENCES run (id)
-  ##  , FOREIGN KEY (waypoint_index) REFERENCES waypoint (`index`)    ## here is the fail
-);
+    );
 
 CREATE TABLE IF NOT EXISTS route_archive(
 	route_id VARCHAR(225),
