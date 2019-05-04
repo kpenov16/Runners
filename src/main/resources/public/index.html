@@ -16,7 +16,7 @@
             <h1>Create route</h1>
             <div ng-controller="createRunController">
                 Enter route id : <input type="text" ng-model="runCreate.id" placeholder="id">
-                Enter route location : <input type="text" ng-model="runCreate.location" placeholder="city">
+                Enter route locations : <input type="text" ng-model="runCreate.locations" placeholder="city">
                 <button ng-click="createRun()">
                     Submit
                 </button>
@@ -31,7 +31,7 @@
             <h1>Prints routes from database:</h1>
             <div ng-repeat="route in routes">
                 <p ng-click="plusOne($index)">Run id: {{route.id}},
-                    location: {{route.location}},
+                    locations: {{route.locations}},
                     attendancies:  {{route.attendancies}}</p>
             </div>
         </div>

@@ -38,7 +38,7 @@ public class RouteRepositoryImplTest {
         user.setUserName("BillGates");
         user.setPassword("bananas");
         Location userLocation = new Location(UUID.randomUUID().toString());
-        user.setLocation(userLocation);
+        user.setLocations(new ArrayList<Location>(){{add(userLocation);}} );
 
         route = new Route(UUID.randomUUID().toString());
         Location location = new Location(UUID.randomUUID().toString());
@@ -238,7 +238,7 @@ public class RouteRepositoryImplTest {
         location.setCountry("Sweden");
         location.setStreetName("Main street");
         location.setStreetNumber("5A");
-        user.setLocation(location);
+        user.setLocations( new ArrayList<Location>(){{add(location);}} );
 
         return user;
     }
@@ -296,7 +296,7 @@ public class RouteRepositoryImplTest {
 
         Route updatedRoute = route;
         updatedRoute.setTitle("new Title");
-        Location newLocation = new Location(route.getLocation().getId());
+        Location newLocation = new Location(route.getLocations().get(0).getId());
         newLocation.setX(11.2123);
         newLocation.setY(33.3123);
         newLocation.setCity("Germany");

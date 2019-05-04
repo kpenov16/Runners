@@ -34,7 +34,7 @@ public class UserRepositoryImplTest {
         location.setCountry("Sweden");
         location.setStreetName("Main street");
         location.setStreetNumber("5A");
-        user.setLocation(location);
+        user.setLocations(new ArrayList<Location>(){{add(location);}});
 
         //routeRepository = new RouteRepositoryImpl();
         //runRepository = new RunRepositoryImpl();
@@ -60,7 +60,7 @@ public class UserRepositoryImplTest {
         assertEquals(user.getEmail(), createdUser.getEmail());
         assertEquals(user.getPassword(), createdUser.getPassword());
         assertEquals(user.getUserName(), createdUser.getUserName());
-        assertEquals(user.getLocation().toString(), createdUser.getLocation().toString());
+        assertEquals(user.getLocations().toString(), createdUser.getLocations().toString());
 
         //tear down
     }
@@ -76,7 +76,7 @@ public class UserRepositoryImplTest {
         assertEquals(user.getEmail(), createdUser.getEmail());
         assertEquals(user.getPassword(), createdUser.getPassword());
         assertEquals(user.getUserName(), createdUser.getUserName());
-        assertEquals(user.getLocation().toString(), createdUser.getLocation().toString());
+        assertEquals(user.getLocations().toString(), createdUser.getLocations().toString());
 
         //tear down
     }
@@ -90,12 +90,12 @@ public class UserRepositoryImplTest {
         updatedUser.setUserName("updated_UserName");
         updatedUser.setEmail("updated_Email");
         updatedUser.setPassword("new_Password");
-        updatedUser.getLocation().setStreetName("Prince street");
-        updatedUser.getLocation().setStreetNumber("99a");
-        updatedUser.getLocation().setCity("Munchen");
-        updatedUser.getLocation().setCountry("Germany");
-        updatedUser.getLocation().setX(22.22);
-        updatedUser.getLocation().setY(11.11);
+        updatedUser.getLocations().get(0).setStreetName("Prince street");
+        updatedUser.getLocations().get(0).setStreetNumber("99a");
+        updatedUser.getLocations().get(0).setCity("Munchen");
+        updatedUser.getLocations().get(0).setCountry("Germany");
+        updatedUser.getLocations().get(0).setX(22.22);
+        updatedUser.getLocations().get(0).setY(11.11);
         //act
         userRepository.updateUser(updatedUser);
 
@@ -104,7 +104,7 @@ public class UserRepositoryImplTest {
         assertEquals(updatedUser.getUserName(), returnedUser.getUserName());
         assertEquals(updatedUser.getEmail(), returnedUser.getEmail());
         assertEquals(updatedUser.getPassword(), returnedUser.getPassword());
-        assertEquals(updatedUser.getLocation().toString(), returnedUser.getLocation().toString());
+        assertEquals(updatedUser.getLocations().toString(), returnedUser.getLocations().toString());
     }
 
     @Test
@@ -120,7 +120,8 @@ public class UserRepositoryImplTest {
         userWithDuplicateUserName.setUserName(userName);
         userWithDuplicateUserName.setEmail("userWithDuplicateUserName@banana.com");
         userWithDuplicateUserName.setPassword("userWithDuplicateUserName_password");
-        userWithDuplicateUserName.setLocation(new Location(UUID.randomUUID().toString()));
+        userWithDuplicateUserName
+                .setLocations(new ArrayList<Location>(){{add( new Location(UUID.randomUUID().toString()) );}});
         userRepository.createUser(userWithDuplicateUserName);
 
         //Act, Assert
@@ -150,7 +151,8 @@ public class UserRepositoryImplTest {
         userWithDuplicateEmail.setUserName(UUID.randomUUID().toString());
         userWithDuplicateEmail.setEmail(email);
         userWithDuplicateEmail.setPassword("userWithDuplicateUserName_password");
-        userWithDuplicateEmail.setLocation(new Location(UUID.randomUUID().toString()));
+        userWithDuplicateEmail
+                .setLocations(new ArrayList<Location>(){{add( new Location(UUID.randomUUID().toString()) );}});
         userRepository.createUser(userWithDuplicateEmail);
 
         //Act, Assert
@@ -177,7 +179,7 @@ public class UserRepositoryImplTest {
         unknownUser.setUserName(user.getUserName());
         unknownUser.setEmail(user.getEmail());
         unknownUser.setPassword(user.getPassword());
-        unknownUser.setLocation(user.getLocation());
+        unknownUser.setLocations(user.getLocations());
 
         //Act, Assert
         assertThrows(UserRepository.UserNotFoundException.class,
@@ -214,7 +216,8 @@ public class UserRepositoryImplTest {
         userWithDuplicateUserName.setUserName(user.getUserName());
         userWithDuplicateUserName.setEmail("userWithDuplicateUserName@banana.com");
         userWithDuplicateUserName.setPassword("userWithDuplicateUserName_password");
-        userWithDuplicateUserName.setLocation(new Location(UUID.randomUUID().toString()));
+        userWithDuplicateUserName
+                .setLocations(new ArrayList<Location>(){{add( new Location(UUID.randomUUID().toString()) );}});
 
         //Act, Assert
         assertThrows(UserRepository.UserNameDuplicationException.class,
@@ -231,7 +234,8 @@ public class UserRepositoryImplTest {
         userWithDuplicateEmail.setEmail(user.getEmail());
         userWithDuplicateEmail.setUserName(UUID.randomUUID().toString());
         userWithDuplicateEmail.setPassword(UUID.randomUUID().toString());
-        userWithDuplicateEmail.setLocation(new Location(UUID.randomUUID().toString()));
+        userWithDuplicateEmail
+                .setLocations(new ArrayList<Location>(){{add( new Location(UUID.randomUUID().toString()) );}});
 
 
         //Act, Assert
@@ -255,7 +259,7 @@ public class UserRepositoryImplTest {
 
         //physical assert 2
         Location location = new Location("");
-        user.setLocation(location);
+        user.setLocations( new ArrayList<Location>(){{add(location);}} );
         userMissingLocationException = assertThrows(UserRepository.UserMissingLocationException.class,
                 () -> userRepository.createUser(user)
         );
@@ -264,7 +268,7 @@ public class UserRepositoryImplTest {
 
         //physical assert 3
         location.setId(null);
-        user.setLocation(location);
+        user.setLocations(new ArrayList<Location>(){{add(location);}});
         userMissingLocationException = assertThrows(UserRepository.UserMissingLocationException.class,
                 () -> userRepository.createUser(user)
         );

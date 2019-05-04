@@ -3,9 +3,10 @@ package dk.runs.runners.repositories;
 import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.User;
 import dk.runs.runners.usecases.UserRepository;
-import org.omg.PortableInterceptor.USER_EXCEPTION;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserRepositoryImpl extends BaseRunnersRepository implements UserRepository {
     private final String url = "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
@@ -33,8 +34,14 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
     }
 
     private void validateUser(User user) {
-        if(user.getLocation() == null || user.getLocation().getId() == null || user.getLocation().getId().isEmpty()){
+        if(user.getLocations() == null || user.getLocations().size() == 0){
             throw new UserMissingLocationException("User with id: " + user.getId() + " is missing location.");
+        }
+
+        for(Location location : user.getLocations()){
+            if(location.getId() == null || location.getId().isEmpty()){
+                throw new UserMissingLocationException("User with id: " + user.getId() + " is missing location.");
+            }
         }
     }
 
@@ -122,7 +129,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
                 " FROM user" +
                 " WHERE user.user_name = ?";
         User user = executeGetUserQuery(sql, userName);
-        user.setLocation( getLocation(user.getId()) ); //if only one location per user
+        user.setLocations( getLocations(user.getId()) ); //if only one location per user
         return user;
     }
 
@@ -132,11 +139,11 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
                 " FROM user" +
                 " WHERE user.id = ?";
         User user = executeGetUserQuery(sql, new User(userId));
-        user.setLocation(getLocation(userId));
+        user.setLocations( getLocations(userId) );
         return user;
     }
 
-    private Location getLocation(String userId) {
+    private List<Location> getLocations(String userId) {
         String sqlOld = " SELECT id, street_name, street_number, city, country, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y" +
                 " FROM location JOIN location_user" +
                 " ON location_user.location_id = location.id" +
@@ -148,20 +155,21 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         return executeGetLocationQuery(sql, userId);
     }
 
-    private Location executeGetLocationQuery(String locationSql, String userId) throws UserNotFoundException {
-        Location location = null;
+    private List<Location> executeGetLocationQuery(String locationSql, String userId) throws UserNotFoundException {
+        List<Location> locations = new ArrayList<>();
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(locationSql)){
             pstmt.setString(1, userId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()){
-                location = new Location(rs.getString("id"));
+                Location location = new Location(rs.getString("id"));
                 location.setStreetName(rs.getString("street_name"));
                 location.setStreetNumber(rs.getString("street_number"));
                 location.setCity(rs.getString("city"));
                 location.setCountry(rs.getString("country"));
                 location.setX(rs.getDouble("X"));
                 location.setY(rs.getDouble("Y"));
+                locations.add(location);
             }
             if(rs != null){  rs.close(); }
         }catch(SQLException se){
@@ -169,7 +177,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         }catch(Exception e){
             throw new UserNotFoundException(e.getMessage());
         }
-        return location;
+        return locations;
     }
 
     private User executeGetUserQuery(String sql, String userName) throws UserNotFoundException {

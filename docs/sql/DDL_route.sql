@@ -4,7 +4,7 @@ CREATE TABLE route(
 	id VARCHAR(225),
 	creator_id VARCHAR(225),
     title VARCHAR(225),
-    location VARCHAR(225),
+    locations VARCHAR(225),
     date BIGINT,
     distance INT,
     duration BIGINT,
@@ -25,7 +25,7 @@ DROP TABLE checkpoint;
 DROP table run;
 
 
-INSERT INTO route (title, creator_id, location, distance, duration, description, status)
+INSERT INTO route (title, creator_id, locations, distance, duration, description, status)
 VALUES ("testing", 2, "testing", 5000, 6454545451651651, "testing", "active");
 SELECT * FROM route;
 DROP TABLE route;

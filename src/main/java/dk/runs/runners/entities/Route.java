@@ -63,12 +63,15 @@ public class Route implements Locational {
     }
 
     @Override
-    public Location getLocation() {
-        return location;
+    public List<Location> getLocations() {
+        return new ArrayList<Location>(){{ add( getLocation() ); }};
     }
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+    public Location getLocation() {
+        return this.location;
     }
 
     public Date getDate() {

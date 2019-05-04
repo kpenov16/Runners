@@ -45,7 +45,7 @@ class RunRepositoryImplTest {
         userLocation.setCountry("Sweden");
         userLocation.setStreetName("Main street");
         userLocation.setStreetNumber("5A");
-        user.setLocation(userLocation);
+        user.setLocations(new ArrayList<Location>(){{add(userLocation);}} );
         //userRepository.createUser(user);
 
         route = new Route(UUID.randomUUID().toString());
@@ -461,11 +461,9 @@ class RunRepositoryImplTest {
         newLocation.setCountry("Sweden");
         newLocation.setStreetName("Main street");
         newLocation.setStreetNumber("5A");
-        user.setLocation(newLocation);
+        user.setLocations( new ArrayList<Location>(){{add(newLocation);}} );
 
         return user;
     }
-
-
 
 }

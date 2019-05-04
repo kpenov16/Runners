@@ -9,7 +9,7 @@ public class User implements Locational{
     private String email = "";
     private String password = "";
     private List<Route> routes = new LinkedList<>();
-    private Location location;
+    private List<Location> locations;
 
     public User(){}
     public User(String id){
@@ -54,12 +54,12 @@ public class User implements Locational{
         return this.routes;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setLocations(List<Location> locations) {
+        this.locations = locations;
     }
 
     @Override
-    public Location getLocation() {
-        return location;
+    public List<Location> getLocations() {
+        return locations;
     }
 }

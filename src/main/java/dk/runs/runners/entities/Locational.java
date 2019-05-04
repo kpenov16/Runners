@@ -1,6 +1,8 @@
 package dk.runs.runners.entities;
 
+import java.util.List;
+
 public interface Locational {
-    Location getLocation();
+    List<Location> getLocations();
     String getId();
 }

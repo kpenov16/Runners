@@ -31,7 +31,8 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     }
 
     private void validateRoute(Route route) {
-        if(route.getLocation() == null || route.getLocation().getId() == null || route.getLocation().getId().isEmpty()){
+        if(route.getLocations() == null || route.getLocations().size() != 1 || route.getLocations().get(0) == null ||
+                route.getLocations().get(0).getId() == null || route.getLocations().get(0).getId().isEmpty() ){
             throw new RouteMissingLocationException("Route with id: " + route.getId() + " is missing location.");
         }
     }
@@ -437,43 +438,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             pstmtWaypoint.executeUpdate();
         }
     }
-    /*
-    private void executeUpdateLocationQuery(Route route, PreparedStatement pstmtRouteLocation) throws SQLException {
-         final Location location = route.getLocation();
-        pstmtRouteLocation.setString(1, location.getStreetName());
-        pstmtRouteLocation.setString(2, location.getStreetNumber());
-        pstmtRouteLocation.setString(3, location.getCity());
-        pstmtRouteLocation.setString(4, location.getCountry());
-        pstmtRouteLocation.setString(5, "POINT(" + location.getX() + " " + location.getY() + ")");
-        pstmtRouteLocation.setInt(6, location.getSRID());
-        pstmtRouteLocation.setString(7, location.getId());
-        pstmtRouteLocation.executeUpdate();
-
-    }*/
-    /*
-    private void executeCreateLocationRouteQuery(Route route, PreparedStatement pstmtLocationRoute) throws SQLException {
-        final Location location = route.getLocation();
-        if (location != null) {
-            pstmtLocationRoute.setString(1, location.getId());
-            pstmtLocationRoute.setString(2, route.getId());
-            pstmtLocationRoute.executeUpdate();
-        }
-    }
-    */
-/*
-    private void executeCreateLocationQuery(Route route, PreparedStatement pstmtLocation) throws SQLException {
-        final Location location = route.getLocation();
-        if (location != null) {
-            pstmtLocation.setString(1, location.getId());
-            pstmtLocation.setString(2, location.getStreetName());
-            pstmtLocation.setString(3, location.getStreetNumber());
-            pstmtLocation.setString(4, location.getCity());
-            pstmtLocation.setString(5, location.getCountry());
-            pstmtLocation.setString(6, "POINT(" + location.getX() + " " + location.getY() + ")");
-            pstmtLocation.setInt(7, location.getSRID());
-            pstmtLocation.executeUpdate();
-        }
-    }*/
 
     public void deleteRoute(String routeId) throws DeleteRouteException {
         Route route = getRoute(routeId);

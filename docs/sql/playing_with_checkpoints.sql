@@ -36,7 +36,7 @@ DELETE FROM `run`;
 DELETE FROM `waypoint`;
 DELETE FROM location_user;
 DELETE FROM location_route;
-DELETE FROM location;
+DELETE FROM locations;
 DELETE FROM `route`;
 DELETE FROM `user`;
 SELECT * FROM `checkpoint`;
