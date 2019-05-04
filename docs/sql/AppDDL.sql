@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `user`(
     user_name  VARCHAR(225) NOT NULL UNIQUE,
     email VARCHAR(225) NOT NULL UNIQUE,
     `password` VARCHAR(225) NOT NULL,
-    PRIMARY KEY (id, user_name, email)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS route(
