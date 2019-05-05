@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `user`(
 
 CREATE TABLE IF NOT EXISTS route(
 	id VARCHAR(225),
-	creator_id VARCHAR(225),
+	creator_id VARCHAR(225) NOT NULL,
     title VARCHAR(225),
     `date` BIGINT,
     distance INT,
