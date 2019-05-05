@@ -85,7 +85,7 @@ CREATE TABLE run(
 CREATE TABLE IF NOT EXISTS checkpoint(
 	run_id VARCHAR(100),
 	waypoint_index INT,
-    visited_timestamp TIMESTAMP,
+    visited_timestamp TIMESTAMP(6),
     PRIMARY KEY (run_id, waypoint_index, visited_timestamp), 
     FOREIGN KEY (run_id) REFERENCES run (id)
     );

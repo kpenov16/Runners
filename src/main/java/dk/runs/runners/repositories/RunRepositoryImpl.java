@@ -228,9 +228,9 @@ public class RunRepositoryImpl implements RunRepository {
 
     @Override
     public void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) {
-        waitToAvoidDuplicateTimestamps(500);
+      //  waitToAvoidDuplicateTimestamps(500);
         String sqlQuery = "INSERT INTO checkpoint (run_id, waypoint_index, visited_timestamp)" +
-                          " SELECT run.id, `index`, now()" +
+                          " SELECT run.id, `index`, now(6)" +
                           " FROM waypoint" +
                           " JOIN run ON waypoint.route_id = run.route_id" +
                           " WHERE run.id = ? AND " +
