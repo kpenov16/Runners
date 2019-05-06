@@ -23,7 +23,7 @@ public interface RunRepository {
 
     Run getRunWithAllCheckpoints(String runId);
 
-    Run getRunWithLastCheckpoints(String runId);
+    Run getRunWithLastCheckpoints(String runId) throws CheckpointException;
 
     void deleteRun(String runId);
 

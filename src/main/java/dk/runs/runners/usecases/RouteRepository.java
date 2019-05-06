@@ -11,11 +11,11 @@ public interface RouteRepository {
 
     Route getRoute(String routeId) throws RouteNotFoundException;
 
-    List<Route> getRoutes(String creatorId);
+    List<Route> getRoutes(String creatorId) throws RouteNotFoundException;
 
-    void updateRoute(Route updatedRoute);
+    void updateRoute(Route updatedRoute) throws RouteIdDuplicationException, UpdateRouteException;
 
-    List<Route> getRouteList(int numberOfRoutes, Date sinceDate);
+    List<Route> getRouteList(int numberOfRoutes, Date sinceDate) throws GetRoutesException;
 
     void deleteRoute(String routeId)throws DeleteRouteException;
 
