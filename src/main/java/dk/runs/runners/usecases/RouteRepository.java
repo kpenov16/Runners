@@ -8,8 +8,8 @@ import java.util.List;
 public interface RouteRepository {
 
     /**
-     * Creates a new route in the data layer and saves it in the route archive
-     * @param route is a route object, with id, title, location,
+     * Creates a new route in the data layer
+     * @param route is a route object, with id, title, location object,
      *              date, distance, duration, description, status, waypoints,
      *              max participants and minimum participants
      * @param creatorId is the id of the user who is creating the route
@@ -36,7 +36,7 @@ public interface RouteRepository {
 
     /**
      * Updates an existing route in the data layer
-     * @param updatedRoute is a route object, with id, title, location,
+     * @param updatedRoute is a route object, with id, title, location object,
      *                    date, distance, duration, description, status, waypoints,
      *                    max participants and minimum participants
      * @throws RouteIdDuplicationException if there already is a route with the same id in the data layer
@@ -47,7 +47,7 @@ public interface RouteRepository {
     /**
      *Retrieves a list of a certain amount of routes by date
      * @param numberOfRoutes is the amount of routes retrieved
-     * @param sinceDate is the date at the time of retrieval
+     * @param sinceDate retrieves routes after the given date
      * @return a list of route objects
      * @throws GetRoutesException if the routes could not be retrieved
      */
@@ -63,8 +63,8 @@ public interface RouteRepository {
     /**
      * Retrieves a list of the most popular routes (has most participants)
      * @param top is the amount of most popular routes desired
-     * @param since is the date at the time of retrieval
-     * @return a list of route objects with the most participants
+     * @param since retrieves routes after the given date
+     * @return a list of sorted route objects by number of participants in decreasing order
      */
     List<Route> getMostPopular(int top, Date since);
 
