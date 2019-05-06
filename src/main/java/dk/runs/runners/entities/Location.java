@@ -9,6 +9,9 @@ public class Location {
     private String country = "";
     private String streetName = "";
     private String streetNumber = "";
+
+    public Location(){}
+
     public Location(String id) {
         this.id = id;
     }
