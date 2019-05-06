@@ -22,13 +22,13 @@ public interface UserRepository {
      * @param userName is the user name of an existing user in the data layer
      * @return User object retrieved from the data layer
      * @throws UserNotFoundException if the user with that userName is not found in the data layer
-     * @throws UserRepositoryException if other exceptions occurred
+     * @throws GetUserException if other exceptions occurred
      */
-    User getUser(String userName) throws UserNotFoundException, UserRepositoryException;
+    User getUser(String userName) throws GetUserException, UserNotFoundException;
 
-    User getUserById(String userId);
+    User getUserById(String userId) throws GetUserException, UserNotFoundException;
 
-    void deleteUser(String userId);
+    void deleteUser(String userId) throws DeleteUserException;
 
     /**
      * Updates an existing user in the data layer.
@@ -79,5 +79,8 @@ public interface UserRepository {
     }
     class UserMissingLocationException extends RuntimeException{
         public UserMissingLocationException(String msg) {super(msg);}
+    }
+    class GetUserException extends RuntimeException{
+        public GetUserException(String msg) {super(msg);}
     }
 }

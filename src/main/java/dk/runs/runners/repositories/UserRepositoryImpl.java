@@ -196,9 +196,9 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             }
             if(rs != null){  rs.close(); }
         }catch(SQLException se){
-            throw new UserRepositoryException(se.getMessage());
+            throw new GetUserException(se.getMessage());
         }catch(Exception e){
-            throw new UserRepositoryException(e.getMessage());
+            throw new GetUserException(e.getMessage());
         }finally {
             if(!isUserFound){
                 throw new UserNotFoundException("User with userName: " + userName + " was not found");
@@ -222,8 +222,10 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             if(rs != null){  rs.close(); }
         }catch(SQLException se){
             se.printStackTrace();
+            throw new GetUserException(se.getMessage());
         }catch(Exception e){
             e.printStackTrace();
+            throw new GetUserException(e.getMessage());
         }finally {
             if(!isUserFound){
                 throw new UserNotFoundException("User with id: " + user.getId() + " was not found");

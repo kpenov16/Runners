@@ -21,11 +21,11 @@ public interface RunRepository {
             UnknownRouteException, UnknownUserException, CreateRunException, RunValidationException,
             MaxParticipansReachedException;
 
-    Run getRunWithAllCheckpoints(String runId);
+    Run getRunWithAllCheckpoints(String runId) throws CheckpointException;
 
     Run getRunWithLastCheckpoints(String runId) throws CheckpointException;
 
-    void deleteRun(String runId);
+    void deleteRun(String runId) throws DeleteRunException;
 
     /** Adds a checkpoint to the run if the user is close to
      *  one of the waypoints of the route.
@@ -38,7 +38,7 @@ public interface RunRepository {
      */
     void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) throws CheckpointException;
 
-    List<WayPoint> getMissingWaypoints(String runId);
+    List<WayPoint> getMissingWaypoints(String runId) throws GetMissingWaypointException;
 
 
 
