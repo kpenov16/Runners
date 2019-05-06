@@ -2,6 +2,7 @@ package dk.runs.runners.entities;
 
 public class Location {
     private String id;
+    private int SRID = 0;
     private double x = 0;
     private double y = 0;
     private String city = "";
@@ -18,6 +19,14 @@ public class Location {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getSRID() {
+        return SRID;
+    }
+
+    public void setSRID(int sRID) {
+        this.SRID = sRID;
     }
 
     public void setX(double x) {
@@ -68,13 +77,9 @@ public class Location {
         this.streetNumber = streetNumber;
     }
 
-    public int getSRID() {
-        return 0;
-    }
-
     @Override
     public String toString(){
-        return String.format("Location: streetName: %s, streetNumber: %s, city: %s, country %s, x: %.6f, y: %.6f",
-                                        streetName,     streetNumber,     city,     country,    x,       y);
+        return String.format("Location: streetName: %s, streetNumber: %s, city: %s, country %s, x: %.6f, y: %.6f, SRID: %d",
+                                        streetName,     streetNumber,     city,     country,    x,       y,       SRID);
     }
 }
