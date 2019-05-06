@@ -21,10 +21,27 @@ public interface RunRepository {
             UnknownRouteException, UnknownUserException, CreateRunException, RunValidationException,
             MaxParticipansReachedException;
 
+    /**
+     * Retrieves a run from the data layer with all checkpoints
+     * @param runId is the id of the current run, which a user is running
+     * @return a run object
+     * @throws CheckpointException if there occurred any error inserting a checkpoint
+     */
     Run getRunWithAllCheckpoints(String runId) throws CheckpointException;
 
+    /**
+     * Retrieves a run from the data layer with the most recently passed checkpoints
+     * @param runId is the id of the current run, which a user is running
+     * @return a run object
+     * @throws CheckpointException if there occurred any error inserting a checkpoint
+     */
     Run getRunWithLastCheckpoints(String runId) throws CheckpointException;
 
+    /**
+     * Deletes an existing run in the data layer
+     * @param runId is the id of the run to be deleted
+     * @throws DeleteRunException if any error occurred while deleting the run
+     */
     void deleteRun(String runId) throws DeleteRunException;
 
     /** Adds a checkpoint to the run if the user is close to
@@ -38,6 +55,12 @@ public interface RunRepository {
      */
     void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) throws CheckpointException;
 
+    /**
+     * Retrieves a list of waypoints the user has yet to pass
+     * @param runId the id of the current run, which a user is running
+     * @return a list of waypoint objects
+     * @throws GetMissingWaypointException if any error occurred while retrieving the waypoints
+     */
     List<WayPoint> getMissingWaypoints(String runId) throws GetMissingWaypointException;
 
 
