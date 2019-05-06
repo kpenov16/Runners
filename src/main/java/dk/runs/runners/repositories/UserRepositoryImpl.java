@@ -45,7 +45,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         }
     }
 
-    private void executeCreateUserQuery(String userSql, String locationSql, User user) throws CreateUserException {
+    private void executeCreateUserQuery(String userSql, String locationSql, User user){
         Connection conn = null;
         PreparedStatement pstmtUser = null;
         PreparedStatement pstmtLocation = null;
@@ -155,7 +155,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         return executeGetLocationQuery(sql, userId);
     }
 
-    private List<Location> executeGetLocationQuery(String locationSql, String userId) throws UserNotFoundException {
+    private List<Location> executeGetLocationQuery(String locationSql, String userId) {
         List<Location> locations = new ArrayList<>();
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(locationSql)){
@@ -180,7 +180,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         return locations;
     }
 
-    private User executeGetUserQuery(String sql, String userName) throws UserNotFoundException {
+    private User executeGetUserQuery(String sql, String userName) {
         boolean isUserFound = false;
         User user = new User();
         try(Connection conn = DriverManager.getConnection(url);
@@ -207,7 +207,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         return user;
     }
 
-    private User executeGetUserQuery(String sql, User user) throws UserNotFoundException {
+    private User executeGetUserQuery(String sql, User user) {
         boolean isUserFound = false;
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
@@ -235,7 +235,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
     }
 
     @Override
-    public void deleteUser(String userId) throws DeleteUserException {
+    public void deleteUser(String userId){
         User user = getUserById(userId);
         String locationRouteSqlOld = "DELETE FROM location_user WHERE user_id = ?";
         String locationSqlOld = "DELETE FROM location WHERE id = ?";
@@ -309,7 +309,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
                 "WHERE user_location.id = ?";
         executeUpdateUserQuery(userSql, locationSql, updatedUser);
     }
-    private void executeUpdateUserQuery(String sql, String locationSql, User user) throws UpdateUserException {
+    private void executeUpdateUserQuery(String sql, String locationSql, User user) {
         boolean isUserFound = true;
         Connection conn = null;
         PreparedStatement pstmtUser = null;

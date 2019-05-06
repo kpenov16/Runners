@@ -16,7 +16,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
 
     @Override
-    public void createRoute(Route route, String creatorId) throws CreateRouteException {
+    public void createRoute(Route route, String creatorId){
         validateRoute(route);
         String routeSql = "INSERT INTO route (id, creator_id, title, date, distance, duration, description, status, max_participants, min_participants)" +
                 "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )";
@@ -37,7 +37,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         }
     }
 
-    private long executeGetIdQuery(String sql, long creatorId) throws RouteNotFoundException {
+    private long executeGetIdQuery(String sql, long creatorId){
         long id  = -1 ;
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
@@ -56,7 +56,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     }
 
     @Override
-    public Route getRoute(String routeId) throws RouteNotFoundException {
+    public Route getRoute(String routeId){
         String sql2 = "SELECT * " +
                 " FROM route" +
                 " WHERE route.id = ?";
@@ -130,8 +130,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     }
 
     private void executeUpdateRouteQueryAsUnitOfWork(String deleteWaypointsSql, String routeSql,
-                                                     String waypointSql, String locationSql, Route route)
-                                                    throws UpdateRouteException {
+                                                     String waypointSql, String locationSql, Route route){
         Connection conn = null;
         PreparedStatement pstmtRoute = null;
         PreparedStatement pstmtWaypoint = null;
@@ -248,7 +247,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         return routes;
     }
 
-    private List<Route> executeGetRouteQuery(String sql, String creatorId) throws RouteNotFoundException {
+    private List<Route> executeGetRouteQuery(String sql, String creatorId) {
         List<Route> routes = new LinkedList<>();
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
@@ -276,7 +275,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     }
 
 
-    private Route executeGetRouteQuery(String sql, Route route) throws RouteNotFoundException {
+    private Route executeGetRouteQuery(String sql, Route route){
         boolean isRouteFound = false;
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
@@ -308,7 +307,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         return route;
     }
 
-    private Location executeGetLocationQuery(String locationSql, String routeId) throws RouteNotFoundException {
+    private Location executeGetLocationQuery(String locationSql, String routeId){
         Location location = null;
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(locationSql)){
@@ -333,7 +332,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     }
 
 
-    private List<WayPoint> executeGetWaypointsQuery(String sql, List<WayPoint> wayPoints, String routeId) throws RouteNotFoundException {
+    private List<WayPoint> executeGetWaypointsQuery(String sql, List<WayPoint> wayPoints, String routeId) {
 
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
@@ -355,7 +354,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     }
 
     private void executeCreateRouteQueryAsUnitOfWork(String routeSql, String waypointSql, String locationSql,
-                                                     Route route, String creatorId) throws CreateRouteException {
+                                                     Route route, String creatorId){
         Connection conn = null;
         PreparedStatement pstmtRoute = null;
         PreparedStatement pstmtWaypoint = null;
@@ -439,7 +438,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         }
     }
 
-    public void deleteRoute(String routeId) throws DeleteRouteException {
+    public void deleteRoute(String routeId){
         Route route = getRoute(routeId);
 
         String locationRouteSql = "DELETE FROM route_location WHERE route_id = ?";
@@ -487,8 +486,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     }
 
     private void executeDeleteRouteQuery(String locationRouteSql, String routeSql,
-                                         String waypointSql, Route route)
-                                        throws DeleteRouteException {
+                                         String waypointSql, Route route) {
         Connection conn = null;
         PreparedStatement pstmtLocationRoute = null;
         PreparedStatement pstmtRoute = null;
