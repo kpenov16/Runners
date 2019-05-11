@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS route_location(
 
 CREATE TABLE IF NOT EXISTS user_location(
 	id VARCHAR(225),
-    user_id VARCHAR(225),
+    user_id VARCHAR(225) NOT NULL,
     street_name VARCHAR(225),
     street_number VARCHAR(225),
     city VARCHAR(225),

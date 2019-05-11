@@ -213,14 +213,14 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     }
 
     @Override
-    public List<Route> getRouteList(int numberOfRoutes, Date sinceDate) {
+    public List<Route> getRouteList(int count, Date sinceDate) {
         long since = sinceDate.getTime();
         String sql = "SELECT route.id AS id " +
                      "FROM route " +
                      "WHERE `date` >= ? " +
                      "ORDER BY `date` DESC " +
                      "LIMIT ? "; //TODO select only comming runs. That is where dato > now
-        return executeGetRoutesQuery(sql, numberOfRoutes, since);
+        return executeGetRoutesQuery(sql, count, since);
     }
 
     private List<Route> executeGetRoutesQuery(String sql, int limit, long since) {

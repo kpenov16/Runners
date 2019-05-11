@@ -67,7 +67,7 @@ public class ShowUserCreatedRoutesImplTest {
         }
 
         @Override
-        public List<Route> getRouteList(int numberOfRoutes, Date sinceDate) {
+        public List<Route> getRouteList(int count, Date since) {
             return null;
         }
 

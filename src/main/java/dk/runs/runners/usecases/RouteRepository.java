@@ -46,12 +46,12 @@ public interface RouteRepository {
 
     /**
      *Retrieves a list of a certain amount of routes by date
-     * @param numberOfRoutes is the amount of routes retrieved
-     * @param sinceDate retrieves routes after the given date
+     * @param count is the amount of routes retrieved
+     * @param since retrieves routes after the given date
      * @return a list of route objects
      * @throws GetRoutesException if the routes could not be retrieved
      */
-    List<Route> getRouteList(int numberOfRoutes, Date sinceDate) throws GetRoutesException;
+    List<Route> getRouteList(int count, Date since) throws GetRoutesException;
 
     /**
      * Deletes an existing route in the data layer
