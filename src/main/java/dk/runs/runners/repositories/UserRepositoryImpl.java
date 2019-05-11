@@ -19,18 +19,10 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         String userSql = "INSERT INTO user (id, user_name, email, password)" +
                                "VALUES ( ? , ? , ? , ? )";
 
-        String locationSqlOld = "INSERT INTO location (id, street_name, street_number, city, country, spatial_point)" +
-                "VALUES ( ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";
-
-        String locationUserSqlOld = "INSERT INTO location_user ( location_id, user_id )" +
-                "VALUES ( ? , ? )";
-
-
         String locationSql = "INSERT INTO user_location (id, user_id, street_name, street_number, city, country, spatial_point)" +
                 "VALUES ( ? , ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";
 
         executeCreateUserQuery(userSql, locationSql, user);
-        //executeCreateUserQuery(userSql, locationSql, locationUserSql, user);
     }
 
     private void validateUser(User user) {
@@ -49,7 +41,6 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         Connection conn = null;
         PreparedStatement pstmtUser = null;
         PreparedStatement pstmtLocation = null;
-
         try{
             conn = DriverManager.getConnection(url);
             conn.setAutoCommit(false);
@@ -66,7 +57,6 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
 
             if(rowsEffected == 1){
                 super.executeCreateLocationQuery(user, pstmtLocation);
-                //executeCreateLocationReferenceQuery(user, pstmtUserLocation);
                 conn.commit();
             }else {
                 conn.rollback();
@@ -144,11 +134,6 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
     }
 
     private List<Location> getLocations(String userId) {
-        String sqlOld = " SELECT id, street_name, street_number, city, country, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y" +
-                " FROM location JOIN location_user" +
-                " ON location_user.location_id = location.id" +
-                " WHERE location_user.user_id = ? ";
-
         String sql = " SELECT id, street_name, street_number, city, country, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y" +
                 " FROM user_location" +
                 " WHERE user_location.user_id = ? ";
@@ -237,15 +222,12 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
     @Override
     public void deleteUser(String userId){
         User user = getUserById(userId);
-        String locationRouteSqlOld = "DELETE FROM location_user WHERE user_id = ?";
-        String locationSqlOld = "DELETE FROM location WHERE id = ?";
 
         String locationRouteSql = "DELETE FROM user_location WHERE user_id = ?";
-        //String locationSql = "DELETE FROM location WHERE id = ?";
 
         String userSql = "DELETE FROM user WHERE id = ?";
+
         executeDeleteUserQuery(locationRouteSql, userSql, user);
-        //executeDeleteUserQuery(locationRouteSql, locationSql, userSql, user);
     }
 
     private void executeDeleteUserQuery(String locationUserSql,
@@ -298,15 +280,14 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         String userSql = "UPDATE user" +
                 " SET user_name = ?, email = ?, password = ?" +
                 " WHERE id = ?";
-        String locationSqlOld = "UPDATE location SET street_name = ? , street_number = ? ," +
-                " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
-                "WHERE location.id = ?";
 
         String locationSql = "UPDATE user_location SET street_name = ? , street_number = ? ," +
                 " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
                 "WHERE user_location.id = ?";
+
         executeUpdateUserQuery(userSql, locationSql, updatedUser);
     }
+
     private void executeUpdateUserQuery(String sql, String locationSql, User user) {
         boolean isUserFound = true;
         Connection conn = null;
@@ -377,8 +358,6 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             if(!isUserFound){
                 throw new UserNotFoundException("Update of user. " +"User with id: "+ user.getId() + " was not found.");
             }
-
         }
     }
-
 }
