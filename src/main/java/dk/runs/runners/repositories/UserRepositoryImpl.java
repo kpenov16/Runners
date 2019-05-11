@@ -292,8 +292,6 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         }
     }
 
-
-
     @Override
     public void updateUser(User updatedUser) {
         validateUser(updatedUser);

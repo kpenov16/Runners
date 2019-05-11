@@ -36,9 +36,6 @@ public abstract class BaseRunnersRepository {
             pstmtLocation.setString(7, location.getId());
             pstmtLocation.executeUpdate();
         }
-        String locationSql = "UPDATE route_location SET street_name = ?, street_number = ?," +
-                " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
-                " WHERE route_location.id = ? ";
     }
 
     protected void executeCreateLocationReferenceQuery(Locational locational, PreparedStatement pstmtLocationUser) throws SQLException {
