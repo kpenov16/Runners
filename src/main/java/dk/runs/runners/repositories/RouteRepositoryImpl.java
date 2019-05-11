@@ -57,9 +57,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     @Override
     public Route getRoute(String routeId){
-        String sql2 = "SELECT * " +
-                " FROM route" +
-                " WHERE route.id = ?";
         String sql = "SELECT route.id, route.title, route.date, route.distance, route.duration, " +
                 "route.description, route.status, route.max_participants, " +
                 "route.min_participants, " +
@@ -172,10 +169,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             }else {
                 conn.rollback();
             }
-
-            //
-
-
         }catch (SQLIntegrityConstraintViolationException e){
             try {
                 if(conn!=null){
@@ -219,14 +212,12 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                      "FROM route " +
                      "WHERE `date` >= ? " +
                      "ORDER BY `date` DESC " +
-                     "LIMIT ? "; //TODO select only comming runs. That is where dato > now
+                     "LIMIT ? ";
         return executeGetRoutesQuery(sql, count, since);
     }
 
     private List<Route> executeGetRoutesQuery(String sql, int limit, long since) {
-
         List<Route> routes = new LinkedList<>();
-
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt = conn.prepareStatement(sql);){
             pstmt.setLong(1, since);
@@ -273,7 +264,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         }
         return routes;
     }
-
 
     private Route executeGetRouteQuery(String sql, Route route){
         boolean isRouteFound = false;
@@ -331,9 +321,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         return location;
     }
 
-
     private List<WayPoint> executeGetWaypointsQuery(String sql, List<WayPoint> wayPoints, String routeId) {
-
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, routeId);
@@ -359,7 +347,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         PreparedStatement pstmtRoute = null;
         PreparedStatement pstmtWaypoint = null;
         PreparedStatement pstmtLocation = null;
-
         try{
             conn = DriverManager.getConnection(url);
             conn.setAutoCommit(false);
@@ -382,8 +369,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
             if(rowsEffected == 1){
                 executeCreateLocationQuery(route, pstmtLocation);
-
-                //executeCreateLocationReferenceQuery(route, pstmtLocationRoute);
 
                 executeCreateWaypointsQuery(route, pstmtWaypoint);
 
@@ -446,7 +431,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         String routeSql = "DELETE FROM route WHERE id = ?";
         String waypointSql = "DELETE FROM waypoint WHERE route_id = ?";
         executeDeleteRouteQuery(locationRouteSql, routeSql, waypointSql, route);
-        //executeDeleteRouteQuery(locationRouteSql, locationSql, routeSql, waypointSql, route);
     }
 
     @Override
