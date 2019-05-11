@@ -37,15 +37,4 @@ public abstract class BaseRunnersRepository {
             pstmtLocation.executeUpdate();
         }
     }
-
-    protected void executeCreateLocationReferenceQuery(Locational locational, PreparedStatement pstmtLocationUser) throws SQLException {
-        for(Location location : locational.getLocations()){
-            if (location != null) {
-                pstmtLocationUser.setString(1, location.getId());
-                pstmtLocationUser.setString(2, locational.getId());
-                pstmtLocationUser.executeUpdate();
-            }
-        }
-    }
-
 }
