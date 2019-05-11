@@ -28,7 +28,6 @@ public class RunRepositoryImpl implements RunRepository {
     @Override
     public void createRun(Run run, String participantId) {
         validate(run);
-
         String sqlQuery = "INSERT INTO run VALUES ( ? , ? , ? )";
         executeCreateRunQuery(sqlQuery,run, participantId);
     }
@@ -65,7 +64,6 @@ public class RunRepositoryImpl implements RunRepository {
                 int rowsEffected = pstmt.executeUpdate();
                 conn.commit();
             }
-
         }catch (Throwable t){
             handleCreationExceptions(t, conn);
         }finally {
@@ -137,19 +135,13 @@ public class RunRepositoryImpl implements RunRepository {
     @Override
     public Run getRunWithAllCheckpoints(String runId) {
         String sqlQuery = "SELECT route_id FROM run WHERE run.id = ?";
-
         String routeId = executeGetRouteIdQuery(sqlQuery, runId);
-
         Route route = routeRepository.getRoute(routeId);
-
         Run run = new Run();
         run.setId(runId);
         run.setRoute(route);
-
         List<Checkpoint> checkpoints = getCheckpoints(runId, route.getWayPoints());
-
         run.setCheckpoints(checkpoints);
-
         return run;
     }
 
@@ -189,7 +181,6 @@ public class RunRepositoryImpl implements RunRepository {
                 }
                 if(rs != null){  rs.close(); }
             }
-
             conn.commit(); //TODO do we need commit here?
         }catch(SQLException se){
             try {
@@ -213,14 +204,13 @@ public class RunRepositoryImpl implements RunRepository {
                 throw new CheckpointException(e.getMessage());
             }
         }
-
         return checkpoints;
     }
-
 
     @Override
     public void deleteRun(String runId) {
         String runSqlQuery = "DELETE FROM run WHERE run.id = ?";
+
         String checkpointsSqlQuery = "DELETE FROM checkpoint WHERE run_id = ?";
 
         executeDeleteRunQuery(runSqlQuery, checkpointsSqlQuery, runId);
@@ -228,7 +218,6 @@ public class RunRepositoryImpl implements RunRepository {
 
     @Override
     public void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) {
-      //  waitToAvoidDuplicateTimestamps(500);
         String sqlQuery = "INSERT INTO checkpoint (run_id, waypoint_index, visited_timestamp)" +
                           " SELECT run.id, `index`, now(6)" +
                           " FROM waypoint" +
@@ -238,29 +227,16 @@ public class RunRepositoryImpl implements RunRepository {
         executeInsertCheckpointQuery(sqlQuery, runId, currentX, currentY, precision);
     }
 
-    private void waitToAvoidDuplicateTimestamps(int millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) { }
-    }
-
     @Override
     public Run getRunWithLastCheckpoints(String runId) {
-
         String sqlQuery = "SELECT route_id FROM run WHERE run.id = ?";
-
         String routeId = executeGetRouteIdQuery(sqlQuery, runId);
-
         Route route = routeRepository.getRoute(routeId);
-
         Run run = new Run();
         run.setId(runId);
         run.setRoute(route);
-
         List<Checkpoint> checkpoints = getLatestCheckpoints(runId, route.getWayPoints());
-
         run.setCheckpoints(checkpoints);
-
         return run;
     }
 
@@ -354,19 +330,15 @@ public class RunRepositoryImpl implements RunRepository {
                 "WHERE run.id = ? AND " +
                 "visited_timestamp IS NULL";
         wayPoints = executeGetMissingWaypointsQuery(sqlQuery, runId);
-
         return wayPoints;
     }
 
     private List<WayPoint> executeGetMissingWaypointsQuery(String sqlQuery, String runId) {
         List<WayPoint> wayPoints = new LinkedList<>();
-
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setString(1, runId);
             ResultSet rs = pstmt.executeQuery();
-
-
             while(rs.next()){
                 WayPoint wayPoint = new WayPoint();
                 wayPoint.setX(rs.getDouble("X"));
@@ -375,7 +347,6 @@ public class RunRepositoryImpl implements RunRepository {
                 wayPoints.add(wayPoint);
             }
             if(rs != null){  rs.close(); }
-
         }catch(SQLException se){
             se.printStackTrace();
             throw new GetMissingWaypointException(se.getMessage());
@@ -383,10 +354,6 @@ public class RunRepositoryImpl implements RunRepository {
             e.printStackTrace();
             throw new GetMissingWaypointException(e.getMessage());
         }
-
-
         return wayPoints;
     }
-
-
 }
