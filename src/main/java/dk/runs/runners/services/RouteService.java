@@ -9,6 +9,7 @@ public interface RouteService {
     List<Route> getRoutesList();
     void createRoute(Route route, String creatorId) throws RouteServiceException;
     void deleteRoute(String id);
+    List<Route> getUserRoutesList(String creatorId) throws RouteServiceException;
 
     class RouteServiceException extends RuntimeException{
         public RouteServiceException(String msg){

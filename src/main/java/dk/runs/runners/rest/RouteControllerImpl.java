@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
 public class RouteControllerImpl {
     //@Resource(name="routeService")
@@ -43,6 +44,11 @@ public class RouteControllerImpl {
         routeResponse.setError("");
         routeResponse.setRoute(routeRequest.getRoute());
         return routeResponse;
+    }
+
+    @GetMapping("/users/{creator_id}/routes") //TODO: should be use userid in future
+    public List<Route> getUserRoutesList(@PathVariable String creator_id){
+        return routeService.getUserRoutesList(creator_id);
     }
 
 }
