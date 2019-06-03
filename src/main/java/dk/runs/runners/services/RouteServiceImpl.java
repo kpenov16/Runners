@@ -16,7 +16,11 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public Route getRoute(String id) {
-        return routeRepository.getRoute(id);
+        try{
+            return routeRepository.getRoute(id);
+        } catch (RouteRepository.GetRoutesException e){
+            throw new RouteService.RouteServiceException("Error retrieving the route");
+        }
     }
 
     @Override

@@ -20,12 +20,17 @@ public class RouteControllerImpl {
         this.routeService = routeService;
     }
 
-    @GetMapping("/routes/{id}")
-    public RouteResponse getRoute(@PathVariable String id){
-        RouteResponse routeResponse = new RouteResponse();
-        routeResponse.setRoute(routeService.getRoute(id));
+//    @GetMapping("/routes/{id}")
+//    public RouteResponse getRoute(@PathVariable String id){
+//        RouteResponse routeResponse = new RouteResponse();
+//        routeResponse.setRoute(routeService.getRoute(id));
+//
+//        return routeResponse;
+//    }
 
-        return routeResponse;
+    @GetMapping("/routes/{id}")
+    public Route getRoute(@PathVariable String id){
+        return routeService.getRoute(id);//TODO: try with ResponseEntity.ok(route) . Or RouteResponse
     }
 
     @DeleteMapping("/routes/{id}")
