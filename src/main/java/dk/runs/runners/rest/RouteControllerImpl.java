@@ -4,6 +4,7 @@ import dk.runs.runners.entities.Route;
 import dk.runs.runners.resources.RouteRequest;
 import dk.runs.runners.resources.RouteResponse;
 import dk.runs.runners.services.RouteService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +29,11 @@ public class RouteControllerImpl {
     }
 
     @DeleteMapping("/routes/{id}")
-    public void deleteRoute(@PathVariable String id){
+    public ResponseEntity<Void> deleteRoute(@PathVariable String id){
         routeService.deleteRoute(id);
+        return ResponseEntity.noContent().build();
+
+        // return ResponseEntity.notFound().build() is route is not found
     }
 
     @GetMapping("/routes")
@@ -50,6 +54,7 @@ public class RouteControllerImpl {
     public List<Route> getUserRoutesList(@PathVariable String creator_id){
         return routeService.getUserRoutesList(creator_id);
     }
+
 
 }
 

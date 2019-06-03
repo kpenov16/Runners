@@ -46,7 +46,11 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public void deleteRoute(String id) {
-        routeRepository.deleteRoute(id);
+        try{
+            routeRepository.deleteRoute(id);
+        } catch(RouteRepository.DeleteRouteException e){
+            throw new RouteService.RouteServiceException("Error deleting the route");
+        }
     }
 
     @Override
@@ -57,4 +61,5 @@ public class RouteServiceImpl implements RouteService {
             throw new RouteServiceException("Error retrieving your created routes.");
         }
     }
+
 }
