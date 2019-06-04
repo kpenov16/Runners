@@ -21,22 +21,22 @@ class RouteControllerImplTest {
         routeService = Mockito.mock(RouteService.class);
         controller = new RouteControllerImpl(routeService);
     }
-
-    @Test
-    void givenCreateRunWithExistingId_returnRunServiceException() {
-        // Arrange
-        RouteRequest routeRequest = new RouteRequest();
-        Route route = new Route();
-        routeRequest.setRoute(route);
-        routeRequest.setCreatorId("");
-
-        doThrow(new RouteService.RouteServiceException("")).when(routeService).createRoute(routeRequest.getRoute(), routeRequest.getCreatorId()); //  have to be same object as in  controller addRun call
-
-        // Act & Assert
-        assertThrows(RouteService.RouteServiceException.class,
-                () -> controller.addRoute(routeRequest)
-        );
-    }
+//
+//    @Test
+//    void givenCreateRunWithExistingId_returnRunServiceException() {
+//        // Arrange
+//        RouteRequest routeRequest = new RouteRequest();
+//        Route route = new Route();
+//        routeRequest.setRoute(route);
+//        routeRequest.setCreatorId("");
+//
+//        doThrow(new RouteService.RouteServiceException("")).when(routeService).createRoute(routeRequest.getRoute(), routeRequest.getCreatorId()); //  have to be same object as in  controller addRun call
+//
+//        // Act & Assert
+//        assertThrows(RouteService.RouteServiceException.class,
+//                () -> controller.addRoute(routeRequest)
+//        );
+//    }
 
 
 

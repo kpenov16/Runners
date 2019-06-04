@@ -4,9 +4,12 @@ import dk.runs.runners.entities.Route;
 import dk.runs.runners.resources.RouteRequest;
 import dk.runs.runners.resources.RouteResponse;
 import dk.runs.runners.services.RouteService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @CrossOrigin(origins="http://localhost:4200")
@@ -28,8 +31,8 @@ public class RouteControllerImpl {
 //        return routeResponse;
 //    }
 
-    @GetMapping("/routes/{id}")
-    public Route getRoute(@PathVariable String id){
+    @GetMapping("users/{userId}/routes/{id}")
+    public Route getRoute(@PathVariable String userId, @PathVariable String id){
         return routeService.getRoute(id);//TODO: try with ResponseEntity.ok(route) . Or RouteResponse
     }
 
@@ -46,20 +49,34 @@ public class RouteControllerImpl {
         return routeService.getRoutesList();
     }
 
-    @PostMapping(path = "/routes")//@PostMapping(path = "/createRoute")
-    public RouteResponse addRoute(@RequestBody RouteRequest routeRequest) {
-        routeService.createRoute(routeRequest.getRoute(), routeRequest.getCreatorId());
-        RouteResponse routeResponse = new RouteResponse();
-        routeResponse.setError("");
-        routeResponse.setRoute(routeRequest.getRoute());
-        return routeResponse;
+//    @PostMapping(path = "/routes")//@PostMapping(path = "/createRoute")
+//    public RouteResponse addRoute(@RequestBody RouteRequest routeRequest) {
+//        routeService.createRoute(routeRequest.getRoute(), routeRequest.getCreatorId());
+//        RouteResponse routeResponse = new RouteResponse();
+//        routeResponse.setError("");
+//        routeResponse.setRoute(routeRequest.getRoute());
+//        return routeResponse;
+//    }
+
+    @PostMapping(path = "/users/{creatorId}/routes")
+    public ResponseEntity<Void> createRoute(@PathVariable String creatorId, @RequestBody Route route) {
+        Route createdRoute = routeService.createRoute(route, creatorId);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(createdRoute.getId()).toUri();
+        return ResponseEntity.created(uri).build();
     }
 
-    @GetMapping("/users/{creator_id}/routes") //TODO: should be use userid in future
-    public List<Route> getUserRoutesList(@PathVariable String creator_id){
-        return routeService.getUserRoutesList(creator_id);
+    @GetMapping("/users/{creatorId}/routes")
+    public List<Route> getUserRoutesList(@PathVariable String creatorId){
+        return routeService.getUserRoutesList(creatorId);
     }
 
+    @PutMapping("/routes/{id}")
+    public ResponseEntity<Route> updateRoute(
+            @PathVariable String id, @RequestBody Route route
+    ){
+        Route routeUpdated = routeService.updateRoute(route);
+        return new ResponseEntity<>(routeUpdated, HttpStatus.OK);
+    }
 
 }
 

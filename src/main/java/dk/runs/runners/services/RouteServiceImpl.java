@@ -2,9 +2,11 @@ package dk.runs.runners.services;
 
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.usecases.RouteRepository;
+import dk.runs.runners.usecases.RunRepository;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 public class RouteServiceImpl implements RouteService {
 
@@ -35,9 +37,11 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    public void createRoute(Route route, String creatorId) {
+    public Route createRoute(Route route, String creatorId) {
         try {
+            route.setId(UUID.randomUUID().toString());
             routeRepository.createRoute(route, creatorId);
+            return route;
         }catch (RouteRepository.RouteIdDuplicationException e){
             if(e.getMessage().contains("PRIMARY")){
                 throw new RouteServiceException("Route already created!");
@@ -63,6 +67,16 @@ public class RouteServiceImpl implements RouteService {
             return routeRepository.getRoutes(creatorId);
         } catch(RouteRepository.GetRoutesException e){
             throw new RouteServiceException("Error retrieving your created routes.");
+        }
+    }
+
+    @Override
+    public Route updateRoute(Route route) throws RouteServiceException {
+        try{
+            routeRepository.updateRoute(route);
+            return route;
+        } catch (RouteRepository.UpdateRouteException e){
+            throw new RouteService.RouteServiceException("Error updating route.");
         }
     }
 
