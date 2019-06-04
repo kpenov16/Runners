@@ -41,7 +41,7 @@ public class RouteControllerImpl {
         routeService.deleteRoute(id);
         return ResponseEntity.noContent().build();
 
-        // return ResponseEntity.notFound().build() is route is not found
+        // return ResponseEntity.notFound().build() is route is not found. Step 66
     }
 
     @GetMapping("/routes")
@@ -59,10 +59,10 @@ public class RouteControllerImpl {
 //    }
 
     @PostMapping(path = "/users/{creatorId}/routes")
-    public ResponseEntity<Void> createRoute(@PathVariable String creatorId, @RequestBody Route route) {
+    public ResponseEntity<Route> createRoute(@PathVariable String creatorId, @RequestBody Route route) {
         Route createdRoute = routeService.createRoute(route, creatorId);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(createdRoute.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(uri).body(createdRoute);
     }
 
     @GetMapping("/users/{creatorId}/routes")
