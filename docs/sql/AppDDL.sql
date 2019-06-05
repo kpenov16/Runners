@@ -146,7 +146,7 @@ BEGIN
 		WHERE waypoint.route_id = OLD.id;
 END//
 DELIMITER ;
-    
+Drop trigger AfterUpdateOnRoute;
 
 
 

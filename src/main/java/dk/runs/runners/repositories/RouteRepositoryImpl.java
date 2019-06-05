@@ -156,14 +156,14 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
             if(rowsEffected == 1){
                 //delete waypoints
-          //      pstmtDeleteWaypoint.setString(1, route.getId()); //TODO uncommented these. It was commented because of nullpointer exception. Because right now required simplified version of route. Without waypoint and location
-          //      pstmtDeleteWaypoint.executeUpdate();
+                pstmtDeleteWaypoint.setString(1, route.getId());
+                pstmtDeleteWaypoint.executeUpdate();
 
                 //create waypoints
-         //       executeCreateWaypointsQuery(route, pstmtWaypoint);
+                executeCreateWaypointsQuery(route, pstmtWaypoint);
 
                 //update location
-        //        super.executeUpdateLocationQuery(route, pstmtRouteLocation);
+        //        super.executeUpdateLocationQuery(route, pstmtRouteLocation); //TODO uncommented these. It was commented because of nullpointer exception. Because right now required simplified version of route. Without location
 
                 conn.commit();
             }else {
