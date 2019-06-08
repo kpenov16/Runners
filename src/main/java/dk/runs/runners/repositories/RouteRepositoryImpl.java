@@ -1,5 +1,6 @@
 package dk.runs.runners.repositories;
 
+import dk.runs.runners.datasourceconfig.DataSource;
 import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.WayPoint;
@@ -39,7 +40,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     private long executeGetIdQuery(String sql, long creatorId){
         long id  = -1 ;
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setLong(1, creatorId);
             ResultSet rs = pstmt.executeQuery();
@@ -134,7 +135,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         PreparedStatement pstmtDeleteWaypoint = null;
         PreparedStatement pstmtRouteLocation = null;
         try{
-            conn = DriverManager.getConnection(url);
+            conn = DataSource.getConnection();
             conn.setAutoCommit(false);
 
             pstmtDeleteWaypoint = conn.prepareStatement(deleteWaypointsSql);
@@ -218,7 +219,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     private List<Route> executeGetRoutesQuery(String sql, int limit, long since) {
         List<Route> routes = new LinkedList<>();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql);){
             pstmt.setLong(1, since);
             pstmt.setInt(2, limit);
@@ -240,7 +241,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     private List<Route> executeGetRouteQuery(String sql, String creatorId) {
         List<Route> routes = new LinkedList<>();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, creatorId);
             ResultSet rs = pstmt.executeQuery();
@@ -267,7 +268,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     private Route executeGetRouteQuery(String sql, Route route){
         boolean isRouteFound = false;
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, route.getId());
             ResultSet rs = pstmt.executeQuery();
@@ -299,7 +300,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     private Location executeGetLocationQuery(String locationSql, String routeId){
         Location location = null;
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(locationSql)){
             pstmt.setString(1, routeId);
             ResultSet rs = pstmt.executeQuery();
@@ -322,7 +323,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     }
 
     private List<WayPoint> executeGetWaypointsQuery(String sql, List<WayPoint> wayPoints, String routeId) {
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, routeId);
             ResultSet rs = pstmt.executeQuery();
@@ -348,7 +349,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         PreparedStatement pstmtWaypoint = null;
         PreparedStatement pstmtLocation = null;
         try{
-            conn = DriverManager.getConnection(url);
+            conn = DataSource.getConnection();
             conn.setAutoCommit(false);
 
             pstmtRoute = conn.prepareStatement(routeSql);
@@ -449,7 +450,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     private List<Route> executeMostPopularRoutesQuery(int top, long since, String mostPopularRoutesSql) {
         List<Route> routes = new ArrayList<>();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(mostPopularRoutesSql)){
             pstmt.setLong(1, since);
             pstmt.setInt(2, top);
@@ -476,7 +477,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         PreparedStatement pstmtRoute = null;
         PreparedStatement pstmtWaypoint = null;
         try{
-            conn = DriverManager.getConnection(url);
+            conn = DataSource.getConnection();
             conn.setAutoCommit(false);
 
             pstmtLocationRoute = conn.prepareStatement(locationRouteSql);

@@ -1,5 +1,6 @@
 package dk.runs.runners.repositories;
 
+import dk.runs.runners.datasourceconfig.DataSource;
 import dk.runs.runners.entities.Checkpoint;
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.Run;
@@ -44,7 +45,7 @@ public class RunRepositoryImpl implements RunRepository {
         Connection conn = null;
         PreparedStatement pstmt = null;
         try{
-            conn = DriverManager.getConnection(url);
+            conn = DataSource.getConnection();
             conn.setAutoCommit(false);
 
             pstmt = conn.prepareStatement(sql);
@@ -164,7 +165,7 @@ public class RunRepositoryImpl implements RunRepository {
         Connection conn = null;
         PreparedStatement pstmtCheckpoint = null;
         try{
-            conn = DriverManager.getConnection(url);
+            conn = DataSource.getConnection();
             conn.setAutoCommit(false);
 
             pstmtCheckpoint = conn.prepareStatement(sql);
@@ -241,7 +242,7 @@ public class RunRepositoryImpl implements RunRepository {
     }
 
     private void executeInsertCheckpointQuery(String sqlQuery, String runId, double currentX, double currentY, int precision) {
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setString(1, runId);
             pstmt.setString(2, "Point("+currentX+" "+currentY+")");
@@ -261,7 +262,7 @@ public class RunRepositoryImpl implements RunRepository {
         PreparedStatement pstmtRun = null;
         PreparedStatement pstmtCheckpoint = null;
         try{
-            conn = DriverManager.getConnection(url);
+            conn = DataSource.getConnection();
             conn.setAutoCommit(false);
 
             pstmtCheckpoint = conn.prepareStatement(checkpointsSqlQuery);
@@ -300,7 +301,7 @@ public class RunRepositoryImpl implements RunRepository {
 
     private String executeGetRouteIdQuery(String sqlQuery, String runId) {
         String routeId = null;
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setString(1, runId);
             ResultSet rs = pstmt.executeQuery();
@@ -335,7 +336,7 @@ public class RunRepositoryImpl implements RunRepository {
 
     private List<WayPoint> executeGetMissingWaypointsQuery(String sqlQuery, String runId) {
         List<WayPoint> wayPoints = new LinkedList<>();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setString(1, runId);
             ResultSet rs = pstmt.executeQuery();
