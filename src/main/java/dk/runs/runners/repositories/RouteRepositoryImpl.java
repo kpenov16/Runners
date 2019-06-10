@@ -226,7 +226,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
                 Route route = new Route(rs.getString(1));
-                route.setDate(rs.getDate("date"));
+                route.setDate(new Date(rs.getLong("date")));
                 route.setTitle(rs.getString("title"));
 
          //TODO uncomment these      route.setWayPoints(getWaypoints(route.getId()));
@@ -235,6 +235,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             }
             if(rs != null){ rs.close(); }
         } catch (SQLException se){
+            se.printStackTrace();
             throw new GetRoutesException(se.getMessage());
         } catch (Exception e){
             throw new GetRoutesException(e.getMessage());
