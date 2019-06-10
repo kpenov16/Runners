@@ -1,5 +1,6 @@
 package dk.runs.runners.repositories;
 
+import dk.runs.runners.datasourceconfig.DataSource;
 import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.User;
 import dk.runs.runners.usecases.UserRepository;
@@ -42,7 +43,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         PreparedStatement pstmtUser = null;
         PreparedStatement pstmtLocation = null;
         try{
-            conn = DriverManager.getConnection(url);
+            conn = DataSource.getConnection();
             conn.setAutoCommit(false);
 
             pstmtLocation = conn.prepareStatement(locationSql);
@@ -142,7 +143,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
 
     private List<Location> executeGetLocationQuery(String locationSql, String userId) {
         List<Location> locations = new ArrayList<>();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(locationSql)){
             pstmt.setString(1, userId);
             ResultSet rs = pstmt.executeQuery();
@@ -168,7 +169,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
     private User executeGetUserQuery(String sql, String userName) {
         boolean isUserFound = false;
         User user = new User();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, userName);
             ResultSet rs = pstmt.executeQuery();
@@ -194,7 +195,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
 
     private User executeGetUserQuery(String sql, User user) {
         boolean isUserFound = false;
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn = DataSource.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sql)){
             pstmt.setString(1, user.getId());
             ResultSet rs = pstmt.executeQuery();
@@ -237,7 +238,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         PreparedStatement pstmtLocationUser = null;
         PreparedStatement pstmtUser = null;
         try{
-            conn = DriverManager.getConnection(url);
+            conn = DataSource.getConnection();
             conn.setAutoCommit(false);
 
             pstmtLocationUser = conn.prepareStatement(locationUserSql);
@@ -294,7 +295,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         PreparedStatement pstmtUser = null;
         PreparedStatement pstmtLocation = null;
         try{
-            conn = DriverManager.getConnection(url);
+            conn = DataSource.getConnection();
             conn.setAutoCommit(false);
 
             pstmtUser = conn.prepareStatement(sql);
