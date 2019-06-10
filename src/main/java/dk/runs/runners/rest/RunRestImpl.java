@@ -1,6 +1,7 @@
 package dk.runs.runners.rest;
 
 
+import dk.runs.runners.entities.Checkpoint;
 import dk.runs.runners.entities.WayPoint;
 import dk.runs.runners.services.RunController;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,5 +24,10 @@ public class RunRestImpl {
     @GetMapping("run/{runId}/waypoint")
     public List<WayPoint> getMissingWaypoints(@PathVariable String runId){
         return runController.getMissingWaypoints(runId);
+    }
+
+    @GetMapping("run/{runId}/checkpoint")
+    public List<Checkpoint> getLastestCheckpoints(@PathVariable String runId){
+        return runController.getLastestCheckpoints(runId);
     }
 }
