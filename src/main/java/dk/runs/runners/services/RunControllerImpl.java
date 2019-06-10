@@ -16,6 +16,11 @@ public class RunControllerImpl implements RunController {
 
     @Override
     public List<WayPoint> getMissingWaypoints(String runId) throws RunServiceException {
-        return null;
+
+        try{
+            return runRepository.getMissingWaypoints(runId);
+        } catch (RunRepository.GetMissingWaypointException e){
+            throw new RunServiceException("Error. Could not retrieve waypoints");
+        }
     }
 }
