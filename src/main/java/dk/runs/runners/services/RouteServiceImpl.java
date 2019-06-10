@@ -32,7 +32,7 @@ public class RouteServiceImpl implements RouteService {
         calendar.add(Calendar.DATE, -1);
         try {
         // TODO: uncomment these    return routeRepository.getRouteList(1, calendar.getTime());
-               return routeRepository.getRouteList(100, new Date(0));
+               return routeRepository.getRouteList(100, new Date(1));
         }catch (RouteRepository.GetRoutesException e){
             throw new RouteServiceException("Could not receive routes from database");
         }
