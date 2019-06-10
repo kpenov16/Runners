@@ -226,8 +226,8 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
                 Route route = new Route(rs.getString(1));
-                route.setWayPoints(getWaypoints(route.getId()));
-                route.setLocation(getLocation(route.getId()));
+         //TODO uncomment these      route.setWayPoints(getWaypoints(route.getId()));
+         //TODO uncomment these       route.setLocation(getLocation(route.getId()));
                 routes.add(route);
             }
             if(rs != null){ rs.close(); }
