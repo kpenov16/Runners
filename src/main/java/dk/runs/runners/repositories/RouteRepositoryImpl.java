@@ -209,7 +209,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     @Override
     public List<Route> getRouteList(int count, Date sinceDate) {
         long since = sinceDate.getTime();
-        String sql = "SELECT route.id AS id " +
+        String sql = "SELECT route.id AS id, route.date AS date, route.title AS title " +
                      "FROM route " +
                      "WHERE `date` >= ? " +
                      "ORDER BY `date` DESC " +
@@ -226,6 +226,9 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
                 Route route = new Route(rs.getString(1));
+                route.setDate(rs.getDate("date"));
+                route.setTitle(rs.getString("title"));
+
          //TODO uncomment these      route.setWayPoints(getWaypoints(route.getId()));
          //TODO uncomment these       route.setLocation(getLocation(route.getId()));
                 routes.add(route);
