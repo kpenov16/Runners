@@ -1,30 +1,24 @@
 package dk.runs.runners.config;
 
-import dk.runs.runners.repositories.RouteRepositoryImpl;
 import dk.runs.runners.repositories.RunRepositoryImpl;
-import dk.runs.runners.services.RouteService;
-import dk.runs.runners.services.RouteServiceImpl;
 import dk.runs.runners.services.RunController;
 import dk.runs.runners.services.RunControllerImpl;
-import dk.runs.runners.usecases.RouteRepository;
 import dk.runs.runners.usecases.RunRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 @Configuration
-public class RoutesConfig {
-
+public class RunConfig {
     @Bean
     @Scope("prototype")
-    public RouteService getRouteService(){
-        return new RouteServiceImpl(getRouteRepository());
+    public RunRepository getRunRepository(){
+        return new RunRepositoryImpl();
     }
 
     @Bean
     @Scope("prototype")
-    public RouteRepository getRouteRepository(){
-        return new RouteRepositoryImpl();
+    public RunController getRunController(){
+        return new RunControllerImpl(getRunRepository());
     }
-
 }
