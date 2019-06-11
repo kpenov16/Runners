@@ -64,7 +64,6 @@ public interface RunRepository {
     List<WayPoint> getMissingWaypoints(String runId) throws GetMissingWaypointException;
 
 
-
     class RunValidationException extends RuntimeException{
         public RunValidationException(String msg) {super(msg);}
     }
