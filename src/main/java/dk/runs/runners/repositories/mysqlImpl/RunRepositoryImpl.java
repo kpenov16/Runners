@@ -33,7 +33,7 @@ public class RunRepositoryImpl implements RunRepository {
     @Override
     public void createRun(Run run, String participantId) {
         validate(run);
-        String sqlQuery = "INSERT INTO run VALUES ( ? , ? , ? )";
+        String sqlQuery = "INSERT INTO run (id, route_id, user_id) VALUES ( ? , ? , ? )";
         executeCreateRunQuery(sqlQuery,run, participantId);
     }
 
