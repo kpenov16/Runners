@@ -2,13 +2,14 @@ package dk.runs.runners.restControllers;
 
 
 import dk.runs.runners.entities.Checkpoint;
+import dk.runs.runners.entities.Run;
 import dk.runs.runners.entities.WayPoint;
 import dk.runs.runners.services.interfaceServices.RunService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @CrossOrigin(origins="http://localhost:4200")
@@ -29,5 +30,12 @@ public class RunControllertImpl {
     @GetMapping("run/{runId}/checkpoint")
     public List<Checkpoint> getLastestCheckpoints(@PathVariable String runId){
         return runService.getLastestCheckpoints(runId);
+    }
+
+    @PostMapping(path = "/users/(creatorid)/runs")
+    public ResponseEntity<Run> createRun(@PathVariable String creatorid, @RequestBody Run run) {
+        Run createdRun = runService.createRun(run, creatorid);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/(id)").buildAndExpand(createdRun.getId()).toUri();
+        return ResponseEntity.created(uri).body(createdRun);
     }
 }
