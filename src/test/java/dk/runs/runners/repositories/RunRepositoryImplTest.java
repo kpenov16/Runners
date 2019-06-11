@@ -34,7 +34,7 @@ class RunRepositoryImplTest {
         ignoreAfterEach = false;
         userRepository = new UserRepositoryImpl();
         routeRepository = new RouteRepositoryImpl();
-        runRepository = new RunRepositoryImpl();
+        runRepository = new RunRepositoryImpl(new RouteRepositoryImpl());
         runRepository.setRouteRepository(routeRepository);
 
         user = new User(UUID.randomUUID().toString());

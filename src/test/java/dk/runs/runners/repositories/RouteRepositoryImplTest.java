@@ -33,7 +33,7 @@ public class RouteRepositoryImplTest {
         userRepository = new UserRepositoryImpl();
         routeRepository = new RouteRepositoryImpl();
 
-        runRepository = new RunRepositoryImpl();
+        runRepository = new RunRepositoryImpl(new RouteRepositoryImpl());
         ((RunRepositoryImpl) runRepository).setRouteRepository(routeRepository);
 
         user = new User(UUID.randomUUID().toString());

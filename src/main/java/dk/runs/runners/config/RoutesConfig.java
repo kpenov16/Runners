@@ -7,20 +7,20 @@ import dk.runs.runners.services.interfaceRepositories.RouteRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-
-@Configuration
-public class RoutesConfig {
-
-    @Bean
-    @Scope("prototype")
-    public RouteService getRouteService(){
-        return new RouteServiceImpl(getRouteRepository());
-    }
-
-    @Bean
-    @Scope("prototype")
-    public RouteRepository getRouteRepository(){
-        return new RouteRepositoryImpl();
-    }
-
-}
+//
+//@Configuration
+//public class RoutesConfig {
+//
+//    @Bean
+//    @Scope("prototype")
+//    public RouteService getRouteService(){
+//        return new RouteServiceImpl(getRouteRepository());
+//    }
+//
+//    @Bean
+//    @Scope("prototype")
+//    public RouteRepository getRouteRepository(){
+//        return new RouteRepositoryImpl();
+//    }
+//
+//}

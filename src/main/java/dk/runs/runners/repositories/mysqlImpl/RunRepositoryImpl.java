@@ -22,6 +22,10 @@ public class RunRepositoryImpl implements RunRepository {
 
     private RouteRepository routeRepository;
 
+    public RunRepositoryImpl(RouteRepository routeRepository){
+        this.routeRepository = routeRepository;
+    }
+
     public void setRouteRepository(RouteRepository routeRepository) {
         this.routeRepository = routeRepository;
     }
@@ -239,6 +243,8 @@ public class RunRepositoryImpl implements RunRepository {
         List<Checkpoint> checkpoints = getLatestCheckpoints(runId, route.getWayPoints());
         run.setCheckpoints(checkpoints);
         return run;
+
+
     }
 
     private void executeInsertCheckpointQuery(String sqlQuery, String runId, double currentX, double currentY, int precision) {
