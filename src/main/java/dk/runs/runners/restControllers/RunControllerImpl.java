@@ -13,10 +13,10 @@ import java.util.List;
 
 @CrossOrigin(origins="http://localhost:4200")
 @RestController
-public class RunControllertImpl {
+public class RunControllerImpl {
     private RunService runService;
 
-    public RunControllertImpl(RunService runService){
+    public RunControllerImpl(RunService runService){
         this.runService = runService;
     }
 

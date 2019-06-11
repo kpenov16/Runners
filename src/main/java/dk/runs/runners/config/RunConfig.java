@@ -18,7 +18,8 @@ public class RunConfig {
 
     @Bean
     @Scope("prototype")
-    public RunService getRunController(){
+    public RunService getRunService(){
         return new RunServiceImpl(getRunRepository());
     }
+
 }
