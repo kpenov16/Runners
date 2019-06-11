@@ -1,5 +1,6 @@
 package dk.runs.runners.entities;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,6 +8,8 @@ public class Run {
     private String id;
     private Route route;
     private List<Checkpoint> checkpoints = new LinkedList<>();
+    private Date startTime;
+    private Date endTime;
 
     public String getId() {
         return id;
@@ -32,11 +35,29 @@ public class Run {
         this.checkpoints = checkpoints;
     }
 
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
     @Override
     public String toString() {
         return  "Run " +
                 "id: " + id + ", " +
                 "route: " + route + ", " +
-                "checkpoints: " + checkpoints;
+                "checkpoints: " + checkpoints + ", " +
+                "startDate: " + startTime + ", " +
+                "endDate: " + endTime;
     }
 }
