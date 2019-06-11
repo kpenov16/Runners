@@ -32,10 +32,15 @@ public class RunControllertImpl {
         return runService.getLastestCheckpoints(runId);
     }
 
-    @PostMapping(path = "/users/(creatorid)/runs")
+    @PostMapping(path = "/users/(creatorid)/run")
     public ResponseEntity<Run> createRun(@PathVariable String creatorid, @RequestBody Run run) {
         Run createdRun = runService.createRun(run, creatorid);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/(id)").buildAndExpand(createdRun.getId()).toUri();
         return ResponseEntity.created(uri).body(createdRun);
+    }
+
+    @GetMapping("run/{id}")
+    public Run getRun(@PathVariable String id){
+        return runService.getRun(id);
     }
 }
