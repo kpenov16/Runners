@@ -1,12 +1,12 @@
-package dk.runs.runners.repositories;
+package dk.runs.runners.repositories.mysqlImpl;
 
 import dk.runs.runners.datasourceconfig.DataSource;
 import dk.runs.runners.entities.Checkpoint;
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.Run;
 import dk.runs.runners.entities.WayPoint;
-import dk.runs.runners.usecases.RouteRepository;
-import dk.runs.runners.usecases.RunRepository;
+import dk.runs.runners.services.interfaceRepositories.RouteRepository;
+import dk.runs.runners.services.interfaceRepositories.RunRepository;
 
 import java.sql.*;
 import java.util.LinkedList;

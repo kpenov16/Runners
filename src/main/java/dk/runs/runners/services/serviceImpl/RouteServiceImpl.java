@@ -1,8 +1,8 @@
-package dk.runs.runners.services;
+package dk.runs.runners.services.serviceImpl;
 
 import dk.runs.runners.entities.Route;
-import dk.runs.runners.usecases.RouteRepository;
-import dk.runs.runners.usecases.RunRepository;
+import dk.runs.runners.services.interfaceServices.RouteService;
+import dk.runs.runners.services.interfaceRepositories.RouteRepository;
 
 import java.util.Calendar;
 import java.util.Date;

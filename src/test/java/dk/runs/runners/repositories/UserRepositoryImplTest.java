@@ -1,6 +1,7 @@
 package dk.runs.runners.repositories;
 import dk.runs.runners.entities.*;
-import dk.runs.runners.usecases.UserRepository;
+import dk.runs.runners.repositories.mysqlImpl.UserRepositoryImpl;
+import dk.runs.runners.services.interfaceRepositories.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,17 +1,18 @@
-package dk.runs.runners.services;
+package dk.runs.runners.services.serviceImpl;
 
 
 import dk.runs.runners.entities.Checkpoint;
 import dk.runs.runners.entities.WayPoint;
-import dk.runs.runners.usecases.RunRepository;
+import dk.runs.runners.services.interfaceServices.RunService;
+import dk.runs.runners.services.interfaceRepositories.RunRepository;
 
 import java.util.List;
 
-public class RunControllerImpl implements RunController {
+public class RunServiceImpl implements RunService {
 
     private RunRepository runRepository;
 
-    public RunControllerImpl(RunRepository runRepository){
+    public RunServiceImpl(RunRepository runRepository){
         this.runRepository = runRepository;
     }
 
@@ -29,7 +30,7 @@ public class RunControllerImpl implements RunController {
         try{
             return runRepository.getRunWithLastCheckpoints(runId).getCheckpoints();
         } catch (RunRepository.CheckpointException e){
-            throw new RunController.RunServiceException("Error retrieving checkpoints");
+            throw new RunService.RunServiceException("Error retrieving checkpoints");
         }
     }
 }

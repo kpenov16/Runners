@@ -1,4 +1,4 @@
-package dk.runs.runners.services;
+package dk.runs.runners.services.interfaceServices;
 
 import dk.runs.runners.entities.Route;
 

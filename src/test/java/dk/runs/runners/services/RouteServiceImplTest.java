@@ -1,7 +1,9 @@
 package dk.runs.runners.services;
 
 import dk.runs.runners.entities.Route;
-import dk.runs.runners.usecases.RouteRepository;
+import dk.runs.runners.services.interfaceServices.RouteService;
+import dk.runs.runners.services.serviceImpl.RouteServiceImpl;
+import dk.runs.runners.services.interfaceRepositories.RouteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

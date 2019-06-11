@@ -1,8 +1,7 @@
-package dk.runs.runners.rest;
+package dk.runs.runners.restControllers;
 
 import dk.runs.runners.entities.Route;
-import dk.runs.runners.resources.RouteRequest;
-import dk.runs.runners.services.RouteService;
+import dk.runs.runners.services.interfaceServices.RouteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

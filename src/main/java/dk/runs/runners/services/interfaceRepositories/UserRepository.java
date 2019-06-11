@@ -1,4 +1,4 @@
-package dk.runs.runners.usecases;
+package dk.runs.runners.services.interfaceRepositories;
 
 import dk.runs.runners.entities.User;
 

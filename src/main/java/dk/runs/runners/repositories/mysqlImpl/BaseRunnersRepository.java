@@ -1,4 +1,4 @@
-package dk.runs.runners.repositories;
+package dk.runs.runners.repositories.mysqlImpl;
 
 import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.Locational;

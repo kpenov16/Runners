@@ -1,9 +1,9 @@
 package dk.runs.runners.config;
 
-import dk.runs.runners.repositories.RunRepositoryImpl;
-import dk.runs.runners.services.RunController;
-import dk.runs.runners.services.RunControllerImpl;
-import dk.runs.runners.usecases.RunRepository;
+import dk.runs.runners.repositories.mysqlImpl.RunRepositoryImpl;
+import dk.runs.runners.services.interfaceServices.RunService;
+import dk.runs.runners.services.serviceImpl.RunServiceImpl;
+import dk.runs.runners.services.interfaceRepositories.RunRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -18,7 +18,7 @@ public class RunConfig {
 
     @Bean
     @Scope("prototype")
-    public RunController getRunController(){
-        return new RunControllerImpl(getRunRepository());
+    public RunService getRunController(){
+        return new RunServiceImpl(getRunRepository());
     }
 }

@@ -1,9 +1,9 @@
-package dk.runs.runners.repositories;
+package dk.runs.runners.repositories.mysqlImpl;
 
 import dk.runs.runners.datasourceconfig.DataSource;
 import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.User;
-import dk.runs.runners.usecases.UserRepository;
+import dk.runs.runners.services.interfaceRepositories.UserRepository;
 
 import java.sql.*;
 import java.util.ArrayList;

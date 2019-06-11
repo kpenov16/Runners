@@ -1,9 +1,7 @@
-package dk.runs.runners.rest;
+package dk.runs.runners.restControllers;
 
 import dk.runs.runners.entities.Route;
-import dk.runs.runners.resources.RouteRequest;
-import dk.runs.runners.resources.RouteResponse;
-import dk.runs.runners.services.RouteService;
+import dk.runs.runners.services.interfaceServices.RouteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
