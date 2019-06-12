@@ -498,6 +498,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
             conn.commit();
         }catch(SQLException se){
+            se.printStackTrace();
             try {
                 conn.rollback();
                 throw new DeleteRouteException(se.getMessage());
