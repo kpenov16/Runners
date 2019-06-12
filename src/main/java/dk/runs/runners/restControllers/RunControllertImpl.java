@@ -55,4 +55,10 @@ public class RunControllertImpl {
 
     @GetMapping("users/{creatorId}/runs")
     public List<Run> getRuns(@PathVariable String creatorId){ return runService.getRuns(creatorId);}
+
+    @PutMapping("runs/{id}")
+    public ResponseEntity<Void> updateRun(@PathVariable String id, @RequestBody Run run){
+        runService.updateRun(run);
+        return ResponseEntity.noContent().build();
+    }
 }

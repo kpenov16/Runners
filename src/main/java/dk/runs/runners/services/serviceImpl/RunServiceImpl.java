@@ -79,8 +79,15 @@ public class RunServiceImpl implements RunService {
     }
 
     @Override
-    public Run updateRun(Run run) throws RunServiceException {
-        return null;
+    public void updateRun(Run run) throws RunServiceException {
+
+        try{
+            runRepository.updateRun(run);
+        } catch(RunRepository.UpdateRunException e){
+            throw new RunServiceException("Error. Could not update run");
+
+        }
+
     }
 
     @Override

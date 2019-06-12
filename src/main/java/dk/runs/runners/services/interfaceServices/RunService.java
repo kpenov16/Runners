@@ -22,7 +22,7 @@ public interface RunService {
      */
     List<Run> getRuns(String creatorId) throws RunServiceException;
     void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) throws RunServiceException;
-    Run updateRun(Run run) throws RunServiceException;
+    void updateRun(Run run) throws RunServiceException;
     Void deleteRun(String id) throws RunServiceException;
 
     class RunServiceException extends RuntimeException{
