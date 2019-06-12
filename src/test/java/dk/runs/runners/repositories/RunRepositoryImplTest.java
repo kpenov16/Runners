@@ -491,4 +491,29 @@ class RunRepositoryImplTest {
         deleteCreatedEntities();
     }
 
+    @Test
+    void givenRunToUpdate_returnRunupdated(){
+        ignoreAfterEach = true;
+        //Arrange
+        User user = constructUser();
+        userRepository.createUser(user);
+        Route route = constructRoute();
+        routeRepository.createRoute(route, user.getId());
+        Run run = constructRun(route);
+        runRepository.createRun(run, user.getId());
+        Date startDate = new Date( System.currentTimeMillis());
+        Date endDate = new Date( System.currentTimeMillis()+10000);
+        Run runUpdated = run;
+        runUpdated.setStartTime(startDate);
+        runUpdated.setEndTime(endDate);
+        // Act
+        runRepository.updateRun(runUpdated);
+        //Assert
+        Run returnedRun = runRepository.getRunWithLastCheckpoints(runUpdated.getId());
+        assertEquals(runUpdated.getStartTime().toString(), returnedRun.getStartTime().toString());
+        assertEquals(runUpdated.getEndTime().toString(), returnedRun.getEndTime().toString());
+        //cleanup
+        deleteCreatedEntities();
+    }
+
 }

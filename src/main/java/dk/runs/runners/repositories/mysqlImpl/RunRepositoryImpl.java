@@ -234,10 +234,13 @@ public class RunRepositoryImpl implements RunRepository {
 
     @Override
     public Run getRunWithLastCheckpoints(String runId) {
-        String sqlQuery = "SELECT route_id FROM run WHERE run.id = ?";
-        String routeId = executeGetRouteIdQuery(sqlQuery, runId);
+        String sqlQueryRouteId = "SELECT route_id FROM run WHERE run.id = ?";
+        String routeId = executeGetRouteIdQuery(sqlQueryRouteId, runId);
+        String sqlQueryTime = "SELECT start_time, end_time FROM run WHERE run.id = ?";
+        Run run = executeGetRun(sqlQueryTime, runId);
+        //Route route = routeRepository.getRoute(runId);
         Route route = routeRepository.getRoute(routeId);
-        Run run = new Run();
+        //Run run = new Run();
         run.setId(runId);
         run.setRoute(route);
         List<Checkpoint> checkpoints = getLatestCheckpoints(runId, route.getWayPoints());
@@ -245,6 +248,27 @@ public class RunRepositoryImpl implements RunRepository {
         return run;
 
 
+    }
+
+    private Run executeGetRun(String sqlQuery, String runId) {
+        Run run = new Run();
+        try(Connection conn = DataSource.getConnection();
+            PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
+            pstmt.setString(1, runId);
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                run.setStartTime(new java.util.Date(rs.getLong("start_time")));
+                run.setEndTime(new java.util.Date(rs.getLong("end_time")));
+            }
+            if(rs != null){  rs.close(); }
+        }catch(SQLException se){
+            se.printStackTrace();
+            throw new GetRunsException(se.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new GetRunsException(e.getMessage());
+        }
+        return run;
     }
 
     private void executeInsertCheckpointQuery(String sqlQuery, String runId, double currentX, double currentY, int precision) {
@@ -346,6 +370,33 @@ public class RunRepositoryImpl implements RunRepository {
         String sqlQuery = "SELECT id FROM run WHERE user_id = ?";
         runs = executeGetRunsQuery(sqlQuery, userId);
         return runs;
+    }
+
+    @Override
+    public void updateRun(Run runUpdated) {
+        String sqlQuery = "UPDATE run SET start_time = ?, end_time = ? WHERE id = ?";
+        executeUpdateRun(sqlQuery, runUpdated);
+    }
+
+    private void executeUpdateRun(String sqlQuery, Run runUpdated) {
+        try(Connection conn = DataSource.getConnection();
+            PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
+            pstmt.setLong(1, runUpdated.getStartTime().getTime());
+            pstmt.setLong(2, runUpdated.getEndTime().getTime());
+            pstmt.setString(3, runUpdated.getId());
+            int rowsEffected = pstmt.executeUpdate();
+            if(rowsEffected < 1){
+              throw new RunNotFound("Run with id:"+ runUpdated.getId() + " not exists.");
+            }
+
+        }catch(SQLException se){
+            se.printStackTrace();
+            throw new UpdateRunException(se.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new UpdateRunException(e.getMessage());
+        }
+
     }
 
     private List<Run> executeGetRunsQuery(String sqlQuery, String userId) {

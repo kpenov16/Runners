@@ -71,6 +71,16 @@ public interface RunRepository {
      */
     List<Run> getRuns(String userId) throws GetRunsException;
 
+    /**
+     * Updates an existing run in the data layer
+     * @param runUpdated run object to be updated
+     * @throws UpdateRunException other not predefined exceptions are wrapped in this exception
+     * @throws StartDateAlreadyExists it is allowed to set a start date only once for a run
+     * @throws EndDateAlreadyExists it is allowed to set a end date only once for a run
+     * @throws RunNotFound if run with current id is not found
+     */
+    void updateRun(Run runUpdated) throws UpdateRunException, StartDateAlreadyExists, EndDateAlreadyExists, RunNotFound;
+
 
     class RunValidationException extends RuntimeException{
         public RunValidationException(String msg) {super(msg);}
@@ -101,5 +111,17 @@ public interface RunRepository {
     }
     class GetRunsException extends RuntimeException{
         public GetRunsException(String msg) {super(msg);}
+    }
+    class UpdateRunException extends RuntimeException{
+        public UpdateRunException(String msg) {super(msg);}
+    }
+    class StartDateAlreadyExists extends RuntimeException{
+        public StartDateAlreadyExists(String msg) {super(msg);}
+    }
+    class EndDateAlreadyExists extends RuntimeException{
+        public EndDateAlreadyExists(String msg) {super(msg);}
+    }
+    class RunNotFound extends RuntimeException{
+        public RunNotFound(String msg) {super(msg);}
     }
 }
