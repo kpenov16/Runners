@@ -4,6 +4,8 @@ public class Checkpoint {
     private WayPoint wayPoint;
     private long visitedTimestamp;
 
+    public Checkpoint(){}
+
     public Checkpoint(WayPoint wayPoint) {
         setWayPoint(wayPoint);
     }
