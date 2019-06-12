@@ -14,6 +14,7 @@ public interface RunService {
     Run createRun(Run run, String creatorId) throws RunServiceException;
     Run getRun(String id) throws RunServiceException;
     List<Run> getRuns(String creatorId) throws RunServiceException;
+    Run getRunWithLatestCheckpoints(String runId) throws RunServiceException;
     void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) throws RunServiceException;
     Run updateRun(Run run) throws RunServiceException;
     Void deleteRun(String id) throws RunServiceException;

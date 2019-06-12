@@ -55,4 +55,7 @@ public class RunControllertImpl {
 
     @GetMapping("users/{creatorId}/runs")
     public List<Run> getRuns(@PathVariable String creatorId){ return runService.getRuns(creatorId);}
+
+    @GetMapping("runResults/{runId}")
+    public Run getRunWithLatestCheckpoints(@PathVariable String runId){ return runService.getRunWithLatestCheckpoints(runId);}
 }

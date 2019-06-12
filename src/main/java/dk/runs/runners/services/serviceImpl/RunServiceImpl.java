@@ -70,6 +70,15 @@ public class RunServiceImpl implements RunService {
     }
 
     @Override
+    public Run getRunWithLatestCheckpoints(String runId) throws RunServiceException {
+        try {
+            return runRepository.getRunWithLastCheckpoints(runId);
+        }catch (RunRepository.CheckpointException e){
+            throw new RunService.RunServiceException("An error occurred while retrieving results");
+        }
+    }
+
+    @Override
     public void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) throws RunServiceException {
         try{
             runRepository.addCheckpointIfValid(runId, currentX, currentY, precision);
