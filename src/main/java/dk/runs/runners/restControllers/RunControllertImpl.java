@@ -22,17 +22,17 @@ public class RunControllertImpl {
     }
 
 
-    @GetMapping("runs/{runId}/waypoint")
+    @GetMapping("runs/{runId}/waypoints")
     public List<WayPoint> getMissingWaypoints(@PathVariable String runId){
         return runService.getMissingWaypoints(runId);
     }
 
-    @GetMapping("runs/{runId}/checkpoint")
+    @GetMapping("runs/{runId}/checkpoints")
     public List<Checkpoint> getLastestCheckpoints(@PathVariable String runId){
         return runService.getLastestCheckpoints(runId);
     }
 
-    @PutMapping("runs/{runId}/checkpoint")
+    @PutMapping("runs/{runId}/checkpoints")
     public ResponseEntity<Void> addCheckPointIfValid(@PathVariable String runId,
                                                  @RequestParam double currentX,
                                                  @RequestParam double currentY,
