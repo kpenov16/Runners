@@ -61,6 +61,15 @@ public class RunServiceImpl implements RunService {
     }
 
     @Override
+    public void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) throws RunServiceException {
+        try{
+            runRepository.addCheckpointIfValid(runId, currentX, currentY, precision);
+        } catch(RunRepository.CheckpointException e){
+            throw new RunServiceException("Error. Could not sumbit your position.");
+        }
+    }
+
+    @Override
     public Run updateRun(Run run) throws RunServiceException {
         return null;
     }
@@ -69,4 +78,5 @@ public class RunServiceImpl implements RunService {
     public Void deleteRun(String id) throws RunServiceException {
         return null;
     }
+
 }

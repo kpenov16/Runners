@@ -1,6 +1,6 @@
 USE s133967;
 INSERT INTO `user` VALUES ('1','myusername', 'myemail','mypasword');
-INSERT INTO `route` (`id`,`title`,`creator_id`,`date`) VALUES ('10', 'Fun run', '1', now()+0);
+INSERT INTO `route` (`id`,`title`,`creator_id`,`date`, `max_participants`) VALUES ('10', 'Fun run', '1', now()+0, 10);
 INSERT INTO `route` (`id`,`title`,`creator_id`,`date`) VALUES ('11', 'Happy run', '1', now()+0);
 INSERT INTO `route` (`id`,`title`,`creator_id`,`date`) VALUES ('12', 'Cultural run', '1', now()+0);
 
@@ -22,6 +22,9 @@ Select * from route;
 Delete from `user`;
 Delete from `route`;
 Select * from checkpoint;
+Select * from run;
+Delete from run;
+Delete from checkpoint;
 
 
 SELECT route.id AS id 

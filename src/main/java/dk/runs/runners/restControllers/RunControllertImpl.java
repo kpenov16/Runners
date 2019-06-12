@@ -22,24 +22,33 @@ public class RunControllertImpl {
     }
 
 
-    @GetMapping("run/{runId}/waypoint")
+    @GetMapping("runs/{runId}/waypoint")
     public List<WayPoint> getMissingWaypoints(@PathVariable String runId){
         return runService.getMissingWaypoints(runId);
     }
 
-    @GetMapping("run/{runId}/checkpoint")
+    @GetMapping("runs/{runId}/checkpoint")
     public List<Checkpoint> getLastestCheckpoints(@PathVariable String runId){
         return runService.getLastestCheckpoints(runId);
     }
 
-    @PostMapping("/users/{creatorId}/run")
+    @PutMapping("runs/{runId}/checkpoint")
+    public ResponseEntity<Void> addCheckPointIfValid(@PathVariable String runId,
+                                                 @RequestParam double currentX,
+                                                 @RequestParam double currentY,
+                                                 @RequestParam int precision){
+        runService.addCheckpointIfValid(runId, currentX, currentY, precision);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/users/{creatorId}/runs")
     public Run createRun(@PathVariable String creatorId, @RequestBody Run run) {
         Run createdRun = runService.createRun(run, creatorId);
        // URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/(id)").buildAndExpand(createdRun.getId()).toUri();
         return createdRun; //ResponseEntity.created(uri).body(createdRun);
     }
 
-    @GetMapping("run/{id}")
+    @GetMapping("runs/{id}")
     public Run getRun(@PathVariable String id){
         return runService.getRun(id);
     }
