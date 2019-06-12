@@ -30,4 +30,15 @@ public class UserControllerImpl {
         return ResponseEntity.created(uri).body(createdUser);
         //return new ResponseEntity<User>(createdUser, HttpStatus.OK);
     }
+
+    @GetMapping("/users/{userName}")
+    public User getUser(@PathVariable String userName){
+        return userService.getUser(userName);
+    }
+    /*
+    @GetMapping("/users/{id}")
+    public User getUserById(@PathVariable String id){
+        return userService.getUser(id);
+    }
+    */
 }
