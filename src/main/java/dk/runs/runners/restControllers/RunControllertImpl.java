@@ -52,4 +52,7 @@ public class RunControllertImpl {
     public Run getRun(@PathVariable String id){
         return runService.getRun(id);
     }
+
+    @GetMapping("users/{creatorId}/runs")
+    public List<Run> getRuns(@PathVariable String creatorId){ return runService.getRuns(creatorId);}
 }

@@ -61,6 +61,15 @@ public class RunServiceImpl implements RunService {
     }
 
     @Override
+    public List<Run> getRuns(String creatorId) throws RunServiceException {
+        try {
+            return runRepository.getRuns(creatorId);
+        }catch (RunRepository.GetRunsException e){
+            throw new RunService.RunServiceException("An error occurred while retrieving runs.");
+        }
+    }
+
+    @Override
     public void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) throws RunServiceException {
         try{
             runRepository.addCheckpointIfValid(runId, currentX, currentY, precision);
