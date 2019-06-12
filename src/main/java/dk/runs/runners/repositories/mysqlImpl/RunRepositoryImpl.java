@@ -340,6 +340,38 @@ public class RunRepositoryImpl implements RunRepository {
         return wayPoints;
     }
 
+    @Override
+    public List<Run> getRuns(String userId) throws GetRunsException {
+        List<Run> runs;
+        String sqlQuery = "SELECT id FROM run WHERE user_id = ?";
+        runs = executeGetRunsQuery(sqlQuery, userId);
+        return runs;
+    }
+
+    private List<Run> executeGetRunsQuery(String sqlQuery, String userId) {
+        List<Run> runs = new LinkedList<>();
+
+        try(Connection conn = DataSource.getConnection();
+            PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
+            pstmt.setString(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                String runId = rs.getString("id");
+                Run run =getRunWithLastCheckpoints(runId);
+                runs.add(run);
+            }
+            if(rs != null){  rs.close(); }
+        }catch(SQLException se){
+            se.printStackTrace();
+            throw new GetRunsException(se.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new GetRunsException(e.getMessage());
+        }
+
+        return runs;
+    }
+
     private List<WayPoint> executeGetMissingWaypointsQuery(String sqlQuery, String runId) {
         List<WayPoint> wayPoints = new LinkedList<>();
         try(Connection conn = DataSource.getConnection();

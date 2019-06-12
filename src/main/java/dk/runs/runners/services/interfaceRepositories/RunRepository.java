@@ -63,6 +63,14 @@ public interface RunRepository {
      */
     List<WayPoint> getMissingWaypoints(String runId) throws GetMissingWaypointException;
 
+    /**
+     * Retrieves a list of runs, which the user is signed up
+     * @param userId is the id of the user which has signed up for runs
+     * @return  a list of runs objects by searched user
+     * @throws GetRunsException if there are no runs with matching user id existing in the data layer
+     */
+    List<Run> getRuns(String userId) throws GetRunsException;
+
 
     class RunValidationException extends RuntimeException{
         public RunValidationException(String msg) {super(msg);}
@@ -90,5 +98,8 @@ public interface RunRepository {
     }
     class MaxParticipansReachedException extends RuntimeException{
         public MaxParticipansReachedException(String msg) {super(msg);}
+    }
+    class GetRunsException extends RuntimeException{
+        public GetRunsException(String msg) {super(msg);}
     }
 }

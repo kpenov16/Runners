@@ -469,4 +469,26 @@ class RunRepositoryImplTest {
         return user;
     }
 
+    @Test
+    void givenGetRunsOfUserWithTwoRuns_returnListOfRunsSizeEqualsTwo(){
+        ignoreAfterEach = true;
+        // Arrange
+        User user = constructUser();
+        userRepository.createUser(user);
+        Route route = constructRoute();
+        Route routeSecond = constructRoute();
+        routeRepository.createRoute(route, user.getId());
+        routeRepository.createRoute(routeSecond, user.getId());
+        Run run = constructRun(route);
+        Run runSecond = constructRun(routeSecond);
+        runRepository.createRun(run, user.getId());
+        runRepository.createRun(runSecond, user.getId());
+        //Act
+        List<Run> userRuns = runRepository.getRuns(user.getId());
+        assertEquals(2, userRuns.size());
+
+        //Clean up
+        deleteCreatedEntities();
+    }
+
 }
