@@ -18,7 +18,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     @Override
     public void createRoute(Route route, String creatorId){
-        validateRoute(route); //TODO: uncomment this
+        validateRoute(route);
         String routeSql = "INSERT INTO route (id, creator_id, title, date, distance, duration, description, status, max_participants, min_participants)" +
                 "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )";
 
@@ -164,7 +164,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 executeCreateWaypointsQuery(route, pstmtWaypoint);
 
                 //update location
-                super.executeUpdateLocationQuery(route, pstmtRouteLocation); //TODO uncommented these. It was commented because of nullpointer exception. Because right now required simplified version of route. Without location
+                super.executeUpdateLocationQuery(route, pstmtRouteLocation);
 
                 conn.commit();
             }else {
@@ -229,9 +229,9 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 route.setDate(new Date(rs.getLong("date")));
                 route.setTitle(rs.getString("title"));
 
-            route.setWayPoints(getWaypoints(route.getId())); //TODO uncomment these
+            route.setWayPoints(getWaypoints(route.getId()));
 
-            route.setLocation(getLocation(route.getId())); //TODO uncomment these
+            route.setLocation(getLocation(route.getId()));
                 routes.add(route);
             }
             if(rs != null){ rs.close(); }
