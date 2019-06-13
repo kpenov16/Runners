@@ -42,6 +42,7 @@ public class RouteServiceImpl implements RouteService {
     public Route createRoute(Route route, String creatorId) {
         try {
             route.setId(UUID.randomUUID().toString());
+            route.getLocation().setId(UUID.randomUUID().toString());
             routeRepository.createRoute(route, creatorId);
             return route;
         }catch (RouteRepository.RouteIdDuplicationException e){
