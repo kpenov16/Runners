@@ -1,4 +1,4 @@
-package dk.runs.runners.datasourceconfig;
+package dk.runs.runners.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -6,7 +6,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class DataSource {
+public class DataSourceConfig {
     private static HikariConfig config = new HikariConfig();
     private static HikariDataSource dataSource;
 
@@ -22,7 +22,7 @@ public class DataSource {
         dataSource = new HikariDataSource(config);
     }
 
-    private DataSource(){}
+    private DataSourceConfig(){}
 
     public static Connection getConnection()throws SQLException {
         return dataSource.getConnection();

@@ -1,6 +1,6 @@
 package dk.runs.runners.repositories.mysqlImpl;
 
-import dk.runs.runners.datasourceconfig.DataSource;
+import dk.runs.runners.config.DataSourceConfig;
 import dk.runs.runners.entities.Checkpoint;
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.entities.Run;
@@ -49,7 +49,7 @@ public class RunRepositoryImpl implements RunRepository {
         Connection conn = null;
         PreparedStatement pstmt = null;
         try{
-            conn = DataSource.getConnection();
+            conn = DataSourceConfig.getConnection();
             conn.setAutoCommit(false);
 
             pstmt = conn.prepareStatement(sql);
@@ -169,7 +169,7 @@ public class RunRepositoryImpl implements RunRepository {
         Connection conn = null;
         PreparedStatement pstmtCheckpoint = null;
         try{
-            conn = DataSource.getConnection();
+            conn = DataSourceConfig.getConnection();
             conn.setAutoCommit(false);
 
             pstmtCheckpoint = conn.prepareStatement(sql);
@@ -252,7 +252,7 @@ public class RunRepositoryImpl implements RunRepository {
 
     private Run executeGetRun(String sqlQuery, String runId) {
         Run run = new Run();
-        try(Connection conn = DataSource.getConnection();
+        try(Connection conn = DataSourceConfig.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setString(1, runId);
             ResultSet rs = pstmt.executeQuery();
@@ -272,7 +272,7 @@ public class RunRepositoryImpl implements RunRepository {
     }
 
     private void executeInsertCheckpointQuery(String sqlQuery, String runId, double currentX, double currentY, int precision) {
-        try(Connection conn = DataSource.getConnection();
+        try(Connection conn = DataSourceConfig.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setString(1, runId);
             pstmt.setString(2, "Point("+currentX+" "+currentY+")");
@@ -292,7 +292,7 @@ public class RunRepositoryImpl implements RunRepository {
         PreparedStatement pstmtRun = null;
         PreparedStatement pstmtCheckpoint = null;
         try{
-            conn = DataSource.getConnection();
+            conn = DataSourceConfig.getConnection();
             conn.setAutoCommit(false);
 
             pstmtCheckpoint = conn.prepareStatement(checkpointsSqlQuery);
@@ -331,7 +331,7 @@ public class RunRepositoryImpl implements RunRepository {
 
     private String executeGetRouteIdQuery(String sqlQuery, String runId) {
         String routeId = null;
-        try(Connection conn = DataSource.getConnection();
+        try(Connection conn = DataSourceConfig.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setString(1, runId);
             ResultSet rs = pstmt.executeQuery();
@@ -379,7 +379,7 @@ public class RunRepositoryImpl implements RunRepository {
     }
 
     private void executeUpdateRun(String sqlQuery, Run runUpdated) {
-        try(Connection conn = DataSource.getConnection();
+        try(Connection conn = DataSourceConfig.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setLong(1, runUpdated.getStartTime().getTime());
             pstmt.setLong(2, runUpdated.getEndTime().getTime());
@@ -402,7 +402,7 @@ public class RunRepositoryImpl implements RunRepository {
     private List<Run> executeGetRunsQuery(String sqlQuery, String userId) {
         List<Run> runs = new LinkedList<>();
 
-        try(Connection conn = DataSource.getConnection();
+        try(Connection conn = DataSourceConfig.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setString(1, userId);
             ResultSet rs = pstmt.executeQuery();
@@ -425,7 +425,7 @@ public class RunRepositoryImpl implements RunRepository {
 
     private List<WayPoint> executeGetMissingWaypointsQuery(String sqlQuery, String runId) {
         List<WayPoint> wayPoints = new LinkedList<>();
-        try(Connection conn = DataSource.getConnection();
+        try(Connection conn = DataSourceConfig.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
             pstmt.setString(1, runId);
             ResultSet rs = pstmt.executeQuery();
