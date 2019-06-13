@@ -238,7 +238,8 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             pstmt.setInt(2, limit);
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
-                Route route = new Route(rs.getString(1));
+                //Route route = new Route(rs.getString(1));
+                Route route = getRoute(rs.getString(1));
                 route.setDate(new Date(rs.getLong("date")));
                 route.setTitle(rs.getString("title"));
 
