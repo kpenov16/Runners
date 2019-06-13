@@ -415,8 +415,12 @@ public class RunRepositoryImpl implements RunRepository {
     private void executeUpdateRun(String sqlQuery, Run runUpdated) {
         try(Connection conn = DataSourceConfig.getConnection();
             PreparedStatement pstmt= conn.prepareStatement(sqlQuery)){
-            pstmt.setLong(1, runUpdated.getStartTime().getTime());
-            pstmt.setLong(2, runUpdated.getEndTime().getTime());
+            if(runUpdated.getStartTime() != null){
+                pstmt.setLong(1, runUpdated.getStartTime().getTime());
+            }
+            if(runUpdated.getEndTime() != null){
+                pstmt.setLong(2, runUpdated.getEndTime().getTime());
+            }
             pstmt.setString(3, runUpdated.getId());
             int rowsEffected = pstmt.executeUpdate();
             if(rowsEffected < 1){
