@@ -52,6 +52,8 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             throw new RouteNotFoundException(se.getMessage());
         }catch(Exception e){
             throw new RouteNotFoundException(e.getMessage());
+        } catch(Throwable e){
+            throw new RouteNotFoundException(e.getMessage());
         }
         return id;
     }
@@ -177,7 +179,8 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 }
                 throw new RouteIdDuplicationException(e.getMessage());
             }catch (SQLException rollBackException){
-                //??
+                rollBackException.printStackTrace();
+                throw new UpdateRouteException(rollBackException.getMessage());
             }
         }catch(SQLException se){
             try {
@@ -195,7 +198,17 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             }catch (SQLException rollBackException){
                 throw new UpdateRouteException(rollBackException.getMessage());
             }
-        }finally {
+        }catch(Throwable e){
+            try {
+                conn.rollback();
+                e.printStackTrace();
+                throw new UpdateRouteException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new UpdateRouteException(rollBackException.getMessage());
+            }
+        }
+
+        finally {
             try {
                 if(pstmtRoute != null) pstmtRoute.close();
                 if(pstmtWaypoint != null) pstmtWaypoint.close();
@@ -239,8 +252,13 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             se.printStackTrace();
             throw new GetRoutesException(se.getMessage());
         } catch (Exception e){
+            e.printStackTrace();
             throw new GetRoutesException(e.getMessage());
-        }
+        }   catch (Throwable e){
+            e.printStackTrace();
+        throw new GetRoutesException(e.getMessage());
+    }
+
         return routes;
     }
 
@@ -264,8 +282,13 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             }
             if(rs != null){  rs.close(); }
         }catch(SQLException se){
+            se.printStackTrace();
             throw new RouteNotFoundException(se.getMessage());
         }catch(Exception e){
+            e.printStackTrace();
+            throw new RouteNotFoundException(e.getMessage());
+        }catch(Throwable e){
+            e.printStackTrace();
             throw new RouteNotFoundException(e.getMessage());
         }
         return routes;
@@ -293,8 +316,13 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             if(rs != null){ rs.close(); }
         }catch(SQLException se){
             se.printStackTrace();
+            throw new GetRoutesException(se.getMessage());
         }catch(Exception e){
             e.printStackTrace();
+            throw new GetRoutesException(e.getMessage());
+        }catch(Throwable e){
+            e.printStackTrace();
+            throw new GetRoutesException(e.getMessage());
         }finally {
             if(!isRouteFound){
                 throw new RouteNotFoundException("Route with id: " + route.getId() + " was not found");
@@ -320,8 +348,13 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             }
             if(rs != null){  rs.close(); }
         }catch(SQLException se){
+            se.printStackTrace();
             throw new RouteNotFoundException(se.getMessage());
         }catch(Exception e){
+            e.printStackTrace();
+            throw new RouteNotFoundException(e.getMessage());
+        }catch(Throwable e){
+            e.printStackTrace();
             throw new RouteNotFoundException(e.getMessage());
         }
         return location;
@@ -340,9 +373,14 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             }
             if(rs != null){  rs.close(); }
         }catch(SQLException se){
+            se.printStackTrace();
             throw new RouteNotFoundException(se.getMessage());
         }catch(Exception e){
+            e.printStackTrace();
             throw new RouteNotFoundException(e.getMessage());
+        }catch(Throwable e){
+            e.printStackTrace();
+            throw new GetRoutesException(e.getMessage());
         }
         return wayPoints;
     }
@@ -389,7 +427,8 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 }
                 throw new RouteIdDuplicationException(e.getMessage());
             }catch (SQLException rollBackException){
-                //??
+                rollBackException.printStackTrace();
+                throw new CreateRouteException(rollBackException.getMessage());
             }
         }catch(SQLException se){
             try {
@@ -400,6 +439,14 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 throw new CreateRouteException(rollBackException.getMessage());
             }
         }catch(Exception e){
+            try {
+                conn.rollback();
+                e.printStackTrace();
+                throw new CreateRouteException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new CreateRouteException(rollBackException.getMessage());
+            }
+        }catch(Throwable e){
             try {
                 conn.rollback();
                 e.printStackTrace();
@@ -469,8 +516,13 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             if(rs != null){ rs.close(); }
         }catch(SQLException se){
             se.printStackTrace();
+            throw new GetRoutesException(se.getMessage());
         }catch(Exception e){
             e.printStackTrace();
+            throw new GetRoutesException(e.getMessage());
+        }catch(Throwable e){
+            e.printStackTrace();
+            throw new GetRoutesException(e.getMessage());
         }
         return routes;
     }
@@ -507,6 +559,13 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                 throw new DeleteRouteException(rollBackException.getMessage());
             }
         }catch(Exception e){
+            try {
+                conn.rollback();
+                throw new DeleteRouteException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new DeleteRouteException(rollBackException.getMessage());
+            }
+        }catch(Throwable e){
             try {
                 conn.rollback();
                 throw new DeleteRouteException(e.getMessage());

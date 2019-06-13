@@ -25,6 +25,8 @@ public class RunServiceImpl implements RunService {
             return runRepository.getMissingWaypoints(runId);
         } catch (RunRepository.GetMissingWaypointException e){
             throw new RunServiceException("Error. Could not retrieve waypoints");
+        } catch (Throwable e){
+            throw new RunServiceException("Error. Could not retrieve waypoints");
         }
     }
 
@@ -32,6 +34,8 @@ public class RunServiceImpl implements RunService {
         try{
             return runRepository.getRunWithLastCheckpoints(runId).getCheckpoints();
         } catch (RunRepository.CheckpointException e){
+            throw new RunService.RunServiceException("Error retrieving checkpoints");
+        } catch (Throwable e){
             throw new RunService.RunServiceException("Error retrieving checkpoints");
         }
     }
@@ -49,6 +53,10 @@ public class RunServiceImpl implements RunService {
                 throw new RunServiceException("An error occurred while creating run, try again later.");
             }
         }
+        catch (Throwable e ){
+            throw new RunServiceException("An error occurred while creating run, try again later.");
+
+        }
     }
 
     @Override
@@ -56,6 +64,8 @@ public class RunServiceImpl implements RunService {
         try {
             return runRepository.getRunWithLastCheckpoints(id);
         }catch (RunRepository.CheckpointException e){
+            throw new RunService.RunServiceException("An error occurred while retrieving run.");
+        }catch (Throwable e){
             throw new RunService.RunServiceException("An error occurred while retrieving run.");
         }
     }
@@ -66,6 +76,8 @@ public class RunServiceImpl implements RunService {
             return runRepository.getRuns(creatorId);
         }catch (RunRepository.GetRunsException e){
             throw new RunService.RunServiceException("An error occurred while retrieving runs.");
+        }catch (Throwable e){
+            throw new RunService.RunServiceException("An error occurred while retrieving runs.");
         }
     }
 
@@ -74,6 +86,8 @@ public class RunServiceImpl implements RunService {
         try{
             runRepository.addCheckpointIfValid(runId, currentX, currentY, precision);
         } catch(RunRepository.CheckpointException e){
+            throw new RunServiceException("Error. Could not sumbit your position.");
+        } catch(Throwable e){
             throw new RunServiceException("Error. Could not sumbit your position.");
         }
     }
@@ -84,6 +98,9 @@ public class RunServiceImpl implements RunService {
         try{
             runRepository.updateRun(run);
         } catch(RunRepository.UpdateRunException e){
+            throw new RunServiceException("Error. Could not update run");
+
+        }catch(Throwable e){
             throw new RunServiceException("Error. Could not update run");
 
         }

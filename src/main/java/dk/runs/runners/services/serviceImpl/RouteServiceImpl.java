@@ -23,6 +23,8 @@ public class RouteServiceImpl implements RouteService {
             return routeRepository.getRoute(id);
         } catch (RouteRepository.GetRoutesException e){
             throw new RouteService.RouteServiceException("Error retrieving the route");
+        }catch (Throwable e){
+            throw new RouteService.RouteServiceException("Error retrieving the route");
         }
     }
 
@@ -34,6 +36,8 @@ public class RouteServiceImpl implements RouteService {
         // TODO: uncomment these    return routeRepository.getRouteList(1, calendar.getTime());
                return routeRepository.getRouteList(100, new Date(1));
         }catch (RouteRepository.GetRoutesException e){
+            throw new RouteServiceException("Could not receive routes from database");
+        }catch (Throwable e){
             throw new RouteServiceException("Could not receive routes from database");
         }
     }
@@ -51,6 +55,8 @@ public class RouteServiceImpl implements RouteService {
             } else {
                 throw new RouteServiceException("Error creating a route. Try again later.");
             }
+        } catch (Throwable e){
+                throw new RouteServiceException("Error creating a route. Try again later.");
         }
 
     }
@@ -61,6 +67,8 @@ public class RouteServiceImpl implements RouteService {
             routeRepository.deleteRoute(id);
         } catch(RouteRepository.DeleteRouteException e){
             throw new RouteService.RouteServiceException("Error deleting the route");
+        }  catch(Throwable e){
+            throw new RouteService.RouteServiceException("Error deleting the route");
         }
     }
 
@@ -69,6 +77,8 @@ public class RouteServiceImpl implements RouteService {
         try{
             return routeRepository.getRoutes(creatorId);
         } catch(RouteRepository.GetRoutesException e){
+            throw new RouteServiceException("Error retrieving your created routes.");
+        } catch(Throwable e){
             throw new RouteServiceException("Error retrieving your created routes.");
         }
     }
@@ -79,6 +89,8 @@ public class RouteServiceImpl implements RouteService {
             routeRepository.updateRoute(route);
             return route;
         } catch (RouteRepository.UpdateRouteException e){
+            throw new RouteService.RouteServiceException("Error updating route.");
+        } catch (Throwable e){
             throw new RouteService.RouteServiceException("Error updating route.");
         }
     }

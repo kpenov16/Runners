@@ -134,6 +134,9 @@ public class RunRepositoryImpl implements RunRepository {
             }catch (SQLException rollBackException){
                 throw new CreateRunException(rollBackException.getMessage());
             }
+        } else{
+            t.printStackTrace();
+            throw new RuntimeException(t.getMessage());
         }
     }
 
@@ -201,7 +204,15 @@ public class RunRepositoryImpl implements RunRepository {
             }catch (SQLException rollBackException){
                 throw new CheckpointException(rollBackException.getMessage());
             }
-        }finally {
+        }catch(Throwable e){
+            try {
+                conn.rollback();
+                throw new CheckpointException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new CheckpointException(rollBackException.getMessage());
+            }
+        }
+        finally {
             try {
                 if(pstmtCheckpoint != null) pstmtCheckpoint.close();
                 if(conn != null) conn.close();
@@ -268,6 +279,10 @@ public class RunRepositoryImpl implements RunRepository {
             e.printStackTrace();
             throw new GetRunsException(e.getMessage());
         }
+        catch(Throwable e){
+            e.printStackTrace();
+            throw new GetRunsException(e.getMessage());
+        }
         return run;
     }
 
@@ -282,6 +297,9 @@ public class RunRepositoryImpl implements RunRepository {
             se.printStackTrace();
             throw new CheckpointException(se.getMessage());
         }catch(Exception e){
+            e.printStackTrace();
+            throw new CheckpointException(e.getMessage());
+        }catch(Throwable e){
             e.printStackTrace();
             throw new CheckpointException(e.getMessage());
         }
@@ -318,6 +336,13 @@ public class RunRepositoryImpl implements RunRepository {
             }catch (SQLException rollBackException){
                 throw new DeleteRunException(rollBackException.getMessage());
             }
+        }catch(Throwable e){
+            try {
+                conn.rollback();
+                throw new DeleteRunException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new DeleteRunException(rollBackException.getMessage());
+            }
         }finally {
             try {
                 if(pstmtRun != null) pstmtRun.close();
@@ -345,6 +370,9 @@ public class RunRepositoryImpl implements RunRepository {
             se.printStackTrace();
             throw new CreateRunException(se.getMessage());
         }catch(Exception e){
+            e.printStackTrace();
+            throw new CreateRunException(e.getMessage());
+        }catch(Throwable e){
             e.printStackTrace();
             throw new CreateRunException(e.getMessage());
         }
@@ -396,6 +424,11 @@ public class RunRepositoryImpl implements RunRepository {
             e.printStackTrace();
             throw new UpdateRunException(e.getMessage());
         }
+        catch(Throwable e){
+            e.printStackTrace();
+            throw new UpdateRunException(e.getMessage());
+        }
+
 
     }
 
@@ -416,6 +449,9 @@ public class RunRepositoryImpl implements RunRepository {
             se.printStackTrace();
             throw new GetRunsException(se.getMessage());
         }catch(Exception e){
+            e.printStackTrace();
+            throw new GetRunsException(e.getMessage());
+        }catch(Throwable e){
             e.printStackTrace();
             throw new GetRunsException(e.getMessage());
         }
@@ -441,6 +477,10 @@ public class RunRepositoryImpl implements RunRepository {
             se.printStackTrace();
             throw new GetMissingWaypointException(se.getMessage());
         }catch(Exception e){
+            e.printStackTrace();
+            throw new GetMissingWaypointException(e.getMessage());
+        }
+        catch(Throwable e){
             e.printStackTrace();
             throw new GetMissingWaypointException(e.getMessage());
         }
