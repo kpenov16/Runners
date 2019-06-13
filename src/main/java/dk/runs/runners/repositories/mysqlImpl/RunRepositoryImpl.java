@@ -268,8 +268,14 @@ public class RunRepositoryImpl implements RunRepository {
             pstmt.setString(1, runId);
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
-                run.setStartTime(new java.util.Date(rs.getLong("start_time")));
-                run.setEndTime(new java.util.Date(rs.getLong("end_time")));
+                long startTime = (rs.getLong("start_time"));
+                if (startTime > 0 ){
+                    run.setStartTime(new java.util.Date(startTime));
+                }
+                long endTime = rs.getLong("end_time");
+                if( endTime > 0){
+                    run.setEndTime(new java.util.Date(endTime));
+                }
             }
             if(rs != null){  rs.close(); }
         }catch(SQLException se){
