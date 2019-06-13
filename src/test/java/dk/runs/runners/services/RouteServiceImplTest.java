@@ -1,5 +1,6 @@
 package dk.runs.runners.services;
 
+import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.Route;
 import dk.runs.runners.services.interfaceServices.RouteService;
 import dk.runs.runners.services.serviceImpl.RouteServiceImpl;
@@ -27,10 +28,13 @@ class RouteServiceImplTest {
         //Arrange
         routeRepository = new FakeRouteRepository();
         routeService = new RouteServiceImpl(routeRepository);
+        Location location = new Location();
+        Route route = new Route();
+        route.setLocation(location);
 
         //Act, Assert
         RouteService.RouteServiceException ex = assertThrows(RouteService.RouteServiceException.class,
-                () -> routeService.createRoute(new Route(), "creatorId")
+                () -> routeService.createRoute(route, "creatorId")
         );
         assertEquals("Route already created!",ex.getMessage());
         assertEquals(1,((FakeRouteRepository) routeRepository).numberOfCallsTo_createRun);
