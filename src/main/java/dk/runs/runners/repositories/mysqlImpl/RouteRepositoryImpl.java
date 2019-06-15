@@ -88,7 +88,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
     public List<Route> getRoutes(String creatorId) {
         String sql = "SELECT * " +
                      " FROM route" +
-                     " WHERE route.creator_id = ?";
+                     " WHERE route.creator_id = ? and status != 'deleted' ";
         List<Route> routes = executeGetRouteQuery( sql, creatorId );
         for(Route r : routes){
             r.setWayPoints( getWaypoints(r.getId()) );
@@ -224,9 +224,9 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         long since = sinceDate.getTime();
         String sql = "SELECT route.id AS id, route.date AS date, route.title AS title " +
                      "FROM route " +
-                     "WHERE `date` >= ? " +
+                     "WHERE `date` >= ? and status != 'deleted' " +
                      "ORDER BY `date` DESC " +
-                     "LIMIT ? ";
+                     "LIMIT ?";
         return executeGetRoutesQuery(sql, count, since);
     }
 
