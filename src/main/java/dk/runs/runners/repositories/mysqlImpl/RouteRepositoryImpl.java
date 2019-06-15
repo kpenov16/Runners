@@ -224,7 +224,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         long since = sinceDate.getTime();
         String sql = "SELECT route.id AS id, route.date AS date, route.title AS title " +
                      "FROM route " +
-                     "WHERE `date` >= ? and status != 'deleted' " +
+                     "WHERE `date` >= ? and status = 'released' " +
                      "ORDER BY `date` DESC " +
                      "LIMIT ?";
         return executeGetRoutesQuery(sql, count, since);

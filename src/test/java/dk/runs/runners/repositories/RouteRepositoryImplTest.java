@@ -7,11 +7,13 @@ import dk.runs.runners.repositories.mysqlImpl.UserRepositoryImpl;
 import dk.runs.runners.services.interfaceRepositories.RouteRepository;
 import dk.runs.runners.services.interfaceRepositories.RunRepository;
 import dk.runs.runners.services.interfaceRepositories.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static junit.framework.TestCase.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -55,7 +57,7 @@ public class RouteRepositoryImplTest {
         route.setLocation(location);
         route.setDescription("It is going to be very fun!!!");
         route.setDate(new Date(ms));
-        route.setStatus("active");
+        route.setStatus("released");
         route.setDuration(ONE_HOUR);
         route.setDistance(DISTANCE);
         route.setMaxParticipants(5);
@@ -85,13 +87,13 @@ public class RouteRepositoryImplTest {
         secondRoute.setDistance(DISTANCE);
     }
 
-    /*
-    @AfterEach
-    public void tearDown(){
-        routeRepository.deleteRoute(route.getId());
-        routeRepository.deleteRoute(secondRoute.getId());
-        userRepository.deleteUser(user.getId());
-    }*/
+
+//    @AfterEach
+//    public void tearDown(){
+//        routeRepository.deleteRoute(route.getId());
+//        routeRepository.deleteRoute(secondRoute.getId());
+//        userRepository.deleteUser(user.getId());
+//    }
 
 
     private RunRepository runRepository = null;
@@ -358,19 +360,26 @@ public class RouteRepositoryImplTest {
 
     @Test
     public void givenGetRoutesList_returnListIsNotEmpty(){
-        userRepository.createUser(user);
+        try {
+            userRepository.createUser(user);
 
-        routeRepository.createRoute(route, user.getId());
-        routeRepository.createRoute(secondRoute, user.getId());
+            routeRepository.createRoute(route, user.getId());
+            routeRepository.createRoute(secondRoute, user.getId());
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -1);
-        assertTrue(routeRepository.getRouteList(2, calendar.getTime()).size() > 0);
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE, -1);
+            assertTrue(routeRepository.getRouteList(2, calendar.getTime()).size() > 0);
 
-        //clean up
-        routeRepository.deleteRoute(route.getId());
-        routeRepository.deleteRoute(secondRoute.getId());
-        userRepository.deleteUser(user.getId());
+        } catch (Throwable t){
+            t.printStackTrace();
+            fail("givenGetRoutesList_returnListIsNotEmpty");
+        } finally {
+            //clean up
+            routeRepository.deleteRoute(route.getId());
+            routeRepository.deleteRoute(secondRoute.getId());
+            userRepository.deleteUser(user.getId());
+        }
+
     }
 
     @Test
