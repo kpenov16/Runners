@@ -1,5 +1,6 @@
 package dk.runs.runners.repositories;
 import dk.runs.runners.entities.*;
+import dk.runs.runners.repositories.arrayListImpl.UserRepoArrayListImpl;
 import dk.runs.runners.repositories.mysqlImpl.UserRepositoryImpl;
 import dk.runs.runners.services.interfaceRepositories.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -14,7 +15,7 @@ public class UserRepositoryImplTest {
     private User user;
     private Location location;
     private boolean afterToBeLaunched = true;
-    private UserRepositoryImpl userRepository = null;
+    private UserRepository userRepository = null;
     //private RouteRepository routeRepository = null;
     //private RunRepository runRepository = null;
 
@@ -114,8 +115,11 @@ public class UserRepositoryImplTest {
         String userName = UUID.randomUUID().toString();
 
         userRepository.createUser(user);
-        User updatedUser = user;
+        User updatedUser = new User(user.getId()); // have to create new object. Otherwise it refers to the same object in in-memory database and modifies them directly, which gives unexpected exceptions
         updatedUser.setUserName(userName);
+        updatedUser.setEmail(UUID.randomUUID().toString());
+        updatedUser.setPassword(user.getPassword());
+        updatedUser.setLocations(user.getLocations());
 
         User userWithDuplicateUserName = new User(UUID.randomUUID().toString());
         userWithDuplicateUserName.setUserName(userName);
