@@ -12,6 +12,7 @@ public class UserRepoArrayListImpl implements UserRepository {
 
     private static List<User> users = new ArrayList<>();
 
+    // some dummy data
     static {
         users.add(new User("1", "John", "john@email.com", "123", null,
                 new ArrayList<Location>(){{add(new Location(UUID.randomUUID().toString(), 0, 2,2, "New York", "USA", "Main street", "55C"));}}));
@@ -62,12 +63,18 @@ public class UserRepoArrayListImpl implements UserRepository {
 
     @Override
     public User getUserById(String userId) throws GetUserException, UserNotFoundException {
+        User userToReturn = null;
         for(User user:users){
             if(user.getId().equalsIgnoreCase(userId)){
-                return user;
+                userToReturn = user;
             }
         }
-        return null;
+
+        if(userToReturn == null){
+            throw new UserNotFoundException("User not found");
+        } else{
+            return userToReturn;
+        }
     }
 
     @Override
