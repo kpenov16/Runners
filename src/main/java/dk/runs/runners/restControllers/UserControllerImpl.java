@@ -35,6 +35,11 @@ public class UserControllerImpl {
     public User getUser(@PathVariable String userName){
         return userService.getUser(userName);
     }
+
+    @PutMapping("/users")
+    public User updateUser(@RequestBody User user){
+        return userService.updateUser(user);
+    }
     /*
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable String id){

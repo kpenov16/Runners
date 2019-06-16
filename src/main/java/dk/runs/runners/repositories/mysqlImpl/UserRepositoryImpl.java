@@ -57,7 +57,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
             int rowsEffected = pstmtUser.executeUpdate();
 
             if(rowsEffected == 1){
-                super.executeCreateLocationQuery(user, pstmtLocation);
+                super.executeCreateLocationsQuery(user, pstmtLocation);
                 conn.commit();
             }else {
                 conn.rollback();
@@ -282,14 +282,98 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
                 " SET user_name = ?, email = ?, password = ?" +
                 " WHERE id = ?";
 
-        String locationSql = "UPDATE user_location SET street_name = ? , street_number = ? ," +
+        //TODO: remove old locations query
+        String deleteUserLocations = "DELETE FROM user_location WHERE user_id = ?";
+        String insertUserLocations = "INSERT INTO user_location (id, user_id, street_name, street_number, city, country, spatial_point)" +
+                "VALUES ( ? , ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";
+
+/*        String locationSql = "UPDATE user_location SET street_name = ? , street_number = ? ," +
                 " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
                 "WHERE user_location.id = ?";
-
-        executeUpdateUserQuery(userSql, locationSql, updatedUser);
+*/
+          executeUpdateUserQuery(userSql, deleteUserLocations, insertUserLocations, updatedUser);
+        //executeUpdateUserQuery(userSql, locationSql, updatedUser);
     }
 
-    private void executeUpdateUserQuery(String sql, String locationSql, User user) {
+    private void executeUpdateUserQuery(String sql, String deleteUserLocations, String insertUserLocations, User user) {
+        boolean isUserFound = true;
+        Connection conn = null;
+        PreparedStatement pstmtUser = null;
+        PreparedStatement pstmtDeleteUserLocations = null;
+        PreparedStatement pstmtInsertUserLocations = null;
+        try{
+            conn = DataSourceConfig.getConnection();
+            conn.setAutoCommit(false);
+
+            pstmtUser = conn.prepareStatement(sql);
+            pstmtDeleteUserLocations = conn.prepareStatement(deleteUserLocations);
+            pstmtInsertUserLocations = conn.prepareStatement(insertUserLocations);
+
+            pstmtUser.setString(1, user.getUserName());
+            pstmtUser.setString(2, user.getEmail());
+            pstmtUser.setString(3, user.getPassword() );
+            pstmtUser.setString(4, user.getId());
+
+            int rowsEffected = pstmtUser.executeUpdate();
+
+            if(rowsEffected == 1){
+                //update location
+                //super.executeUpdateLocationQuery(user, pstmtDeleteUserLocations);
+                super.executeDeleteLocationsQuery(user, pstmtDeleteUserLocations);
+                super.executeCreateLocationsQuery(user, pstmtInsertUserLocations);
+                conn.commit();
+            }else {
+                conn.rollback();
+                isUserFound = false;
+            }
+        }catch (SQLIntegrityConstraintViolationException e){
+            try {
+                if(conn!=null){
+                    conn.rollback();
+                }
+                final String MSG = e.getMessage();
+                if (MSG.contains("user_name")) {
+                    throw new UserNameDuplicationException(MSG);
+                } else if (MSG.contains("email")) {
+                    throw new UserEmailDuplicationException(MSG);
+                } else {
+                    throw new UpdateUserException(MSG);
+                }
+            }catch (SQLException rollBackException){
+                throw new UpdateUserException(rollBackException.getMessage());
+            }
+        }catch(SQLException se){
+            try {
+                conn.rollback();
+                se.printStackTrace();
+                throw new UpdateUserException(se.getMessage());
+            }catch (SQLException rollBackException){
+                throw new UpdateUserException(rollBackException.getMessage());
+            }
+        }catch(Exception e){
+            try {
+                conn.rollback();
+                e.printStackTrace();
+                throw new UpdateUserException(e.getMessage());
+            }catch (SQLException rollBackException){
+                throw new UpdateUserException(rollBackException.getMessage());
+            }
+        }finally {
+            try {
+                if(pstmtUser != null) pstmtUser.close();
+                if(pstmtDeleteUserLocations != null) pstmtDeleteUserLocations.close();
+                if(conn != null) conn.close();
+            } catch (SQLException e) {
+                throw new UpdateUserException(e.getMessage());
+            }
+            if(!isUserFound){
+                throw new UserNotFoundException("Update of user. " +"User with id: "+ user.getId() + " was not found.");
+            }
+        }
+    }
+
+
+    private void executeUpdateUserQueryOld(String sql, String locationSql, User user) {
         boolean isUserFound = true;
         Connection conn = null;
         PreparedStatement pstmtUser = null;

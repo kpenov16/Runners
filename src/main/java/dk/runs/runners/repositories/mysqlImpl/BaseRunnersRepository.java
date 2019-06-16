@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public abstract class BaseRunnersRepository {
 
-    protected void executeCreateLocationQuery(Locational locational, PreparedStatement pstmtLocation) throws SQLException {
+    protected void executeCreateLocationsQuery(Locational locational, PreparedStatement pstmtLocation) throws SQLException {
         for(Location location : locational.getLocations()){
             if (location != null) {
                 pstmtLocation.setString(1, location.getId());
@@ -36,5 +36,9 @@ public abstract class BaseRunnersRepository {
             pstmtLocation.setString(7, location.getId());
             pstmtLocation.executeUpdate();
         }
+    }
+
+    protected void executeDeleteLocationsQuery(Locational locational, PreparedStatement pstmtDeleteLocations) throws SQLException {
+        pstmtDeleteLocations.setString(1, locational.getId());
     }
 }
