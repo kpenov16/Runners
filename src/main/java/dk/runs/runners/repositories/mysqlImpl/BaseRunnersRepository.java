@@ -34,8 +34,8 @@ public abstract class BaseRunnersRepository {
             pstmtLocation.setString(4, location.getCountry());
             pstmtLocation.setString(5, "POINT(" + location.getX() + " " + location.getY() + ")");
             pstmtLocation.setInt(6, location.getSRID());
-            pstmtLocation.setString(7, location.getId());
-            pstmtLocation.setString(8, location.getTitle());
+            pstmtLocation.setString(7, location.getTitle());
+            pstmtLocation.setString(8, location.getId());
             pstmtLocation.executeUpdate();
         }
     }

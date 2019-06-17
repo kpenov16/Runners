@@ -1,4 +1,4 @@
-USE s133967;
+USE s185144;
 
 DROP TRIGGER IF EXISTS AfterUpdateOnRoute;
 
@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS route_location(
     city VARCHAR(225),
     country VARCHAR(225),
     spatial_point POINT SRID 0,
+    title VARCHAR(225),
     PRIMARY KEY (id),
     FOREIGN KEY (route_id) REFERENCES route (id)
 ); 

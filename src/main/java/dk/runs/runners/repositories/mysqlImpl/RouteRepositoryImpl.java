@@ -22,8 +22,8 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
         String routeSql = "INSERT INTO route (id, creator_id, title, date, distance, duration, description, status, max_participants, min_participants)" +
                 "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )";
 
-        String locationSql = "INSERT INTO route_location (id, route_id, street_name, street_number, city, country, spatial_point)" +
-                "VALUES ( ? , ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";
+        String locationSql = "INSERT INTO route_location (id, route_id, street_name, street_number, city, country, spatial_point, title)" +
+                "VALUES ( ? , ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ), ?)";
 
         String waypointSql = "INSERT INTO waypoint (`index`, route_id, spatial_point)" +
                 "VALUES ( ? , ? , ST_GeomFromText( ? , ? ))";
@@ -124,7 +124,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
                              " VALUES ( ? , ? , ST_GeomFromText( ? , ? )) ";
 
         String locationSql = "UPDATE route_location SET street_name = ? , street_number = ? ," +
-                            " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
+                            " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? ), title = ?" +
                             " WHERE route_location.id = ? ";
         executeUpdateRouteQueryAsUnitOfWork(deleteWaypointsSql, routeSql, waypointSql, locationSql, route);
     }
