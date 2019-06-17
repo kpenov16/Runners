@@ -1,5 +1,6 @@
 package dk.runs.runners.config;
 
+import dk.runs.runners.repositories.arrayListImpl.UserRepoArrayListImpl;
 import dk.runs.runners.repositories.mysqlImpl.RouteRepositoryImpl;
 import dk.runs.runners.repositories.mysqlImpl.RunRepositoryImpl;
 import dk.runs.runners.repositories.mysqlImpl.UserRepositoryImpl;
@@ -45,7 +46,8 @@ public class DIConfig {
     @Bean
     @Scope("prototype")
     public UserRepository getUserRepository(){
-        return new UserRepositoryImpl();
+        return new UserRepositoryImpl();  // MySQL database
+        //return new UserRepoArrayListImpl(); // in-memory storage
     }
 
     @Bean
