@@ -1,14 +1,15 @@
 package dk.runs.runners.entities;
 
 public class Location {
-    private String id;
+    private String id = "none";
     private int SRID = 0;
     private double x = 0;
     private double y = 0;
-    private String city = "";
-    private String country = "";
-    private String streetName = "";
-    private String streetNumber = "";
+    private String city = "none";
+    private String country = "none";
+    private String streetName = "none";
+    private String streetNumber = "none";
+    private String title = "none";
 
     public Location(){}
 
@@ -24,6 +25,7 @@ public class Location {
     }
 
     public Location(String id) {
+        this();
         this.id = id;
     }
 
@@ -91,9 +93,18 @@ public class Location {
         this.streetNumber = streetNumber;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
     @Override
     public String toString(){
-        return String.format("Location: streetName: %s, streetNumber: %s, city: %s, country %s, x: %.6f, y: %.6f, SRID: %d",
-                                        streetName,     streetNumber,     city,     country,    x,       y,       SRID);
+        return String.format("Location: streetName: %s, streetNumber: %s, city: %s, country %s, x: %.6f, y: %.6f, SRID: %d, title: %s",
+                                        streetName,     streetNumber,     city,     country,    x,       y,       SRID, title);
     }
 }

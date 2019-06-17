@@ -406,7 +406,7 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
             int rowsEffected = pstmtRoute.executeUpdate();
 
             if(rowsEffected == 1){
-                executeCreateLocationQuery(route, pstmtLocation);
+                executeCreateLocationsQuery(route, pstmtLocation);
 
                 executeCreateWaypointsQuery(route, pstmtWaypoint);
 

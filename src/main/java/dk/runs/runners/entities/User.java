@@ -1,5 +1,6 @@
 package dk.runs.runners.entities;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class User implements Locational{
     private String email = "";
     private String password = "";
     private List<Route> routes = new LinkedList<>();
-    private List<Location> locations;
+    private List<Location> locations = new ArrayList<>();
 
     public User(){}
     public User(String id){
