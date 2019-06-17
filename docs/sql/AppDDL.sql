@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS user_location(
     city VARCHAR(225),
     country VARCHAR(225),
     spatial_point POINT SRID 0,
+    title VARCHAR(225),
     PRIMARY KEY (id),
 	FOREIGN KEY (user_id ) REFERENCES `user` (id)
 ); 
