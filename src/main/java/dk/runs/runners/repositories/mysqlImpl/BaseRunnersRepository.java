@@ -40,5 +40,6 @@ public abstract class BaseRunnersRepository {
 
     protected void executeDeleteLocationsQuery(Locational locational, PreparedStatement pstmtDeleteLocations) throws SQLException {
         pstmtDeleteLocations.setString(1, locational.getId());
+        pstmtDeleteLocations.executeUpdate();
     }
 }

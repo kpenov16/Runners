@@ -1,18 +1,19 @@
 package dk.runs.runners.entities;
 
 public class Location {
-    private String id;
+    private String id = "none";
     private int SRID = 0;
     private double x = 0;
     private double y = 0;
-    private String city = "";
-    private String country = "";
-    private String streetName = "";
-    private String streetNumber = "";
+    private String city = "none";
+    private String country = "none";
+    private String streetName = "none";
+    private String streetNumber = "none";
 
     public Location(){}
 
     public Location(String id) {
+        this();
         this.id = id;
     }
 
