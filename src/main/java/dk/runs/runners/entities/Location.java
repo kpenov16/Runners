@@ -9,6 +9,7 @@ public class Location {
     private String country = "none";
     private String streetName = "none";
     private String streetNumber = "none";
+    private String title = "none";
 
     public Location(){}
 
@@ -81,9 +82,18 @@ public class Location {
         this.streetNumber = streetNumber;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
     @Override
     public String toString(){
-        return String.format("Location: streetName: %s, streetNumber: %s, city: %s, country %s, x: %.6f, y: %.6f, SRID: %d",
-                                        streetName,     streetNumber,     city,     country,    x,       y,       SRID);
+        return String.format("Location: streetName: %s, streetNumber: %s, city: %s, country %s, x: %.6f, y: %.6f, SRID: %d, title: %s",
+                                        streetName,     streetNumber,     city,     country,    x,       y,       SRID, title);
     }
 }

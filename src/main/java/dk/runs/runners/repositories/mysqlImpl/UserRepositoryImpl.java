@@ -20,8 +20,8 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
         String userSql = "INSERT INTO user (id, user_name, email, password)" +
                                "VALUES ( ? , ? , ? , ? )";
 
-        String locationSql = "INSERT INTO user_location (id, user_id, street_name, street_number, city, country, spatial_point)" +
-                "VALUES ( ? , ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";
+        String locationSql = "INSERT INTO user_location (id, user_id, street_name, street_number, city, country, spatial_point, title)" +
+                "VALUES ( ? , ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ), ?)";
 
         executeCreateUserQuery(userSql, locationSql, user);
     }
@@ -135,7 +135,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
     }
 
     private List<Location> getLocations(String userId) {
-        String sql = " SELECT id, street_name, street_number, city, country, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y" +
+        String sql = " SELECT id, street_name, street_number, city, country, ST_X(spatial_point) AS X, ST_Y(spatial_point) AS Y, title" +
                 " FROM user_location" +
                 " WHERE user_location.user_id = ? ";
         return executeGetLocationQuery(sql, userId);
@@ -155,6 +155,7 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
                 location.setCountry(rs.getString("country"));
                 location.setX(rs.getDouble("X"));
                 location.setY(rs.getDouble("Y"));
+                location.setTitle(rs.getString("title"));
                 locations.add(location);
             }
             if(rs != null){  rs.close(); }
@@ -284,8 +285,8 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
 
         //TODO: remove old locations query
         String deleteUserLocations = "DELETE FROM user_location WHERE user_id = ?";
-        String insertUserLocations = "INSERT INTO user_location (id, user_id, street_name, street_number, city, country, spatial_point)" +
-                "VALUES ( ? , ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ))";
+        String insertUserLocations = "INSERT INTO user_location (id, user_id, street_name, street_number, city, country, spatial_point, title)" +
+                "VALUES ( ? , ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ), ? )";
 
 /*        String locationSql = "UPDATE user_location SET street_name = ? , street_number = ? ," +
                 " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
