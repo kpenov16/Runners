@@ -62,4 +62,13 @@ public class User implements Locational{
     public List<Location> getLocations() {
         return locations;
     }
+
+    public User(String id, String userName, String email, String password, List<Route> routes, List<Location> locations) {
+        this.id = id;
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.routes = routes;
+        this.locations = locations;
+    }
 }

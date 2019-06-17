@@ -1,5 +1,6 @@
 package dk.runs.runners.repositories;
 import dk.runs.runners.entities.*;
+import dk.runs.runners.repositories.arrayListImpl.UserRepoArrayListImpl;
 import dk.runs.runners.repositories.mysqlImpl.UserRepositoryImpl;
 import dk.runs.runners.services.interfaceRepositories.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -14,7 +15,7 @@ public class UserRepositoryImplTest {
     private User user;
     private Location location;
     private boolean afterToBeLaunched = true;
-    private UserRepositoryImpl userRepository = null;
+    private UserRepository userRepository = null;
     //private RouteRepository routeRepository = null;
     //private RunRepository runRepository = null;
 
@@ -87,10 +88,11 @@ public class UserRepositoryImplTest {
         //arrange
         userRepository.createUser(user);
 
-        User updatedUser = user;
+        User updatedUser = new User(user.getId());;
         updatedUser.setUserName("updated_UserName");
         updatedUser.setEmail("updated_Email");
         updatedUser.setPassword("new_Password");
+        updatedUser.setLocations(new ArrayList<Location>(){{add(location);}});
         updatedUser.getLocations().get(0).setStreetName("Prince street");
         updatedUser.getLocations().get(0).setStreetNumber("99a");
         updatedUser.getLocations().get(0).setCity("Munchen");
@@ -114,8 +116,11 @@ public class UserRepositoryImplTest {
         String userName = UUID.randomUUID().toString();
 
         userRepository.createUser(user);
-        User updatedUser = user;
+        User updatedUser = new User(user.getId()); // have to create new object. Otherwise it refers to the same object in in-memory database and modifies them directly, which gives unexpected exceptions
         updatedUser.setUserName(userName);
+        updatedUser.setEmail(UUID.randomUUID().toString());
+        updatedUser.setPassword(user.getPassword());
+        updatedUser.setLocations(user.getLocations());
 
         User userWithDuplicateUserName = new User(UUID.randomUUID().toString());
         userWithDuplicateUserName.setUserName(userName);
@@ -145,8 +150,11 @@ public class UserRepositoryImplTest {
         String email = UUID.randomUUID().toString();
 
         userRepository.createUser(user);
-        User updatedUser = user;
+        User updatedUser = new User(user.getId());
+        updatedUser.setUserName(UUID.randomUUID().toString());
         updatedUser.setEmail(email);
+        updatedUser.setPassword(user.getPassword());
+        updatedUser.setLocations(user.getLocations());
 
         User userWithDuplicateEmail = new User(UUID.randomUUID().toString());
         userWithDuplicateEmail.setUserName(UUID.randomUUID().toString());
@@ -201,10 +209,15 @@ public class UserRepositoryImplTest {
     public void givenCreateUserWithExistingId_returnUserIdDuplicationException() {
         //Arrange
         userRepository.createUser(user);
+        User userWithDuplicateID = new User(user.getId());
+        userWithDuplicateID.setUserName(UUID.randomUUID().toString());
+        userWithDuplicateID.setEmail(UUID.randomUUID().toString());
+        userWithDuplicateID.setPassword(UUID.randomUUID().toString());
+        userWithDuplicateID.setLocations(user.getLocations());
 
         //Act, Assert
         assertThrows(UserRepository.UserIdDuplicationException.class,
-                () -> userRepository.createUser(user)
+                () -> userRepository.createUser(userWithDuplicateID)
         );
     }
 

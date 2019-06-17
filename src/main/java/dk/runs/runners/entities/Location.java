@@ -12,6 +12,17 @@ public class Location {
 
     public Location(){}
 
+    public Location(String id, int SRID, double x, double y, String city, String country, String streetName, String streetNumber) {
+        this.id = id;
+        this.SRID = SRID;
+        this.x = x;
+        this.y = y;
+        this.city = city;
+        this.country = country;
+        this.streetName = streetName;
+        this.streetNumber = streetNumber;
+    }
+
     public Location(String id) {
         this.id = id;
     }
