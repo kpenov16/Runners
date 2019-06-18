@@ -1,6 +1,7 @@
 package dk.runs.runners.restControllers;
 
 import dk.runs.runners.entities.Route;
+import dk.runs.runners.entities.User;
 import dk.runs.runners.services.interfaceServices.RouteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,11 @@ public class RouteControllerImpl {
     @GetMapping("users/{userId}/routes/{id}")
     public Route getRoute(@PathVariable String userId, @PathVariable String id){
         return routeService.getRoute(id);//TODO: try with ResponseEntity.ok(route) . Or RouteResponse
+    }
+
+    @GetMapping("routes/{routeId}/users")
+    public List<User> getRouteParticipants(@PathVariable String routeId){
+        return routeService.getRouteParticipants(routeId);
     }
 
     @DeleteMapping("/routes/{id}")
