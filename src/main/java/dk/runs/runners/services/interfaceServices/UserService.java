@@ -9,7 +9,7 @@ public interface UserService {
     User updateUser(User user);
 
     class UserServiceException extends RuntimeException{
-        public static final String USER_WITH_USER_NAME_S_ALREADY_EXIST = "User with userName: %s already exist.";
+        public static final String USER_WITH_USER_NAME_S_ALREADY_EXIST = "User with user name: %s already exist.";
 
         public UserServiceException(String msg){
             super(msg);
