@@ -419,21 +419,31 @@ public class RouteRepositoryImplTest {
         User user1 = constructUser();
         User user2 = constructUser();
         User user3 = constructUser();
-        userRepository.createUser(user1);
-        userRepository.createUser(user2);
-        userRepository.createUser(user3);
         Route route = constructRoute();
-        routeRepository.createRoute(route, user1.getId());
         Run run1 = constructRun(route);
         Run run2 = constructRun(route);
         Run run3 = constructRun(route);
-        runRepository.createRun(run1, user1.getId());
-        runRepository.createRun(run2, user2.getId());
-        runRepository.createRun(run3, user3.getId());
-
         try{
+            userRepository.createUser(user1);
+            userRepository.createUser(user2);
+            userRepository.createUser(user3);
+            routeRepository.createRoute(route, user1.getId());
+            runRepository.createRun(run1, user1.getId());
+            runRepository.createRun(run2, user2.getId());
+            runRepository.createRun(run3, user3.getId());
+            List<String> exceptedUserNames = new ArrayList<>();
+            exceptedUserNames.add(user1.getUserName());
+            exceptedUserNames.add(user2.getUserName());
+            exceptedUserNames.add(user3.getUserName());
+            Collections.sort(exceptedUserNames);
+            //Act
             List<User> participants = routeRepository.getRouteParticipants(route.getId());
-            assertEquals(3, participants.size());
+            List<String> participantsUserNames = new ArrayList<>();
+            for(User user: participants){
+                participantsUserNames.add(user.getUserName());
+            }
+            Collections.sort(participantsUserNames);
+            assertEquals(exceptedUserNames, participantsUserNames);
         } catch (Throwable t){
             t.printStackTrace();
             fail("givenRouteWithPatricipants_returnParticipants");
