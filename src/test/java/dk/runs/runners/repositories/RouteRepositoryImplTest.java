@@ -82,7 +82,7 @@ public class RouteRepositoryImplTest {
         secondRoute.setLocation(secondRouteLocation);
         secondRoute.setDescription("It is going to be very fun!!!");
         secondRoute.setDate(new Date(ms2));
-        secondRoute.setStatus("active");
+        secondRoute.setStatus("released");
         secondRoute.setDuration(ONE_HOUR);
         secondRoute.setDistance(DISTANCE);
     }
@@ -360,16 +360,25 @@ public class RouteRepositoryImplTest {
 
     @Test
     public void givenGetRoutesList_returnListIsNotEmpty(){
+        //Arrange
+        class RouteComparator implements Comparator<Route>{
+            @Override
+            public int compare(Route route1, Route route2) {
+                return route1.getId().compareTo(route2.getId());
+            }
+        }
         try {
             userRepository.createUser(user);
-
             routeRepository.createRoute(route, user.getId());
             routeRepository.createRoute(secondRoute, user.getId());
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DATE, -1);
-            assertTrue(routeRepository.getRouteList(2, calendar.getTime()).size() > 0);
-
+            List<Route> expectedRoutes = new ArrayList<>();
+            expectedRoutes.add(route);
+            expectedRoutes.add(secondRoute);
+            Collections.sort(expectedRoutes, new RouteComparator());
+            //Act
+            List<Route> actualRoutes = routeRepository.getRouteList(2, new Date(1));
+            Collections.sort(actualRoutes, new RouteComparator());
+            assertEquals(expectedRoutes.toString(), actualRoutes.toString());
         } catch (Throwable t){
             t.printStackTrace();
             fail("givenGetRoutesList_returnListIsNotEmpty");
@@ -379,7 +388,6 @@ public class RouteRepositoryImplTest {
             routeRepository.deleteRoute(secondRoute.getId());
             userRepository.deleteUser(user.getId());
         }
-
     }
 
     @Test
