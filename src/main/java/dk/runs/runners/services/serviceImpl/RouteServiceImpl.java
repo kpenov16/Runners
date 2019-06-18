@@ -1,6 +1,7 @@
 package dk.runs.runners.services.serviceImpl;
 
 import dk.runs.runners.entities.Route;
+import dk.runs.runners.entities.User;
 import dk.runs.runners.services.interfaceServices.RouteService;
 import dk.runs.runners.services.interfaceRepositories.RouteRepository;
 
@@ -92,6 +93,17 @@ public class RouteServiceImpl implements RouteService {
             throw new RouteService.RouteServiceException("Error updating route.");
         } catch (Throwable e){
             throw new RouteService.RouteServiceException("Error updating route.");
+        }
+    }
+
+    @Override
+    public List<User> getRouteParticipants(String routeId) {
+        try {
+            return routeRepository.getRouteParticipants(routeId);
+        }catch (RouteRepository.RouteNotFoundException e){
+            throw new RouteService.RouteServiceException("Error retrieving participants");
+        }catch (Throwable e){
+            throw new RouteService.RouteServiceException("Error retrieving participants");
         }
     }
 
