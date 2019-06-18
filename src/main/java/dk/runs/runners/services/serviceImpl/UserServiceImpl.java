@@ -30,6 +30,10 @@ public class UserServiceImpl implements UserService {
             this.userRepository.createUser(user);
         }catch (UserNameDuplicationException e){
             throw new UserServiceException(String.format(UserServiceException.USER_WITH_USER_NAME_S_ALREADY_EXIST, user.getUserName()));
+        }catch (UserRepository.UserEmailDuplicationException e){
+            throw new UserServiceException(String.format(UserServiceException.USER_WITH_EMAIL_S_ALREADY_EXIST, user.getEmail()));
+        }catch (Throwable t){
+            throw new UserServiceException(String.format(UserServiceException.OTHER, t.getMessage()));
         }
     }
 
@@ -58,4 +62,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    protected void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 }
