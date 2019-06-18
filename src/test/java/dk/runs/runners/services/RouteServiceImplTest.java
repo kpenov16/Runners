@@ -2,6 +2,7 @@ package dk.runs.runners.services;
 
 import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.Route;
+import dk.runs.runners.entities.User;
 import dk.runs.runners.services.interfaceServices.RouteService;
 import dk.runs.runners.services.serviceImpl.RouteServiceImpl;
 import dk.runs.runners.services.interfaceRepositories.RouteRepository;
@@ -71,6 +72,11 @@ class RouteServiceImplTest {
 
         @Override
         public List<Route> getMostPopular(int top, Date since) {
+            return null;
+        }
+
+        @Override
+        public List<User> getRouteParticipants(String routeId) throws RouteNotFoundException {
             return null;
         }
     }

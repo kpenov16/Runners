@@ -412,4 +412,39 @@ public class RouteRepositoryImplTest {
         assertEquals("Route with id: " + routeId + " is missing location.",
                 routeMissingLocationException.getMessage());
     }
+
+    @Test
+    public void givenRouteWithPatricipants_returnParticipants(){
+
+        User user1 = constructUser();
+        User user2 = constructUser();
+        User user3 = constructUser();
+        userRepository.createUser(user1);
+        userRepository.createUser(user2);
+        userRepository.createUser(user3);
+        Route route = constructRoute();
+        routeRepository.createRoute(route, user1.getId());
+        Run run1 = constructRun(route);
+        Run run2 = constructRun(route);
+        Run run3 = constructRun(route);
+        runRepository.createRun(run1, user1.getId());
+        runRepository.createRun(run2, user2.getId());
+        runRepository.createRun(run3, user3.getId());
+
+        try{
+            List<User> participants = routeRepository.getRouteParticipants(route.getId());
+            assertEquals(3, participants.size());
+        } catch (Throwable t){
+            t.printStackTrace();
+            fail("givenRouteWithPatricipants_returnParticipants");
+        } finally {
+            runRepository.deleteRun(run1.getId());
+            runRepository.deleteRun(run2.getId());
+            runRepository.deleteRun(run3.getId());
+            routeRepository.deleteRoute(route.getId());
+            userRepository.deleteUser(user1.getId());
+            userRepository.deleteUser(user2.getId());
+            userRepository.deleteUser(user3.getId());
+        }
+    }
 }
