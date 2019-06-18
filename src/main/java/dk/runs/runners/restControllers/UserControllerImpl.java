@@ -17,6 +17,12 @@ public class UserControllerImpl {
         this.userService = userService;
     }
 
+    @PutMapping("/users")
+    public User updateUser(@RequestBody User user){
+        return userService.updateUser(user);
+    }
+
+
     @GetMapping("users/hello")
     public ResponseEntity<String> hello(){
         return new ResponseEntity<String>("Hello Kaloyan", HttpStatus.OK);
@@ -36,10 +42,7 @@ public class UserControllerImpl {
         return userService.getUser(userName);
     }
 
-    @PutMapping("/users")
-    public User updateUser(@RequestBody User user){
-        return userService.updateUser(user);
-    }
+
     /*
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable String id){

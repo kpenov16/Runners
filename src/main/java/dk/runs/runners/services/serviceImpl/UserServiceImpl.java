@@ -3,6 +3,7 @@ package dk.runs.runners.services.serviceImpl;
 import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.User;
 import dk.runs.runners.services.interfaceRepositories.UserRepository;
+import dk.runs.runners.services.interfaceRepositories.UserRepository.UserNameDuplicationException;
 import dk.runs.runners.services.interfaceServices.UserService;
 
 import java.util.ArrayList;
@@ -14,11 +15,22 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+    @Override
+    public User updateUser(User updatedUser) {
+        setupLocationsIds(updatedUser);
+        this.userRepository.updateUser(updatedUser);
+        return this.userRepository.getUser(updatedUser.getUserName());
+    }
+
 
     @Override
     public void createUser(User user) {
         setupIds(user);
-        this.userRepository.createUser(user);
+        try{
+            this.userRepository.createUser(user);
+        }catch (UserNameDuplicationException e){
+            throw new UserServiceException(String.format(UserServiceException.USER_WITH_USER_NAME_S_ALREADY_EXIST, user.getUserName()));
+        }
     }
 
     private void setupIds(User user) {
@@ -45,10 +57,5 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.getUser(userName);
     }
 
-    @Override
-    public User updateUser(User updatedUser) {
-        setupLocationsIds(updatedUser);
-        this.userRepository.updateUser(updatedUser);
-        return this.userRepository.getUser(updatedUser.getUserName());
-    }
+
 }

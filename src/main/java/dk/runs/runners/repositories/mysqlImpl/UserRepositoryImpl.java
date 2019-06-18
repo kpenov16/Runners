@@ -283,17 +283,11 @@ public class UserRepositoryImpl extends BaseRunnersRepository implements UserRep
                 " SET user_name = ?, email = ?, password = ?" +
                 " WHERE id = ?";
 
-        //TODO: remove old locations query
         String deleteUserLocations = "DELETE FROM user_location WHERE user_id = ?";
         String insertUserLocations = "INSERT INTO user_location (id, user_id, street_name, street_number, city, country, spatial_point, title)" +
                 "VALUES ( ? , ? , ? , ? , ? , ? , ST_GeomFromText( ? , ? ), ? )";
 
-/*        String locationSql = "UPDATE user_location SET street_name = ? , street_number = ? ," +
-                " city = ?, country = ?, spatial_point = ST_GeomFromText( ? , ? )" +
-                "WHERE user_location.id = ?";
-*/
-          executeUpdateUserQuery(userSql, deleteUserLocations, insertUserLocations, updatedUser);
-        //executeUpdateUserQuery(userSql, locationSql, updatedUser);
+        executeUpdateUserQuery(userSql, deleteUserLocations, insertUserLocations, updatedUser);
     }
 
     private void executeUpdateUserQuery(String sql, String deleteUserLocations, String insertUserLocations, User user) {
