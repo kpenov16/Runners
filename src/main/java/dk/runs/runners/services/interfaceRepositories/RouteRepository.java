@@ -1,6 +1,7 @@
 package dk.runs.runners.services.interfaceRepositories;
 
 import dk.runs.runners.entities.Route;
+import dk.runs.runners.entities.User;
 
 import java.util.Date;
 import java.util.List;
@@ -68,6 +69,14 @@ public interface RouteRepository {
      */
     List<Route> getMostPopular(int top, Date since);
 
+    /**
+     * Retrieves a list of route participants
+     * @param routeId is the id of the route
+     * @return list of participants
+     * @throws GetParticipantsException other not predefined exceptions are wrapped in this exception
+     */
+    List<User> getRouteParticipants(String routeId) throws RouteNotFoundException;
+
     class UpdateRouteException extends RuntimeException{
         public UpdateRouteException(String msg){
             super(msg);
@@ -96,5 +105,8 @@ public interface RouteRepository {
     }
     class RouteMissingLocationException extends RuntimeException{
         public RouteMissingLocationException(String msg) {super(msg);}
+    }
+    class GetParticipantsException extends RuntimeException{
+        public GetParticipantsException(String msg) {super(msg);}
     }
 }

@@ -3,6 +3,7 @@ package dk.runs.runners.repositories.mysqlImpl;
 import dk.runs.runners.config.DataSourceConfig;
 import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.Route;
+import dk.runs.runners.entities.User;
 import dk.runs.runners.entities.WayPoint;
 import dk.runs.runners.services.interfaceRepositories.RouteRepository;
 
@@ -14,7 +15,6 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
     private final String url = "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?"
             + "user=s133967&password=8JPOJuQcgUpUVIVHY4S2H";
-
 
     @Override
     public void createRoute(Route route, String creatorId){
@@ -492,6 +492,41 @@ public class RouteRepositoryImpl extends BaseRunnersRepository implements RouteR
 
         List<Route> routes = executeMostPopularRoutesQuery( top, since, mostPopularRoutesSql);
         return postprocesMostPopularRoutes(routes);
+    }
+
+    @Override
+    public List<User> getRouteParticipants(String routeId) throws RouteNotFoundException {
+        String sql = "SELECT user.id, user.user_name, user.email from run join route on route.id = run.route_id join user on run.user_id= user.id WHERE route.id = ?";
+        List<User> participants = executeGetRouteParticipants(sql, routeId);
+        return participants;
+    }
+
+    private List<User> executeGetRouteParticipants(String sql, String routeId) {
+        List<User> users = new ArrayList<>();
+
+        try(Connection conn = DataSourceConfig.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setString(1, routeId);
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                User user = new User();
+                user.setId(rs.getString("user.id"));
+                user.setUserName(rs.getString("user.user_name"));
+                user.setEmail(rs.getString("user.email"));
+                users.add(user);
+            }
+            if(rs != null){ rs.close(); }
+        }catch(SQLException se){
+            se.printStackTrace();
+            throw new GetParticipantsException(se.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new GetParticipantsException(e.getMessage());
+        }catch(Throwable e){
+            e.printStackTrace();
+            throw new GetParticipantsException(e.getMessage());
+        }
+        return users;
     }
 
     private List<Route> executeMostPopularRoutesQuery(int top, long since, String mostPopularRoutesSql) {
