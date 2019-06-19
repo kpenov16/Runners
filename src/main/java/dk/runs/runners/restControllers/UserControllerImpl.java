@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.xml.ws.Response;
 import java.net.URI;
 
 @CrossOrigin(origins="http://localhost:4200")
@@ -38,8 +39,9 @@ public class UserControllerImpl {
     }
 
     @GetMapping("/users/{userName}")
-    public User getUser(@PathVariable String userName){
-        return userService.getUser(userName);
+    public ResponseEntity<User> getUser(@PathVariable String userName){
+        User user = userService.getUser(userName);
+        return ResponseEntity.ok(user);
     }
 
 

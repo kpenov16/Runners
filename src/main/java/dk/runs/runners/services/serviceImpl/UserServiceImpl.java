@@ -4,6 +4,7 @@ import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.User;
 import dk.runs.runners.services.interfaceRepositories.UserRepository;
 import dk.runs.runners.services.interfaceRepositories.UserRepository.UserNameDuplicationException;
+import dk.runs.runners.services.interfaceRepositories.UserRepository.UserEmailDuplicationException;
 import dk.runs.runners.services.interfaceServices.UserService;
 
 import java.util.ArrayList;
@@ -18,7 +19,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User updatedUser) {
         setupLocationsIds(updatedUser);
-        this.userRepository.updateUser(updatedUser);
+        try{
+            this.userRepository.updateUser(updatedUser);
+        }catch (Throwable t){
+            handleExceptions(t, updatedUser);
+        }
         return this.userRepository.getUser(updatedUser.getUserName());
     }
 
@@ -28,11 +33,17 @@ public class UserServiceImpl implements UserService {
         setupIds(user);
         try{
             this.userRepository.createUser(user);
-        }catch (UserNameDuplicationException e){
-            throw new UserServiceException(String.format(UserServiceException.USER_WITH_USER_NAME_S_ALREADY_EXIST, user.getUserName()));
-        }catch (UserRepository.UserEmailDuplicationException e){
-            throw new UserServiceException(String.format(UserServiceException.USER_WITH_EMAIL_S_ALREADY_EXIST, user.getEmail()));
         }catch (Throwable t){
+            handleExceptions(t, user);
+        }
+    }
+
+    void handleExceptions(Throwable t, User user){
+        if(t instanceof UserNameDuplicationException){
+            throw new UserServiceException(String.format(UserServiceException.USER_WITH_USER_NAME_S_ALREADY_EXIST, user.getUserName()));
+        }else if(t instanceof UserEmailDuplicationException){
+            throw new UserServiceException(String.format(UserServiceException.USER_WITH_EMAIL_S_ALREADY_EXIST, user.getEmail()));
+        }else{
             throw new UserServiceException(String.format(UserServiceException.OTHER, t.getMessage()));
         }
     }
