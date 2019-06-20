@@ -24,6 +24,25 @@ public class UserServiceImplTest {
     }
 
     @Test
+    public void givenGetUserByNotExistingUserName_returnUserServiceExceptionWithProperMsg(){
+        //arrange
+        userService.setUserRepository( getUserRepositoryCastingUserNonFoundEx() );
+
+        String userName = "Hidi";
+
+        UserServiceException userServiceException =
+                assertThrows(UserServiceException.class,
+                        ()->{
+                            userService.getUser(userName);
+                        }, "expected UserServiceException, but didn't :(");
+
+        //act, //assert
+        assertEquals( String.format( UserServiceException.USER_WITH_USER_NAME_S_NOT_FOUND, userName ),
+                userServiceException.getMessage() );
+    }
+
+
+    @Test
     public void givenCreateUserWithExistingUserName_returnUserServiceExceptionWithProperMsg(){
         //arrange
         userService.setUserRepository( getUserRepositoryCastingUserNameDuplicationEx() );
@@ -100,6 +119,35 @@ public class UserServiceImplTest {
             @Override
             public User getUser(String userName) throws GetUserException, UserNotFoundException {
                 return null;
+            }
+
+            @Override
+            public User getUserById(String userId) throws GetUserException, UserNotFoundException {
+                return null;
+            }
+
+            @Override
+            public void deleteUser(String userId) throws DeleteUserException {
+
+            }
+
+            @Override
+            public void updateUser(User updatedUser) throws UserNameDuplicationException, UserEmailDuplicationException, UpdateUserException, UserNotFoundException {
+
+            }
+        };
+    }
+
+    private UserRepository getUserRepositoryCastingUserNonFoundEx() {
+        return new UserRepository() {
+            @Override
+            public void createUser(User user) throws UserIdDuplicationException, UserNameDuplicationException, UserEmailDuplicationException, CreateUserException, UserMissingLocationException {
+
+            }
+
+            @Override
+            public User getUser(String userName) throws GetUserException, UserNotFoundException {
+                throw new UserNotFoundException("");
             }
 
             @Override
