@@ -46,7 +46,11 @@ public class RunServiceImpl implements RunService {
            run.setId(UUID.randomUUID().toString());
            runRepository.createRun(run, creatorId);
            return run;
-        }catch (RunRepository.RunIdDuplicationException e){
+        }catch(RunRepository.MaxParticipansReachedException e){
+            throw new RunServiceException("Sorry. Can not register for the route, because it reached the maximal number of paticipants");
+        }
+
+        catch (RunRepository.RunIdDuplicationException e){
             if (e.getMessage().contains("PRIMARY")){
                 throw new RunServiceException("Run already created!");
             }else {
@@ -85,7 +89,10 @@ public class RunServiceImpl implements RunService {
     public void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) throws RunServiceException {
         try{
             runRepository.addCheckpointIfValid(runId, currentX, currentY, precision);
+        } catch (RunRepository.WayPointNotFound e){
+            throw new RunServiceException("There was no waypoints near this postion");
         } catch(RunRepository.CheckpointException e){
+            e.printStackTrace();
             throw new RunServiceException("Error. Could not sumbit your position.");
         } catch(Throwable e){
             throw new RunServiceException("Error. Could not sumbit your position.");

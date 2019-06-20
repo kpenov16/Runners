@@ -52,8 +52,9 @@ public interface RunRepository {
      * @param currentY the longitude value of the user's current coordinate
      * @param precision describes how close a user should be to the waypoint in order to mark a waypoint as checked
      * @throws CheckpointException if there is occurred any error inserting a checkpoint
+     * @throws WayPointNotFound if there was not found any waypoints to given current location
      */
-    void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) throws CheckpointException;
+    void addCheckpointIfValid(String runId, double currentX, double currentY, int precision) throws CheckpointException, WayPointNotFound;
 
     /**
      * Retrieves a list of waypoints the user has yet to pass
@@ -123,5 +124,8 @@ public interface RunRepository {
     }
     class RunNotFound extends RuntimeException{
         public RunNotFound(String msg) {super(msg);}
+    }
+    class WayPointNotFound extends RuntimeException{
+        public WayPointNotFound(String msg) {super(msg);}
     }
 }

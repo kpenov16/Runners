@@ -298,10 +298,15 @@ public class RunRepositoryImpl implements RunRepository {
             pstmt.setString(1, runId);
             pstmt.setString(2, "Point("+currentX+" "+currentY+")");
             pstmt.setInt(3, precision);
-            pstmt.executeUpdate();
+            int rowsEffected  = pstmt.executeUpdate();
+            if(rowsEffected < 1){
+                throw new WayPointNotFound("There was no waypoints near this postion");
+            }
         }catch(SQLException se){
             se.printStackTrace();
             throw new CheckpointException(se.getMessage());
+        }catch(WayPointNotFound e){
+            throw new WayPointNotFound("There was no waypoints near this postion");
         }catch(Exception e){
             e.printStackTrace();
             throw new CheckpointException(e.getMessage());
