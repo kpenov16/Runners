@@ -51,12 +51,15 @@ public class RouteControllerImpl {
     }
 
     @GetMapping("/users/{creatorId}/routes")
-    public ResponseEntity<List<Route>> getUserRoutesList(@PathVariable String creatorId){
-        List<Route> routes = routeService.getUserRoutesList(creatorId);
-        if(!routes.isEmpty()){
-            return new ResponseEntity<>(routes, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(routes, HttpStatus.NOT_FOUND);
+    public ResponseEntity getUserRoutesList(@PathVariable String creatorId){
+        if(creatorId.length() < 10){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<Route> routes = routeService.getUserRoutesList(creatorId);
+            return ResponseEntity.status(HttpStatus.OK).body(routes);
+        } catch (RouteService.RouteServiceException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
