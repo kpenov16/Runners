@@ -14,21 +14,12 @@ import java.util.List;
 @CrossOrigin(origins="http://localhost:4200")
 @RestController
 public class RouteControllerImpl {
-    //@Resource(name="routeService")
-    //RouteService routeService = config.getRouteService();
+
     private RouteService routeService;
 
     public RouteControllerImpl(RouteService routeService){
         this.routeService = routeService;
     }
-
-//    @GetMapping("/routes/{id}")
-//    public RouteResponse getRoute(@PathVariable String id){
-//        RouteResponse routeResponse = new RouteResponse();
-//        routeResponse.setRoute(routeService.getRoute(id));
-//
-//        return routeResponse;
-//    }
 
     @GetMapping("users/{userId}/routes/{id}")
     public Route getRoute(@PathVariable String userId, @PathVariable String id){
@@ -44,7 +35,6 @@ public class RouteControllerImpl {
     public ResponseEntity<Void> deleteRoute(@PathVariable String id){
         routeService.deleteRoute(id);
         return ResponseEntity.noContent().build();
-
         // return ResponseEntity.notFound().build() is route is not found. Step 66
     }
 
@@ -52,15 +42,6 @@ public class RouteControllerImpl {
     public List<Route> getRoutes(){
         return routeService.getRoutesList();
     }
-
-//    @PostMapping(path = "/routes")//@PostMapping(path = "/createRoute")
-//    public RouteResponse addRoute(@RequestBody RouteRequest routeRequest) {
-//        routeService.createRoute(routeRequest.getRoute(), routeRequest.getCreatorId());
-//        RouteResponse routeResponse = new RouteResponse();
-//        routeResponse.setError("");
-//        routeResponse.setRoute(routeRequest.getRoute());
-//        return routeResponse;
-//    }
 
     @PostMapping(path = "/users/{creatorId}/routes")
     public ResponseEntity<Route> createRoute(@PathVariable String creatorId, @RequestBody Route route) {
@@ -70,8 +51,13 @@ public class RouteControllerImpl {
     }
 
     @GetMapping("/users/{creatorId}/routes")
-    public List<Route> getUserRoutesList(@PathVariable String creatorId){
-        return routeService.getUserRoutesList(creatorId);
+    public ResponseEntity<List<Route>> getUserRoutesList(@PathVariable String creatorId){
+        List<Route> routes = routeService.getUserRoutesList(creatorId);
+        if(!routes.isEmpty()){
+            return new ResponseEntity<>(routes, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(routes, HttpStatus.NOT_FOUND);
+        }
     }
 
     @PutMapping("/routes/{id}")
