@@ -10,6 +10,9 @@ public interface UserService {
 
     class UserServiceException extends RuntimeException{
         public static final String USER_WITH_USER_NAME_S_ALREADY_EXIST = "User with user name: %s already exist.";
+        public static final String USER_WITH_EMAIL_S_ALREADY_EXIST = "User with email: %s already exist.";
+        public static final String USER_WITH_USER_NAME_S_NOT_FOUND = "User with user name: %s not found.";
+        public static final String OTHER = "Something wrong happened: %s";
 
         public UserServiceException(String msg){
             super(msg);

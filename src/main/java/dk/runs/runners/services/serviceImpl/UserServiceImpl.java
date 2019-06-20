@@ -4,10 +4,11 @@ import dk.runs.runners.entities.Location;
 import dk.runs.runners.entities.User;
 import dk.runs.runners.services.interfaceRepositories.UserRepository;
 import dk.runs.runners.services.interfaceRepositories.UserRepository.UserNameDuplicationException;
+import dk.runs.runners.services.interfaceRepositories.UserRepository.UserEmailDuplicationException;
+import dk.runs.runners.services.interfaceRepositories.UserRepository.UserNotFoundException;
 import dk.runs.runners.services.interfaceServices.UserService;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class UserServiceImpl implements UserService {
@@ -18,7 +19,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User updatedUser) {
         setupLocationsIds(updatedUser);
-        this.userRepository.updateUser(updatedUser);
+        try{
+            this.userRepository.updateUser(updatedUser);
+        }catch (Throwable t){
+            handleExceptions(t, updatedUser);
+        }
         return this.userRepository.getUser(updatedUser.getUserName());
     }
 
@@ -28,8 +33,27 @@ public class UserServiceImpl implements UserService {
         setupIds(user);
         try{
             this.userRepository.createUser(user);
-        }catch (UserNameDuplicationException e){
+        }catch (Throwable t){
+            handleExceptions(t, user);
+        }
+    }
+
+
+    void handleExceptions(Throwable t, String userName){
+        User fakeUser = new User();
+        fakeUser.setUserName(userName);
+        handleExceptions(t, fakeUser);
+    }
+
+    void handleExceptions(Throwable t, User user){
+        if(t instanceof UserNameDuplicationException){
             throw new UserServiceException(String.format(UserServiceException.USER_WITH_USER_NAME_S_ALREADY_EXIST, user.getUserName()));
+        }else if(t instanceof UserEmailDuplicationException){
+            throw new UserServiceException(String.format(UserServiceException.USER_WITH_EMAIL_S_ALREADY_EXIST, user.getEmail()));
+        }else if(t instanceof UserNotFoundException){
+            throw new UserServiceException(String.format(UserServiceException.USER_WITH_USER_NAME_S_NOT_FOUND, user.getUserName()));        }
+        else{
+            throw new UserServiceException(String.format(UserServiceException.OTHER, t.getMessage()));
         }
     }
 
@@ -54,8 +78,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(String userName) {
-        return this.userRepository.getUser(userName);
+        User user = null;
+        try{
+            user = this.userRepository.getUser(userName);
+        }catch (Throwable t){
+            handleExceptions(t, userName);
+        }
+        return user;
     }
 
 
+    protected void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 }
