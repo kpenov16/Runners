@@ -10,9 +10,10 @@ public class User implements Locational{
     private String email = "";
     private String password = "";
     private List<Route> routes = new LinkedList<>();
+    private List<Run> runs = new LinkedList<>();
     private List<Location> locations = new ArrayList<>();
-
     public User(){}
+
     public User(String id){
         setId(id);
     }
@@ -26,7 +27,6 @@ public class User implements Locational{
     public String getUserName() {
         return userName;
     }
-
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -62,6 +62,14 @@ public class User implements Locational{
     @Override
     public List<Location> getLocations() {
         return locations;
+    }
+
+    public List<Run> getRuns() {
+        return runs;
+    }
+
+    public void setRuns(List<Run> runs) {
+        this.runs = runs;
     }
 
     public User(String id, String userName, String email, String password, List<Route> routes, List<Location> locations) {
