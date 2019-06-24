@@ -11,9 +11,9 @@ public class DataSourceConfig {
     private static HikariDataSource dataSource;
 
     static {
-        config.setJdbcUrl("jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s133967?");
-        config.setUsername("s133967");
-        config.setPassword("8JPOJuQcgUpUVIVHY4S2H");
+        config.setJdbcUrl("jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s185144?");
+        config.setUsername("s185144");
+        config.setPassword("XFfpicTFLy2RzYknRgLMO");
         config.addDataSourceProperty("cachePrepStmts","true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
